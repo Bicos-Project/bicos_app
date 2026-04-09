@@ -1,1 +1,0 @@
-# bicos_app
