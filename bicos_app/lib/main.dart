@@ -1,66 +1,49 @@
 import 'package:flutter/material.dart';
+import 'prestador_pages/home_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(home: HomePage(title: 'Bicos')));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+  final ColorScheme bicosColorScheme = const ColorScheme(
+    brightness: Brightness.dark,
 
+    // Cor principal (roxo forte)
+    primary: Color(0xFF8E24AA),
+    onPrimary: Colors.white,
+
+    // Variante da primária
+    primaryContainer: Color(0xFF6A1B9A),
+    onPrimaryContainer: Colors.white,
+
+    // Cor secundária (verde destaque)
+    secondary: Color(0xFFB2FF59),
+    onSecondary: Colors.black,
+
+    secondaryContainer: Color(0xFF7CB342),
+    onSecondaryContainer: Colors.black,
+    background: Color(0xFF1A001F),
+    onBackground: Colors.white,
+
+    // Cards / superfícies
+    surface: Color(0xFF2A0033),
+    onSurface: Colors.white,
+
+    // Erro
+    error: Colors.redAccent,
+    onError: Colors.white,
+  );
+  final LinearGradient mainGradient = LinearGradient(
+    colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA), Color(0xFFAD2BE8)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+    return MaterialApp(title: 'Bicos');
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}

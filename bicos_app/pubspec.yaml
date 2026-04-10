@@ -59,6 +59,8 @@ flutter:
   assets:
     - assets/bicos_logo1.png
     - assets/bicos_logo2.png
+    - assets/header.png
+    - assets/bottom.png
 
 
 
