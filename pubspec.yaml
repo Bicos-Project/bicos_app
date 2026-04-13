@@ -58,7 +58,40 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/
+    - assets/bicos_logo1.png
+    - assets/bicos_logo2.png
+    - assets/header.png
+    - assets/bottom.png
+    - assets/agenda.png
+    - assets/alimentacao.png
+    - assets/barbeiro.png
+    - assets/beleza.png
+    - assets/busca.png
+    - assets/cabeleireira.png
+    - assets/conversa.png
+    - assets/coracao.png
+    - assets/cuidadores.png
+    - assets/diarista.png
+    - assets/eletricista.png
+    - assets/eletronica.png
+    - assets/historico.png
+    - assets/home.png
+    - assets/localizacao.png
+    - assets/logistica.png
+    - assets/menu.png
+    - assets/nota.png
+    - assets/obras.png
+    - assets/pedreiro.png
+    - assets/perfil.png
+    - assets/reparos_rapidos.png
+    - assets/servicos_domesticos.png
+    - assets/seta_avancar.png
+    - assets/seta_voltar.png
+    - assets/trabalhador.png
+    - assets/trancista.png
+    - assets/troca_gas.png
+    - assets/upload.png
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:
