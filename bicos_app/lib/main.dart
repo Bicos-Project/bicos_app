@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     onPrimaryContainer: Colors.white,
 
     // Cor secundária (verde destaque)
-    secondary: Color(0xFFB2FF59),
+    secondary: Color.fromRGBO(223, 244, 129, 1),
     onSecondary: Colors.black,
 
     secondaryContainer: Color(0xFF7CB342),

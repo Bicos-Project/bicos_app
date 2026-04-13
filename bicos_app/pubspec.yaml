@@ -61,6 +61,9 @@ flutter:
     - assets/bicos_logo2.png
     - assets/header.png
     - assets/bottom.png
+    - assets/background.png
+    - assets/image_icon.png
+    - assets/sction_background.png
 
 
 
