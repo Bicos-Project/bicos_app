@@ -43,7 +43,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.principal,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -92,6 +91,7 @@ class HomePage extends StatelessWidget {
               ),
 
               const SizedBox(height: 20),
+              
 
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),

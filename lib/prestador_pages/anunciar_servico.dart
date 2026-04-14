@@ -1,3 +1,5 @@
+import 'package:bicos_app/core/app_colors.dart';
+import 'package:bicos_app/prestador_pages/home_page_prestador.dart';
 import 'package:flutter/material.dart';
 
 class AnunciarServicoPage extends StatefulWidget {
@@ -10,21 +12,21 @@ class AnunciarServicoPage extends StatefulWidget {
 class _AnunciarServicoPageState extends State<AnunciarServicoPage> {
   double _raioAtendimento = 15.0;
 
-  Widget _buildChip(String text, ColorScheme colorScheme) {
+  Widget _buildChip(String text) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
-        color:  Colors.white.withOpacity(0.2), // Usando o roxo de superfície
+        color: Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(50),
       ),
       child: Text(
         text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: colorScheme.onPrimary,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 15,
+          fontWeight: FontWeight(600),
         ),
+        textAlign: TextAlign.center,
       ),
     );
   }
@@ -32,9 +34,9 @@ class _AnunciarServicoPageState extends State<AnunciarServicoPage> {
   InputDecoration _inputStyle(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+      hintStyle: const TextStyle(color: AppColors.cinza, fontSize: 14),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: AppColors.branco,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
@@ -45,46 +47,53 @@ class _AnunciarServicoPageState extends State<AnunciarServicoPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/background.png'), fit: BoxFit.fill
-          )
-        ),
       child: Scaffold(
-        backgroundColor: Colors.transparent, // Deixa o gradiente aparecer
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/header.png'),
-                fit: BoxFit.fill,
-                ),
-              ),
+        backgroundColor: AppColors.principal,
+        // Custom Header como AppBar
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
             ),
-          elevation: 0,
-          leading: IconButton(
-              icon: const Icon(Icons.arrow_back), // Ou apenas Icons.arrow_back
-              color: Color.fromRGBO(223, 244, 129, 1),      // A cor desejada
-              onPressed: () => Navigator.pop(context),
-            ),
-
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+            child: AppBar(
+              automaticallyImplyLeading:
+                  false, // Remove o botão voltar padrão se necessário
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              flexibleSpace: Stack(
                 children: [
-                  Image(image: AssetImage('assets/bicos_logo2.png'), height: 30,)
+                  Image.asset(
+                    "assets/header.png",
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.fill,
+                  ),
+                  SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.asset("assets/bicos_logo2.png", height: 40),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: Image.asset(
+                              "assets/perfil.png",
+                              height: 40,
+                              width: 40,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              const CircleAvatar(
-                radius: 18,
-                backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-              ),
-            ],
+            ),
           ),
         ),
         body: SingleChildScrollView(
@@ -97,7 +106,7 @@ class _AnunciarServicoPageState extends State<AnunciarServicoPage> {
                 Text(
                   'NOVO ANÚNCIO',
                   style: TextStyle(
-                    color: colorScheme.onPrimary.withOpacity(0.7),
+                    color: AppColors.branco,
                     fontSize: 11,
                     letterSpacing: 1.5,
                   ),
@@ -106,66 +115,89 @@ class _AnunciarServicoPageState extends State<AnunciarServicoPage> {
                 Text(
                   'Destaque seu talento\npara a comunidade.',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: AppColors.branco,
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     height: 1.1,
                   ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Container de Upload
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.branco,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
                     children: [
-                      Image(image: AssetImage('assets/image_icon.png'), height: 60,),
+                      const Image(
+                        image: AssetImage('assets/image_icon.png'),
+                        height: 60,
+                      ),
                       const SizedBox(height: 12),
                       const Text(
                         'Adicionar fotos do serviço',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: Colors.black),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.black,
+                        ),
                       ),
                       const Text(
                         'Mostre o seu melhor trabalho (Até 5 fotos)',
-                        style: TextStyle(fontSize: 15, color: Colors.grey),
+                        style: TextStyle(fontSize: 13, color: AppColors.cinza),
                       ),
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                const Text('NOME DO ANÚNCIO', style: TextStyle(color: Colors.white, fontSize: 11)),
+                const Text(
+                  'NOME DO ANÚNCIO',
+                  style: TextStyle(color: AppColors.branco, fontSize: 11),
+                ),
                 const SizedBox(height: 8),
-                TextField(decoration: _inputStyle('Ex: Eletricista Residencial 24h')),
+                TextField(
+                  decoration: _inputStyle('Ex: Eletricista Residencial 24h'),
+                ),
 
                 const SizedBox(height: 20),
-                const Text('CATEGORIA DO SERVIÇO', style: TextStyle(color: Colors.white, fontSize: 11)),
+                const Text(
+                  'CATEGORIA DO SERVIÇO',
+                  style: TextStyle(color: AppColors.branco, fontSize: 11),
+                ),
                 const SizedBox(height: 12),
                 Wrap(
-                  spacing: 25,
-                  runSpacing: 20,
+                  spacing: 12,
+                  runSpacing: 12,
                   children: [
-                    _buildChip('Beleza\ne Estética', colorScheme),
-                    _buildChip('Serviços\nDomésticos', colorScheme),
-                    _buildChip('Reparos\nRápidos', colorScheme),
+                    _buildChip('Beleza\ne Estética'),
+                    _buildChip('Serviços\nDomésticos'),
+                    _buildChip('Reparos\nRápidos'),
                   ],
                 ),
 
                 const SizedBox(height: 20),
-                const Text('DESCRIÇÃO E EXPERIÊNCIA', style: TextStyle(color: Colors.white, fontSize: 11)),
+                const Text(
+                  'DESCRIÇÃO E EXPERIÊNCIA',
+                  style: TextStyle(color: AppColors.branco, fontSize: 11),
+                ),
                 const SizedBox(height: 8),
                 TextField(
                   maxLines: 4,
-                  decoration: _inputStyle('Conte um pouco sobre sua trajetória., \nferramentas que utiliza e difirenciais...'),
+                  decoration: _inputStyle(
+                    'Conte um pouco sobre sua trajetória...',
+                  ),
                 ),
 
                 const SizedBox(height: 20),
-                const Text('VALOR BASE (R\$)', style: TextStyle(color: Colors.white, fontSize: 11)),
+                const Text(
+                  'VALOR BASE (R\$)',
+                  style: TextStyle(color: AppColors.branco, fontSize: 11),
+                ),
                 const SizedBox(height: 8),
                 TextField(
                   keyboardType: TextInputType.number,
@@ -176,67 +208,89 @@ class _AnunciarServicoPageState extends State<AnunciarServicoPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('RAIO DE ATENDIMENTO', style: TextStyle(color: Colors.white, fontSize: 11)),
+                    const Text(
+                      'RAIO DE ATENDIMENTO',
+                      style: TextStyle(color: AppColors.branco, fontSize: 11),
+                    ),
                     Text(
-                      '${_raioAtendimento.toInt()} km', 
-                      style: TextStyle(color: Color.fromRGBO(223, 244, 129, 1), fontWeight: FontWeight.bold)
+                      '${_raioAtendimento.toInt()} km',
+                      style: const TextStyle(
+                        color: AppColors.destaque,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 8),
                 Container(
-                  height: 50, // Altura da barra branca
+                  height: 50,
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white, // O fundo branco que você pediu
+                    color: AppColors.branco,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: SliderTheme(
                     data: SliderTheme.of(context).copyWith(
-                      // Altura da linha do slider
-                      trackHeight: 2, 
-                      // Cor da parte já "percorrida" (Verde limão do seu ColorScheme)
-                      activeTrackColor: Color.fromRGBO(223, 244, 129, 1), 
-                      // Cor da parte que falta percorrer (Cinza claro para contrastar com o branco)
-                      inactiveTrackColor: Colors.grey.shade300, 
-                      // Cor da bolinha
-                      thumbColor: const Color.fromRGBO(223, 244, 129, 1),
-                      overlayColor: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.1),
-                      // Remove as margens internas padrão do Slider para encostar nas bordas se necessário
-                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
-                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 16.0),
+                      trackHeight: 2,
+                      activeTrackColor: const Color(0xFFDFF481),
+                      inactiveTrackColor: Colors.grey.shade300,
+                      thumbColor: const Color(0xFFDFF481),
+                      overlayColor: Colors.black.withOpacity(0.05),
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 10.0,
+                      ),
                     ),
                     child: Slider(
                       value: _raioAtendimento,
                       min: 0,
                       max: 50,
-                      onChanged: (value) => setState(() => _raioAtendimento = value),
+                      onChanged: (value) =>
+                          setState(() => _raioAtendimento = value),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: 55,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Usamos push para permitir que o usuário volte,
+                      // ou pushReplacement se não quiser que ele volte para o formulário.
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const HomePagePrestador(title: 'Home'),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(223, 244, 129, 1),
-                      foregroundColor: Color.fromARGB(255, 66, 95, 35),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      backgroundColor: const Color(0xFFDFF481),
+                      foregroundColor: const Color(0xFF425F23),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
-                        Text('Publicar Anúncio', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text(
+                          'Publicar Anúncio',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                         SizedBox(width: 8),
                         Icon(Icons.send_rounded, size: 18),
                       ],
                     ),
                   ),
                 ),
-                
                 const SizedBox(height: 16),
                 const Center(
                   child: Text(
