@@ -47,21 +47,11 @@ class HistoricoServicos extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        
         // 2. Aplica o degradê em toda a tela
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.center, // Começa exatamente no meio
-            radius:
-                1.0, // Define o quão longe o gradiente se espalha (1.0 = preenche o container)
-            colors: [
-              // A ordem aqui define o "do meio para fora"
-              const Color.fromARGB(255, 52, 7, 63),
-              const Color.fromARGB(255, 64, 18, 75),
-              AppColors.principal, // COR 2: Sua cor principal (meio termo)
-            ],
-          ),
+        decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('assets/background.png'), fit: BoxFit.fill)
         ),
         child: SafeArea(
           child: Column(
