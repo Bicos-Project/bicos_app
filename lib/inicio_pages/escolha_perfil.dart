@@ -1,3 +1,4 @@
+import 'package:bicos_app/inicio_pages/cadastro_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
@@ -86,7 +87,7 @@ class EscolhaPerfil extends StatelessWidget {
                   // AGORA TAMBÉM NAVEGA PARA O LOGIN!
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Login()),
+                    MaterialPageRoute(builder: (context) => const CadastroPrestadorPage()),
                   );
                 },
               ),
