@@ -91,6 +91,7 @@ flutter:
     - assets/trancista.png
     - assets/troca_gas.png
     - assets/upload.png
+    - assets/pintora.png
 
 
   # To add assets to your application, add an assets section, like this:

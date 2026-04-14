@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-import '../cliente_pages/historico_servicos.dart';
+import 'package:bicos_app/cliente_pages/avaliacao.dart';
 
 // Modelo de mensagem
 class Mensagem {
@@ -459,7 +459,15 @@ class _ChatVendedorState extends State<ChatVendedor> {
 
           // Botão câmera
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      const AvaliacaoServico(nomePrestador: 'Mariana'),
+                ),
+              );
+            },
             icon: Icon(
               Icons.camera_alt_outlined,
               color: AppColors.principalEscura.withOpacity(0.75),
