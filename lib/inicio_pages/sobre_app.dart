@@ -155,7 +155,6 @@ class SobreApp extends StatelessWidget {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navegação certinha para a escolha de perfil!
                     Navigator.push(
                       context,
                       MaterialPageRoute(
