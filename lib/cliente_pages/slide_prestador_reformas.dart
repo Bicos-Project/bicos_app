@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
 
-// ── MODELO ────────────────────────────────────────────────────────────────────
+
 class Prestador {
   final String nome;
   final String especialidade;
@@ -22,7 +22,6 @@ class Prestador {
   });
 }
 
-// ── TELA ──────────────────────────────────────────────────────────────────────
 class ObrasEReformas extends StatefulWidget {
   const ObrasEReformas({super.key});
 
@@ -32,7 +31,7 @@ class ObrasEReformas extends StatefulWidget {
 
 class _ObrasEReformasState extends State<ObrasEReformas> {
   final PageController _pageController = PageController(
-    viewportFraction: 0.78, // mostra pedaço dos cards laterais
+    viewportFraction: 0.78, 
     initialPage: 1,
   );
 
@@ -93,10 +92,10 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
         child: SafeArea(
           child: Column(
             children: [
-              // ── HEADER ──────────────────────────────────────
+  
               _construirHeader(),
 
-              // ── SUBTÍTULO ────────────────────────────────────
+   
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -114,7 +113,6 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
                 ),
               ),
 
-              // ── CARROSSEL ────────────────────────────────────
               Expanded(
                 child: PageView.builder(
                   controller: _pageController,
@@ -159,13 +157,12 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
                 ),
               ),
 
-              // ── INDICADOR DE PÁGINA ──────────────────────────
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Seta esquerda
+          
                     MouseRegion(
                       cursor: _paginaAtual > 0
                           ? SystemMouseCursors.click
@@ -191,7 +188,7 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
 
                     const SizedBox(width: 8),
 
-                    // Contador "1 / 3"
+                
                     Text(
                       '${_paginaAtual + 1} / ${_prestadores.length}',
                       style: GoogleFonts.plusJakartaSans(
@@ -203,7 +200,7 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
 
                     const SizedBox(width: 8),
 
-                    // Seta direita
+              
                     MouseRegion(
                       cursor: _paginaAtual < _prestadores.length - 1
                           ? SystemMouseCursors.click
@@ -235,8 +232,7 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
       ),
     );
   }
-
-  // ── HEADER ────────────────────────────────────────────────────────────────
+──
 
   Widget _construirHeader() {
     return Stack(
@@ -285,7 +281,6 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
     );
   }
 
-  // ── CARD DO PRESTADOR ─────────────────────────────────────────────────────
 
   Widget _construirCard(Prestador p) {
     return Container(
@@ -305,13 +300,12 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── FOTO ──
+         
             Expanded(
               flex: 5,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Imagem de fundo
                   Image.asset(
                     p.imagemAsset,
                     fit: BoxFit.cover,
@@ -325,13 +319,11 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
                     ),
                   ),
 
-                  // Badges avaliação + distância
                   Positioned(
                     top: 12,
                     left: 12,
                     child: Row(
                       children: [
-                        // Badge avaliação
                         _construirBadge(
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -355,7 +347,7 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
                           cor: AppColors.destaque,
                         ),
                         const SizedBox(width: 6),
-                        // Badge distância
+       
                         _construirBadge(
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
