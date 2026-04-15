@@ -79,11 +79,11 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Removemos o backgroundColor daqui
+      
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        // Aplicando o mesmo degradê da OrcamentoPage
+
         decoration: const BoxDecoration(
           gradient: RadialGradient(
             center: Alignment(0, -0.4),
@@ -357,7 +357,7 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
                       height: 55,
                       decoration: BoxDecoration(
                         color: AppColors
-                            .destaque, // Mudei para Destaque para combinar com o botão da outra tela
+                            .destaque, 
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -367,7 +367,7 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
                             "Pedir Orçamento",
                             style: TextStyle(
                               color: AppColors
-                                  .preto, // Texto preto no destaque fica melhor
+                                  .preto, 
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
