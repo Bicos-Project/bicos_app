@@ -458,15 +458,7 @@ class _ChatVendedorState extends State<ChatVendedor> {
 
           // Botão câmera
           IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      const AvaliacaoServico(nomePrestador: 'Mariana'),
-                ),
-              );
-            },
+            onPressed: () {},
             icon: Icon(
               Icons.camera_alt_outlined,
               color: AppColors.principalEscura.withOpacity(0.75),

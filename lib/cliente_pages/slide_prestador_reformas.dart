@@ -229,9 +229,6 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
                   ],
                 ),
               ),
-
-              // ── BOTTOM NAV ───────────────────────────────────
-              _construirBottomNav(),
             ],
           ),
         ),

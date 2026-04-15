@@ -7,7 +7,9 @@ import 'favoritos_page.dart';
 import 'package:bicos_app/cliente_pages/slide_prestador_reformas.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final VoidCallback? onMudarAbaFavoritos;
+
+  const HomePage({super.key, this.onMudarAbaFavoritos});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -122,57 +124,55 @@ class _HomePageState extends State<HomePage>
         MaterialPageRoute(builder: (_) => const ObrasEReformas()),
       );
     }
-    // outras rotas podem ser adicionadas aqui
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // HEADER
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  bottom: Radius.circular(40),
-                ),
-                child: SizedBox(
-                  height: 90,
-                  child: Stack(
-                    children: [
-                      Image.asset(
-                        "assets/header.png",
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      Positioned(
-                        left: 16,
-                        top: 30,
-                        child: Image.asset(
-                          "assets/bicos_logo2.png",
-                          height: 30,
+      backgroundColor: AppColors.principal,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment(0, -0.4),
+            radius: 1.2,
+            colors: [Color(0xFF4A1060), Color(0xFF3B0A52), AppColors.principal],
+          ),
+        ),
+        child: SafeArea(
+          child: FadeTransition(
+            opacity: _fadeAnim,
+            child: SlideTransition(
+              position: _slideAnim,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _construirHeader(),
+                    const SizedBox(height: 24),
+                    _construirSaudacao(),
+                    const SizedBox(height: 20),
+                    _construirBuscaRapida(),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Categorias',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.branco,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 14),
-
-                    // ── GRID CATEGORIAS ──────────────────────────
                     _construirGridCategorias(),
-
                     const SizedBox(height: 28),
-
-                    // ── FAVORITOS ────────────────────────────────
                     _construirHeaderFavoritos(),
-
                     const SizedBox(height: 14),
-
                     _construirListaFavoritos(),
-
-                    const SizedBox(height: 32),
+                    // AUMENTADO PARA 110: Garante que a barra não tampe o conteúdo
+                    const SizedBox(height: 110),
                   ],
                 ),
               ),
@@ -183,8 +183,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  // ── WIDGETS ───────────────────────────────────────────────────────────────
-
+  // (MANTIDO IGUAL)
   Widget _construirHeader() {
     return Stack(
       children: [
@@ -218,10 +217,15 @@ class _HomePageState extends State<HomePage>
                     child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
                   ),
                 ),
-              ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-              const SizedBox(height: 20),
-
+  // (MANTIDO IGUAL)
   Widget _construirSaudacao() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -264,6 +268,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  // (MANTIDO IGUAL)
   Widget _construirBuscaRapida() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -299,6 +304,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  // (MANTIDO IGUAL)
   Widget _construirGridCategorias() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -314,11 +320,9 @@ class _HomePageState extends State<HomePage>
         ),
         itemBuilder: (context, index) {
           final cat = categorias[index];
-          final temRota = cat["rota"] != null;
-
           return _CategoriaCard(
             categoria: cat,
-            temRota: temRota,
+            temRota: cat["rota"] != null,
             onTap: () => _navegarCategoria(cat),
           );
         },
@@ -360,10 +364,18 @@ class _HomePageState extends State<HomePage>
           MouseRegion(
             cursor: SystemMouseCursors.click,
             child: GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const FavoritosPage()),
-              ),
+              onTap: () {
+                // Se a função foi fornecida pela MainNavigation, usa ela para mudar a aba.
+                // Se não, faz o push tradicional.
+                if (widget.onMudarAbaFavoritos != null) {
+                  widget.onMudarAbaFavoritos!();
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const FavoritosPage()),
+                  );
+                }
+              },
               child: Row(
                 children: [
                   Text(
@@ -389,12 +401,12 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  // (MANTIDO IGUAL)
   Widget _construirListaFavoritos() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
-        children: favoritos.asMap().entries.map((entry) {
-          final fav = entry.value;
+        children: favoritos.map((fav) {
           return _FavoritoCard(
             fav: fav,
             onTap: () => Navigator.push(
@@ -408,7 +420,7 @@ class _HomePageState extends State<HomePage>
   }
 }
 
-// ── CARD DE CATEGORIA (StatefulWidget para animação de press) ─────────────────
+// ── CARD CATEGORIA (MANTIDO IGUAL) ────────────────────────────────────────────
 
 class _CategoriaCard extends StatefulWidget {
   final Map<String, dynamic> categoria;
@@ -468,7 +480,6 @@ class _CategoriaCardState extends State<_CategoriaCard> {
             ),
             child: Row(
               children: [
-                // Ícone com fundo
                 Container(
                   width: 40,
                   height: 40,
@@ -538,61 +549,63 @@ class _CategoriaCardState extends State<_CategoriaCard> {
   }
 }
 
-// ── CARD DE FAVORITO (StatefulWidget para animação de press) ──────────────────
+// ── CARD FAVORITO (MANTIDO IGUAL) ─────────────────────────────────────────────
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Image.asset(
-                          "assets/coracao.png",
-                          width: 20,
-                          color: AppColors.destaque,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          "Favoritos",
-                          style: TextStyle(
-                            color: AppColors.branco,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
+class _FavoritoCard extends StatefulWidget {
+  final Map<String, String> fav;
+  final VoidCallback onTap;
 
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FavoritosPage(),
-                          ),
-                        );
-                      },
-                      child: Row(
-                        children: [
-                          Text(
-                            "Ver todos",
-                            style: TextStyle(color: AppColors.destaque),
-                          ),
-                          const SizedBox(width: 4),
-                          Image.asset(
-                            "assets/seta_avancar.png",
-                            width: 14,
-                            color: AppColors.destaque,
-                          ),
-                        ],
-                      ),
+  const _FavoritoCard({required this.fav, required this.onTap});
+
+  @override
+  State<_FavoritoCard> createState() => _FavoritoCardState();
+}
+
+class _FavoritoCardState extends State<_FavoritoCard> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTapDown: (_) => setState(() => _pressed = true),
+          onTapUp: (_) {
+            setState(() => _pressed = false);
+            widget.onTap();
+          },
+          onTapCancel: () => setState(() => _pressed = false),
+          child: AnimatedScale(
+            scale: _pressed ? 0.98 : 1.0,
+            duration: const Duration(milliseconds: 120),
+            child: Container(
+              height: 80,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: AppColors.branco,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      widget.fav["imagem"]!,
+                      width: 52,
+                      height: 52,
+                      fit: BoxFit.cover,
                     ),
                   ),
-
                   const SizedBox(width: 14),
-
-                  // Nome + categoria
                   Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -628,8 +641,6 @@ class _CategoriaCardState extends State<_CategoriaCard> {
                       ],
                     ),
                   ),
-
-                  // Coração + seta
                   Row(
                     children: [
                       Icon(
