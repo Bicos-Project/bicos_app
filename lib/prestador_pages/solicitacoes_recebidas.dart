@@ -1,11 +1,10 @@
 import 'package:bicos_app/prestador_pages/visualizacao_proposta_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/app_colors.dart';
-// import 'visualizacao_proposta.dart'; 
+import '../core/app_colors.dart'; 
 
-class VerMaisSolicitacoesPage extends StatelessWidget {
-  const VerMaisSolicitacoesPage({super.key});
+class SolicitacoesRecebidas extends StatelessWidget {
+  const SolicitacoesRecebidas({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +12,7 @@ class VerMaisSolicitacoesPage extends StatelessWidget {
       backgroundColor: AppColors.principal,
       
       // --- SEU HEADER AQUI ---
-      appBar: _construirHeader(),
+      appBar: _construirSeuHeader(),
       
       // --- RESTO DA TELA NO BODY ---
       body: Column(
@@ -77,7 +76,7 @@ class VerMaisSolicitacoesPage extends StatelessWidget {
   }
 
   // --- O MÉTODO COM O SEU CÓDIGO DE HEADER ---
-  PreferredSizeWidget _construirHeader() {
+  PreferredSizeWidget _construirSeuHeader() {
     return PreferredSize(
       preferredSize: const Size.fromHeight(60), // Define a altura do seu header
       child: ClipRRect(

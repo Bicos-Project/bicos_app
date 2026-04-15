@@ -10,7 +10,6 @@ class Perfil extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.principal,
       // A mágica da barra inferior conectada direto no Scaffold
-      bottomNavigationBar: _construirBottomBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -37,7 +36,7 @@ class Perfil extends StatelessWidget {
                   ),
                   const CircleAvatar(
                     radius: 16,
-                    backgroundImage: AssetImage('assets/avatar_mariana.png'),
+                    backgroundImage: AssetImage('assets/vera.png'),
                   ),
                 ],
               ),
@@ -66,7 +65,7 @@ class Perfil extends StatelessWidget {
                     ),
                     child: ClipOval(
                       child: Image.asset(
-                        'assets/avatar_mariana.png',
+                        'assets/vera.png',
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,
@@ -178,50 +177,6 @@ class Perfil extends StatelessWidget {
                   size: 16,
                 ),
             ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  // --- RECEITA DA BARRA DE NAVEGAÇÃO INFERIOR ---
-  Widget _construirBottomBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF46295C), // O roxo da barra
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
-        ),
-        border: Border(
-          top: BorderSide(color: AppColors.branco.withOpacity(0.1), width: 1),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _iconeBottomBar(Icons.favorite_border, 'FAVORITOS'),
-          _iconeBottomBar(Icons.home_outlined, 'HOME'),
-          _iconeBottomBar(Icons.menu, 'MENU'),
-          _iconeBottomBar(Icons.history, 'HISTÓRICO'),
-        ],
-      ),
-    );
-  }
-
-  Widget _iconeBottomBar(IconData icone, String texto) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icone, color: AppColors.branco.withOpacity(0.7), size: 24),
-        const SizedBox(height: 4),
-        Text(
-          texto,
-          style: GoogleFonts.plusJakartaSans(
-            color: AppColors.branco.withOpacity(0.7),
-            fontSize: 9,
-            fontWeight: FontWeight.w800,
           ),
         ),
       ],

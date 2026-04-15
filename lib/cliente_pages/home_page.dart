@@ -129,52 +129,42 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.principal,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment(0, -0.4),
-            radius: 1.2,
-            colors: [Color(0xFF4A1060), Color(0xFF3B0A52), AppColors.principal],
-          ),
-        ),
-        child: SafeArea(
-          child: FadeTransition(
-            opacity: _fadeAnim,
-            child: SlideTransition(
-              position: _slideAnim,
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _construirHeader(),
-                    const SizedBox(height: 24),
-                    _construirSaudacao(),
-                    const SizedBox(height: 20),
-                    _construirBuscaRapida(),
-                    const SizedBox(height: 24),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        'Categorias',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.branco,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
+        child: FadeTransition(
+          opacity: _fadeAnim,
+          child: SlideTransition(
+            position: _slideAnim,
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _construirHeader(),
+                  const SizedBox(height: 24),
+                  _construirSaudacao(),
+                  const SizedBox(height: 20),
+                  _construirBuscaRapida(),
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'Categorias',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.branco,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 14),
-                    _construirGridCategorias(),
-                    const SizedBox(height: 28),
-                    _construirHeaderFavoritos(),
-                    const SizedBox(height: 14),
-                    _construirListaFavoritos(),
-                    // AUMENTADO PARA 110: Garante que a barra não tampe o conteúdo
-                    const SizedBox(height: 110),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 14),
+                  _construirGridCategorias(),
+                  const SizedBox(height: 28),
+                  _construirHeaderFavoritos(),
+                  const SizedBox(height: 14),
+                  _construirListaFavoritos(),
+                  // AUMENTADO PARA 110: Garante que a barra não tampe o conteúdo
+                  const SizedBox(height: 110),
+                ],
               ),
             ),
           ),
@@ -187,11 +177,7 @@ class _HomePageState extends State<HomePage>
   Widget _construirHeader() {
     return Stack(
       children: [
-        Image.asset(
-          'assets/header.png',
-          width: double.infinity,
-          fit: BoxFit.fitWidth,
-        ),
+        Image.asset('assets/header.png', fit: BoxFit.fill),
         Positioned.fill(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -203,16 +189,6 @@ class _HomePageState extends State<HomePage>
                 Container(
                   width: 40,
                   height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.destaque, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.destaque.withOpacity(0.3),
-                        blurRadius: 8,
-                      ),
-                    ],
-                  ),
                   child: ClipOval(
                     child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
                   ),
@@ -244,7 +220,7 @@ class _HomePageState extends State<HomePage>
                   ),
                 ),
                 TextSpan(
-                  text: 'Usuário 👋',
+                  text: 'Usuário!',
                   style: GoogleFonts.plusJakartaSans(
                     color: AppColors.branco,
                     fontSize: 32,

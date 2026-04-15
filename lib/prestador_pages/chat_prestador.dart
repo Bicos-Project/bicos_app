@@ -1,3 +1,7 @@
+import 'package:bicos_app/cliente_pages/avaliacao.dart';
+import 'package:bicos_app/prestador_pages/andamento_servico.dart';
+import 'package:bicos_app/prestador_pages/home_page_prestador.dart';
+import 'package:bicos_app/prestador_pages/visualizacao_chats.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
@@ -124,7 +128,13 @@ class _ChatVendedorState extends State<ChatVendedor> {
               // ── BOTÃO "VISUALIZAR SOLICITAÇÃO" ──
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: _construirBotaoVisualizarSolicitacao(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _construirBotaoRecusarProposta(),
+                    _construirBotaoAceitarProposta(),
+                  ],
+                ),
               ),
 
               // ── SEPARADOR COM DATA ──
@@ -169,7 +179,10 @@ class _ChatVendedorState extends State<ChatVendedor> {
         children: [
           // Botão voltar
           IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const VisualizacaoChats()),
+            ),
             icon: const Icon(
               Icons.arrow_back_ios_new,
               color: AppColors.principal,
@@ -257,16 +270,50 @@ class _ChatVendedorState extends State<ChatVendedor> {
     );
   }
 
-  Widget _construirBotaoVisualizarSolicitacao() {
+  Widget _construirBotaoRecusarProposta() {
     return OutlinedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const HomePagePrestador(title: 'title'),
+          ),
+        );
+      },
+      style: OutlinedButton.styleFrom(
+        side: const BorderSide(
+          color: Color.fromARGB(255, 255, 0, 0),
+          width: 1.5,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      ),
+      child: Text(
+        'Recusar',
+        style: GoogleFonts.plusJakartaSans(
+          color: const Color.fromARGB(255, 255, 0, 0),
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _construirBotaoAceitarProposta() {
+    return OutlinedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AndamentoServicoPage()),
+        );
+      },
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: AppColors.destaque, width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       ),
       child: Text(
-        'Visualizar solicitação',
+        'Aceitar',
         style: GoogleFonts.plusJakartaSans(
           color: AppColors.destaque,
           fontSize: 13,
@@ -458,7 +505,15 @@ class _ChatVendedorState extends State<ChatVendedor> {
 
           // Botão câmera
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      const AvaliacaoServico(nomePrestador: 'Mariana'),
+                ),
+              );
+            },
             icon: Icon(
               Icons.camera_alt_outlined,
               color: AppColors.principalEscura.withOpacity(0.75),

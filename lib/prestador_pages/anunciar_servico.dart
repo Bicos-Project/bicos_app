@@ -1,6 +1,6 @@
 import 'package:bicos_app/core/app_colors.dart';
-import 'package:bicos_app/prestador_pages/home_page_prestador.dart';
 import 'package:flutter/material.dart';
+import 'package:bicos_app/prestador_pages/main_navigation_prestador.dart';
 
 class AnunciarServicoPage extends StatefulWidget {
   const AnunciarServicoPage({super.key});
@@ -49,53 +49,11 @@ class _AnunciarServicoPageState extends State<AnunciarServicoPage> {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
-        backgroundColor: AppColors.principal,
-        // Custom Header como AppBar
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-            ),
-            child: AppBar(
-              automaticallyImplyLeading:
-                  false, // Remove o botão voltar padrão se necessário
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              flexibleSpace: Stack(
-                children: [
-                  Image.asset(
-                    "assets/header.png",
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.fill,
-                  ),
-                  SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Image.asset("assets/bicos_logo2.png", height: 40),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image.asset(
-                              "assets/perfil.png",
-                              height: 40,
-                              width: 40,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          preferredSize: const Size(double.infinity, 80),
+          child: _construirHeader(),
         ),
+        backgroundColor: AppColors.principal,
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -263,7 +221,7 @@ class _AnunciarServicoPageState extends State<AnunciarServicoPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              const HomePagePrestador(title: 'Home'),
+                              const MainNavigationPrestador(), // Volta para a navegação principal do prestador
                         ),
                       );
                     },
@@ -304,6 +262,32 @@ class _AnunciarServicoPageState extends State<AnunciarServicoPage> {
           ),
         ),
       ),
+    );
+  }
+  Widget _construirHeader() {
+    return Stack(
+      children: [
+        Image.asset('assets/header.png', fit: BoxFit.fill),
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset('assets/bicos_logo2.png', height: 32),
+                Container(
+                  width: 40,
+                  height: 40,
+                  child: ClipOval(
+                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

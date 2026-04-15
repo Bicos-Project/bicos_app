@@ -3,7 +3,6 @@ import 'package:bicos_app/prestador_pages/anunciar_servico.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-import '../inicio_pages/login_prestador.dart';
 
 class CadastroPrestadorPage extends StatefulWidget {
   const CadastroPrestadorPage({super.key});
