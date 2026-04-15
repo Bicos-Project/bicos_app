@@ -12,7 +12,7 @@ class AppHeader extends StatelessWidget {
       ),
       child: AppBar(
         automaticallyImplyLeading:
-            false, // Remove o botão voltar padrão se necessário
+            false, 
         backgroundColor: Colors.transparent,
         elevation: 0,
         flexibleSpace: Stack(
