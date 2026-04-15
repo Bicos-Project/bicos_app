@@ -1,11 +1,11 @@
 import 'package:bicos_app/inicio_pages/menu.dart';
-import 'package:bicos_app/prestador_pages/visualizacao_chats.dart';
+import 'package:bicos_app/prestador_pages/andamento_servico.dart';
+import 'package:bicos_app/prestador_pages/home_page_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-import 'home_page_prestador.dart';
-import 'historico_servico_realizado.dart';
-// import 'menu_page.dart'; // descomente quando criar a tela de menu
+import '../prestador_pages/visualizacao_chats.dart';
+import '../prestador_pages/historico_servico.dart';
 
 class MainNavigationPrestador extends StatefulWidget {
   const MainNavigationPrestador({super.key});
@@ -15,13 +15,15 @@ class MainNavigationPrestador extends StatefulWidget {
 }
 
 class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
 
   final List<Widget> _pages = [
     const VisualizacaoChats(), // index 0 → FAVORITOS
     const HomePagePrestador(title: 'HOME',), // index 1 → HOME
-    const MenuApp(), // index 2 → MENU (placeholder até criar a tela)
+    const MenuApp(), // index 2 → MENU
     const HistoricoServicoRealizadoPage(), // index 3 → HISTÓRICO
+    const AndamentoServicoPage(),
+
   ];
 
   @override
@@ -34,7 +36,9 @@ class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
       body: IndexedStack(index: _currentIndex, children: _pages),
 
       // ── BOTTOM NAV ───────────────────────────────────────────
-      bottomNavigationBar: _construirBottomNav(),
+      bottomNavigationBar: SafeArea(
+        child: _construirBottomNav(),
+      ),
     );
   }
 
@@ -61,7 +65,7 @@ class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
                   _construirItem(
                     index: 0,
                     iconeAsset: 'assets/chat.png',
-                    icone: Icons.favorite_border,
+                    icone: Icons.message,
                     label: 'CHATS',
                   ),
                   _construirItem(

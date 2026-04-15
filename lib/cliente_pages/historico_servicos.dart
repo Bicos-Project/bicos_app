@@ -1,4 +1,5 @@
-import 'package:bicos_app/prestador_pages/chat.dart';
+import 'package:bicos_app/cliente_pages/chat_cliente.dart';
+import 'package:bicos_app/prestador_pages/chat_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
@@ -47,16 +48,6 @@ class HistoricoServicos extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        // 2. Aplica o degradê em toda a tela
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/background.png'),
-            fit: BoxFit.fill,
-          ),
-        ),
-        child: SafeArea(
           child: Column(
             children: [
               // ── HEADER ──
@@ -64,8 +55,7 @@ class HistoricoServicos extends StatelessWidget {
                 children: [
                   Image.asset(
                     'assets/header.png',
-                    width: double.infinity,
-                    fit: BoxFit.fitWidth,
+                    fit: BoxFit.fill,
                   ),
                   Positioned.fill(
                     child: Padding(
@@ -77,7 +67,7 @@ class HistoricoServicos extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.asset('assets/bicos_logo2.png', height: 34),
+                          Image.asset('assets/bicos_logo2.png', height: 40),
                           Container(
                             width: 42,
                             height: 42,
@@ -142,7 +132,6 @@ class HistoricoServicos extends StatelessWidget {
               ),
             ],
           ),
-        ),
       ),
     );
   }
@@ -301,7 +290,7 @@ class HistoricoServicos extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const ChatVendedor()),
+                        MaterialPageRoute(builder: (_) => const ChatClientePage()),
                       );
                     },
                     style: OutlinedButton.styleFrom(

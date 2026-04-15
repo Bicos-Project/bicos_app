@@ -1,3 +1,9 @@
+import 'package:bicos_app/cliente_pages/andamento_servico_cliente.dart';
+import 'package:bicos_app/cliente_pages/avaliacao.dart';
+import 'package:bicos_app/prestador_pages/andamento_servico.dart';
+import 'package:bicos_app/prestador_pages/home_page_prestador.dart';
+import 'package:bicos_app/prestador_pages/visualizacao_chats.dart';
+import 'package:bicos_app/prestador_pages/visualizacao_proposta_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
@@ -15,14 +21,15 @@ class Mensagem {
   });
 }
 
-class ChatVendedor extends StatefulWidget {
-  const ChatVendedor({super.key});
+class ChatClientePage extends StatefulWidget {
+  const ChatClientePage({super.key});
 
   @override
-  State<ChatVendedor> createState() => _ChatVendedorState();
+  State<ChatClientePage> createState() => _ChatClientePageState();
 }
 
-class _ChatVendedorState extends State<ChatVendedor> {
+class _ChatClientePageState extends State<ChatClientePage
+> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -124,7 +131,12 @@ class _ChatVendedorState extends State<ChatVendedor> {
               // ── BOTÃO "VISUALIZAR SOLICITAÇÃO" ──
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: _construirBotaoVisualizarSolicitacao(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _construirVisualizarProposta(),
+                  ],
+                ),
               ),
 
               // ── SEPARADOR COM DATA ──
@@ -169,7 +181,10 @@ class _ChatVendedorState extends State<ChatVendedor> {
         children: [
           // Botão voltar
           IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AndamentoServicoClientePage()),
+            ),
             icon: const Icon(
               Icons.arrow_back_ios_new,
               color: AppColors.principal,
@@ -257,16 +272,26 @@ class _ChatVendedorState extends State<ChatVendedor> {
     );
   }
 
-  Widget _construirBotaoVisualizarSolicitacao() {
+  Widget _construirVisualizarProposta() {
     return OutlinedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const AndamentoServicoClientePage(),
+          ),
+        );
+      },
       style: OutlinedButton.styleFrom(
-        side: const BorderSide(color: AppColors.destaque, width: 1.5),
+        side: const BorderSide(
+          color: AppColors.destaque,
+          width: 1.5,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       ),
       child: Text(
-        'Visualizar solicitação',
+        'Visualizar',
         style: GoogleFonts.plusJakartaSans(
           color: AppColors.destaque,
           fontSize: 13,

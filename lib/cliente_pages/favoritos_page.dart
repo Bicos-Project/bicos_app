@@ -137,51 +137,11 @@ class _FavoritosPageState extends State<FavoritosPage> {
 
     return Scaffold(
       backgroundColor: AppColors.principal,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // 🔥 HEADER
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  bottom: Radius.circular(40),
-                ),
-                child: SizedBox(
-                  height: 90,
-                  child: Stack(
-                    children: [
-                      Image.asset(
-                        "assets/header.png",
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                      Positioned(
-                        left: 16,
-                        top: 30,
-                        child: Image.asset(
-                          "assets/bicos_logo2.png",
-                          height: 30,
-                        ),
-                      ),
-                      Positioned(
-                        right: 16,
-                        top: 30,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.asset(
-                            "assets/perfil.png",
-                            height: 35,
-                            width: 35,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _construirHeader(),
+              
               const SizedBox(height: 12),
 
               Padding(
@@ -230,7 +190,9 @@ class _FavoritosPageState extends State<FavoritosPage> {
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
+                  
                 child: Column(
+                  
                   children: [
                     buildCategoria(
                       "Obras e Reformas",
@@ -253,7 +215,36 @@ class _FavoritosPageState extends State<FavoritosPage> {
             ],
           ),
         ),
-      ),
+    );
+
+  }
+    Widget _construirHeader() {
+    return Stack(
+      children: [
+        Image.asset(
+          'assets/header.png',
+          fit: BoxFit.fill,
+        ),
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset('assets/bicos_logo2.png', height: 32),
+                Container(
+                  width: 40,
+                  height: 40,
+                  child: ClipOval(
+                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

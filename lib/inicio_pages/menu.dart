@@ -65,7 +65,7 @@ class MenuApp extends StatelessWidget {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/avatar_mariana.png', // A foto que acabamos de adicionar
+                          'assets/vera.png', // A foto que acabamos de adicionar
                           width: 56,
                           height: 56,
                           fit: BoxFit.cover,

@@ -1,10 +1,10 @@
+import 'package:bicos_app/inicio_pages/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
 import 'home_page.dart';
 import 'favoritos_page.dart';
 import 'historico_servicos.dart';
-// import 'menu_page.dart'; // descomente quando criar a tela de menu
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -19,7 +19,7 @@ class _MainNavigationState extends State<MainNavigation> {
   final List<Widget> _pages = [
     const FavoritosPage(), // index 0 → FAVORITOS
     const HomePage(), // index 1 → HOME
-    const SizedBox(), // index 2 → MENU (placeholder até criar a tela)
+    const MenuApp(), // index 2 → MENU
     const HistoricoServicos(), // index 3 → HISTÓRICO
   ];
 
@@ -27,13 +27,15 @@ class _MainNavigationState extends State<MainNavigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor: AppColors.principal,
+      backgroundColor: Colors.transparent,
 
       // ── BODY: mostra a página ativa ──────────────────────────
       body: IndexedStack(index: _currentIndex, children: _pages),
 
       // ── BOTTOM NAV ───────────────────────────────────────────
-      bottomNavigationBar: _construirBottomNav(),
+      bottomNavigationBar: SafeArea(
+        child: _construirBottomNav(),
+      ),
     );
   }
 
@@ -44,6 +46,7 @@ class _MainNavigationState extends State<MainNavigation> {
         topRight: Radius.circular(40),
       ),
       child: SizedBox(
+        
         height: 80,
         child: Stack(
           children: [

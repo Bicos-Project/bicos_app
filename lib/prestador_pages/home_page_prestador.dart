@@ -1,8 +1,10 @@
 import 'package:bicos_app/core/app_colors.dart';
-import 'package:bicos_app/prestador_pages/visualizacao_proposta.dart';
-import 'package:bicos_app/prestador_pages/historico_servico_realizado.dart';
+import 'package:bicos_app/prestador_pages/andamento_servico.dart';
+import 'package:bicos_app/prestador_pages/visualizacao_proposta_prestador.dart';
+import 'package:bicos_app/prestador_pages/solicitacoes_recebidas.dart';
 import 'package:flutter/material.dart';
 import 'package:bicos_app/prestador_pages/ver_mais_solicitacoes.dart';
+
 
 class HomePagePrestador extends StatefulWidget {
   const HomePagePrestador({super.key, required this.title});
@@ -34,7 +36,7 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
         backgroundColor: AppColors.principal,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(60),
-          child: _buildHeader(),
+          child: _construirHeader(),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(30.0),
@@ -42,7 +44,7 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Olá, Marcos',
+                'Olá, Usuário!',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 28,
@@ -69,8 +71,7 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
               _buildSectionTitle('Serviços em andamento', '1 em progresso'),
               const SizedBox(height: 24),
               _buildJobStatusCard(),
-              const SizedBox(height: 10),
-              _buildVerMaisServicosButton(),
+
             ],
           ),
         ),
@@ -78,48 +79,30 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
     );
   }
 
-  Widget _buildHeader() {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(30),
-        bottomRight: Radius.circular(30),
-      ),
-      child: AppBar(
-        automaticallyImplyLeading:
-            false, // Remove o botão voltar padrão se necessário
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Stack(
-          children: [
-            Image.asset(
-              "assets/header.png",
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.fill,
-            ),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset("assets/bicos_logo2.png", height: 40),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.asset(
-                        "assets/perfil.png",
-                        height: 40,
-                        width: 40,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ],
+  Widget _construirHeader() {
+    return Stack(
+      children: [
+        Image.asset('assets/header.png', fit: BoxFit.fill),
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset('assets/bicos_logo2.png', height: 32),
+                Container(
+                  width: 40,
+                  height: 40,
+                  child: ClipOval(
+                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -232,38 +215,6 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
     );
   }
 
-  Widget _buildVerMaisServicosButton() {
-    return Align(
-      alignment: Alignment.bottomRight,
-      child: SizedBox(
-        width: 95,
-        height: 30,
-        child: ElevatedButton(
-          onPressed: () {
-            // Lógica para ver mais detalhes do serviço em andamento
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HistoricoServicoRealizadoPage(),
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.principal,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50),
-              side: const BorderSide(color: AppColors.destaque, width: 2),
-            ),
-          ),
-          child: const Text(
-            'Ver Mais',
-            style: TextStyle(color: AppColors.destaque, fontSize: 12),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildVerMaisSolicitacoesButton() {
     return Align(
       alignment: Alignment.bottomRight,
@@ -326,4 +277,5 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
       ),
     );
   }
+
 }

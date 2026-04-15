@@ -1,11 +1,12 @@
 import 'package:bicos_app/cliente_pages/avaliacao.dart';
+import 'package:bicos_app/cliente_pages/chat_cliente.dart';
 import 'package:bicos_app/prestador_pages/avaliacao_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
 
-class AndamentoServicoPage extends StatelessWidget {
-  const AndamentoServicoPage({super.key});
+class AndamentoServicoClientePage extends StatelessWidget {
+  const AndamentoServicoClientePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +27,19 @@ class AndamentoServicoPage extends StatelessWidget {
             const SizedBox(height: 16),
             _buildProgressoServico(),
             const SizedBox(height: 16),
+            _buildChatCliente(context),
+            const SizedBox(height: 16),
             _buildResumoFinanceiro(),
             const SizedBox(height: 20),
             _buildBotaoPagamento(context),
             const SizedBox(height: 12),
-            _buildBotaoFinalizar(context),
-            const SizedBox(height: 20),
             _buildLinkSuporte(),
           ],
         ),
       ),
     );
   }
+
   Widget _buildHeader() {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
@@ -82,6 +84,25 @@ class AndamentoServicoPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildChatCliente(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ChatClientePage()),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        child: Image.asset('assets/chat_cliente.png', fit: BoxFit.contain),
+      ),
+    );
+  }
+
   Widget _buildClienteCard() {
     return Container(
       padding: const EdgeInsets.all(14),
@@ -102,7 +123,7 @@ class AndamentoServicoPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Vera Azevedo',
+                  'Prestador de serviço',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
@@ -172,22 +193,6 @@ class AndamentoServicoPage extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.destaque,
-              foregroundColor: AppColors.principalEscura,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              elevation: 0,
-            ),
-            child: const Text(
-              'Adicionar valor',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-            ),
           ),
         ],
       ),
@@ -341,6 +346,10 @@ class AndamentoServicoPage extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Pagamento realizado com sucesso!')),
           );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AvaliacaoServico()),
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.destaque,
@@ -352,40 +361,8 @@ class AndamentoServicoPage extends StatelessWidget {
           elevation: 0,
         ),
         child: const Text(
-          'Pagamento realizado',
+          'Confirmar Pagamento',
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBotaoFinalizar(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AvaliacaoPrestadorPage(),
-            ),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.principalEscura,
-          side: const BorderSide(color: AppColors.principalEscura, width: 1.5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-        ),
-        child: const Text(
-          'Finalizar serviço',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: AppColors.branco,
-          ),
         ),
       ),
     );
