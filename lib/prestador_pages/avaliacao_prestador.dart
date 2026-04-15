@@ -2,7 +2,7 @@ import 'package:bicos_app/core/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-// import '../core/app_text_styles.dart'; // Removido o import duplicado
+
 
 class AvaliacaoPrestadorPage extends StatefulWidget {
   const AvaliacaoPrestadorPage({super.key});
