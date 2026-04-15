@@ -105,20 +105,20 @@ class _ChatClientePageState extends State<ChatClientePage
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 1. Remova a cor sólida do Scaffold
+
       body: Container(
-        // 2. Aplica o gradiente radial em toda a tela
+
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
           gradient: RadialGradient(
-            center: Alignment.center, // Começa exatamente no meio
+            center: Alignment.center,
             radius:
-                1.0, // Define o quão longe o gradiente se espalha (1.0 = preenche o container)
+                1.0, 
             colors: [
-              // A ordem aqui define o "do meio para fora"
+            
               const Color.fromARGB(255, 64, 18, 75),
-              AppColors.principal, // COR 2: Sua cor principal (meio termo)
+              AppColors.principal,
             ],
           ),
         ),
