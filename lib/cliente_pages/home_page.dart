@@ -128,49 +128,32 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.principal,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment(0, -0.4),
-            radius: 1.2,
-            colors: [Color(0xFF4A1060), Color(0xFF3B0A52), AppColors.principal],
-          ),
-        ),
-        child: SafeArea(
-          child: FadeTransition(
-            opacity: _fadeAnim,
-            child: SlideTransition(
-              position: _slideAnim,
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // ── HEADER ──────────────────────────────────
-                    _construirHeader(),
-
-                    const SizedBox(height: 24),
-
-                    // ── SAUDAÇÃO ─────────────────────────────────
-                    _construirSaudacao(),
-
-                    const SizedBox(height: 28),
-
-                    // ── BARRA DE BUSCA ───────────────────────────
-                    _construirBuscaRapida(),
-
-                    const SizedBox(height: 28),
-
-                    // ── TÍTULO CATEGORIAS ────────────────────────
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        'Categorias',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.branco,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // HEADER
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(40),
+                ),
+                child: SizedBox(
+                  height: 90,
+                  child: Stack(
+                    children: [
+                      Image.asset(
+                        "assets/header.png",
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      Positioned(
+                        left: 16,
+                        top: 30,
+                        child: Image.asset(
+                          "assets/bicos_logo2.png",
+                          height: 30,
                         ),
                       ),
                     ),
@@ -235,13 +218,9 @@ class _HomePageState extends State<HomePage>
                     child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+              ),
+
+              const SizedBox(height: 20),
 
   Widget _construirSaudacao() {
     return Padding(
@@ -561,70 +540,52 @@ class _CategoriaCardState extends State<_CategoriaCard> {
 
 // ── CARD DE FAVORITO (StatefulWidget para animação de press) ──────────────────
 
-class _FavoritoCard extends StatefulWidget {
-  final Map<String, String> fav;
-  final VoidCallback onTap;
-
-  const _FavoritoCard({required this.fav, required this.onTap});
-
-  @override
-  State<_FavoritoCard> createState() => _FavoritoCardState();
-}
-
-class _FavoritoCardState extends State<_FavoritoCard> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTapDown: (_) => setState(() => _pressed = true),
-          onTapUp: (_) {
-            setState(() => _pressed = false);
-            widget.onTap();
-          },
-          onTapCancel: () => setState(() => _pressed = false),
-          child: AnimatedScale(
-            scale: _pressed ? 0.98 : 1.0,
-            duration: const Duration(milliseconds: 120),
-            child: Container(
-              height: 80,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: AppColors.branco,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.06),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  // Avatar
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.principal.withOpacity(0.15),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          "assets/coracao.png",
+                          width: 20,
+                          color: AppColors.destaque,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "Favoritos",
+                          style: TextStyle(
+                            color: AppColors.branco,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        widget.fav["imagem"]!,
-                        width: 52,
-                        height: 52,
-                        fit: BoxFit.cover,
+
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FavoritosPage(),
+                          ),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            "Ver todos",
+                            style: TextStyle(color: AppColors.destaque),
+                          ),
+                          const SizedBox(width: 4),
+                          Image.asset(
+                            "assets/seta_avancar.png",
+                            width: 14,
+                            color: AppColors.destaque,
+                          ),
+                        ],
                       ),
                     ),
                   ),

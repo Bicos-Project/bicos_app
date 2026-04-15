@@ -94,6 +94,7 @@ flutter:
     - assets/pintora.png
     - assets/background.png
     - assets/image_icon.png
+    - assets/chat.png
 
 
   # To add assets to your application, add an assets section, like this:

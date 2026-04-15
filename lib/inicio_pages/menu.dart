@@ -34,22 +34,21 @@ class MenuApp extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // --- LINHA DIVISÓRIA ---
-              Divider(
-                color: AppColors.branco.withOpacity(0.15),
-                thickness: 1,
-              ),
-              
+              Divider(color: AppColors.branco.withOpacity(0.15), thickness: 1),
+
               const SizedBox(height: 24),
 
               // --- CARD DE PERFIL ---
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF46295C), // Um roxo levemente mais claro
+                  color: const Color(
+                    0xFF46295C,
+                  ), // Um roxo levemente mais claro
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.branco.withOpacity(0.1)),
                 ),
@@ -59,7 +58,10 @@ class MenuApp extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.destaque, width: 1.5), // Bordinha verde neon!
+                        border: Border.all(
+                          color: AppColors.destaque,
+                          width: 1.5,
+                        ), // Bordinha verde neon!
                       ),
                       child: ClipOval(
                         child: Image.asset(
@@ -107,7 +109,6 @@ class MenuApp extends StatelessWidget {
                 icone: Icons.account_circle_outlined,
                 titulo: 'Perfil',
                 onTap: () {
-                
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const Perfil()),
@@ -115,7 +116,7 @@ class MenuApp extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 16),
-              
+
               _construirBotaoMenu(
                 icone: Icons.settings_outlined,
                 titulo: 'Configurações',
@@ -123,13 +124,14 @@ class MenuApp extends StatelessWidget {
                   print("Clicou em Configurações");
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               _construirBotaoMenu(
                 icone: Icons.logout_outlined,
                 titulo: 'Sair',
-                ehSair: true, // Avisamos a "receita" que esse é o botão de sair (para ficar vermelho)
+                ehSair:
+                    true, // Avisamos a "receita" que esse é o botão de sair (para ficar vermelho)
                 onTap: () {
                   print("Clicou em Sair");
                   // Como é Sair, podemos mandar o usuário de volta para a tela Inicial ou Login
@@ -145,15 +147,21 @@ class MenuApp extends StatelessWidget {
 
   // --- A "RECEITA" DOS BOTÕES DE MENU ---
   Widget _construirBotaoMenu({
-    required IconData icone, 
-    required String titulo, 
-    required VoidCallback onTap, 
-    bool ehSair = false
+    required IconData icone,
+    required String titulo,
+    required VoidCallback onTap,
+    bool ehSair = false,
   }) {
     // Definimos as cores dependendo se é o botão "Sair" ou não
-    final corFundo = ehSair ? const Color(0xFF6B2745) : const Color(0xFF46295C); // Vermelho escuro vs Roxo claro
-    final corBorda = ehSair ? Colors.transparent : AppColors.branco.withOpacity(0.1);
-    final corIcone = ehSair ? const Color(0xFFFF9EAA) : AppColors.destaque; // Rosa claro para sair, verde neon para os outros
+    final corFundo = ehSair
+        ? const Color(0xFF6B2745)
+        : const Color(0xFF46295C); // Vermelho escuro vs Roxo claro
+    final corBorda = ehSair
+        ? Colors.transparent
+        : AppColors.branco.withOpacity(0.1);
+    final corIcone = ehSair
+        ? const Color(0xFFFF9EAA)
+        : AppColors.destaque; // Rosa claro para sair, verde neon para os outros
 
     return InkWell(
       onTap: onTap,
@@ -179,7 +187,11 @@ class MenuApp extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(Icons.chevron_right, color: AppColors.branco.withOpacity(0.5), size: 24),
+            Icon(
+              Icons.chevron_right,
+              color: AppColors.branco.withOpacity(0.5),
+              size: 24,
+            ),
           ],
         ),
       ),

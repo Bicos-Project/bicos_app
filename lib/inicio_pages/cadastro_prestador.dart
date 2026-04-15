@@ -22,15 +22,14 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 32.0,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                
-                Image.asset(
-                  'assets/bicos_logo1.png',
-                  height: 60,
-                ),
+                Image.asset('assets/bicos_logo1.png', height: 60),
 
                 const SizedBox(height: 16),
 
@@ -60,17 +59,26 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
                 const SizedBox(height: 32),
 
                 _construirLabel('Nome'),
-                _construirCampoTexto(dica: 'Digite seu nome', icone: Icons.person_outline),
+                _construirCampoTexto(
+                  dica: 'Digite seu nome',
+                  icone: Icons.person_outline,
+                ),
 
                 const SizedBox(height: 16),
 
                 _construirLabel('E-mail'),
-                _construirCampoTexto(dica: 'Digite seu e-mail', icone: Icons.alternate_email),
+                _construirCampoTexto(
+                  dica: 'Digite seu e-mail',
+                  icone: Icons.alternate_email,
+                ),
 
                 const SizedBox(height: 16),
 
                 _construirLabel('CPF'),
-                _construirCampoTexto(dica: 'Ex: 000.000.000-00', icone: Icons.person_outline),
+                _construirCampoTexto(
+                  dica: 'Ex: 000.000.000-00',
+                  icone: Icons.person_outline,
+                ),
 
                 const SizedBox(height: 16),
 
@@ -84,12 +92,18 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
                 const SizedBox(height: 16),
 
                 _construirLabel('CEP'),
-                _construirCampoTexto(dica: 'Ex: 00000-00', icone: Icons.home_outlined),
+                _construirCampoTexto(
+                  dica: 'Ex: 00000-00',
+                  icone: Icons.home_outlined,
+                ),
 
                 const SizedBox(height: 16),
 
                 _construirLabel('Logradouro'),
-                _construirCampoTexto(dica: 'Ex: Rua dos engenhos', icone: Icons.home_outlined),
+                _construirCampoTexto(
+                  dica: 'Ex: Rua dos engenhos',
+                  icone: Icons.home_outlined,
+                ),
 
                 const SizedBox(height: 16),
 
@@ -100,7 +114,10 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _construirLabel('Número'),
-                          _construirCampoTexto(dica: 'Ex: 12', icone: Icons.home_outlined),
+                          _construirCampoTexto(
+                            dica: 'Ex: 12',
+                            icone: Icons.home_outlined,
+                          ),
                         ],
                       ),
                     ),
@@ -110,7 +127,10 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _construirLabel('Complemento'),
-                          _construirCampoTexto(dica: 'Ex: CASA A', icone: Icons.home_outlined),
+                          _construirCampoTexto(
+                            dica: 'Ex: CASA A',
+                            icone: Icons.home_outlined,
+                          ),
                         ],
                       ),
                     ),
@@ -176,7 +196,7 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
                             color: AppColors.destaque,
                             fontWeight: FontWeight.w700,
                             decoration: TextDecoration.underline,
-                          ), 
+                          ),
                         ),
                       ],
                     ),

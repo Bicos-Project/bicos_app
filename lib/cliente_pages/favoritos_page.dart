@@ -109,10 +109,7 @@ class _FavoritosPageState extends State<FavoritosPage> {
               subtitle: Text(item["servico"]!),
 
               trailing: IconButton(
-                icon: Image.asset(
-                  "assets/coracao.png",
-                  height: 22,
-                ),
+                icon: Image.asset("assets/coracao.png", height: 22),
                 onPressed: () {},
               ),
             ),
@@ -126,14 +123,17 @@ class _FavoritosPageState extends State<FavoritosPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> obras =
-        favoritos.where((e) => e["tipo"] == "Obras").toList();
+    List<Map<String, String>> obras = favoritos
+        .where((e) => e["tipo"] == "Obras")
+        .toList();
 
-    List<Map<String, String>> beleza =
-        favoritos.where((e) => e["tipo"] == "Beleza").toList();
+    List<Map<String, String>> beleza = favoritos
+        .where((e) => e["tipo"] == "Beleza")
+        .toList();
 
-    List<Map<String, String>> domesticos =
-        favoritos.where((e) => e["tipo"] == "Domesticos").toList();
+    List<Map<String, String>> domesticos = favoritos
+        .where((e) => e["tipo"] == "Domesticos")
+        .toList();
 
     return Scaffold(
       backgroundColor: AppColors.principal,
@@ -184,7 +184,6 @@ class _FavoritosPageState extends State<FavoritosPage> {
 
               const SizedBox(height: 12),
 
-              // 🔙 + ❤️ TÍTULO
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
@@ -229,7 +228,6 @@ class _FavoritosPageState extends State<FavoritosPage> {
 
               const SizedBox(height: 16),
 
-              // 📦 CATEGORIAS
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Column(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-import 'package:bicos_app/cliente_pages/avaliacao.dart';
 
 // Modelo de mensagem
 class Mensagem {

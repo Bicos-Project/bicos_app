@@ -5,7 +5,8 @@ class VisualizacaoPropostaPage extends StatefulWidget {
   const VisualizacaoPropostaPage({super.key});
 
   @override
-  State<VisualizacaoPropostaPage> createState() => _VisualizacaoPropostaPageState();
+  State<VisualizacaoPropostaPage> createState() =>
+      _VisualizacaoPropostaPageState();
 }
 
 // 2. A classe de Estado (geralmente privada com _)

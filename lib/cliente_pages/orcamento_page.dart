@@ -14,8 +14,6 @@ class OrcamentoPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-              // 🔥 HEADER
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
                   bottom: Radius.circular(40),
@@ -58,14 +56,10 @@ class OrcamentoPage extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              // 🔙 VOLTAR
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: IconButton(
-                  icon: Image.asset(
-                    "assets/seta_voltar.png",
-                    height: 26,
-                  ),
+                  icon: Image.asset("assets/seta_voltar.png", height: 26),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -74,7 +68,6 @@ class OrcamentoPage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // 📦 CARD SERVIÇO
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
@@ -87,7 +80,6 @@ class OrcamentoPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-
                       Row(
                         children: [
                           ClipRRect(
@@ -114,9 +106,7 @@ class OrcamentoPage extends StatelessWidget {
                               SizedBox(height: 4),
                               Text(
                                 "Eletricista",
-                                style: TextStyle(
-                                  color: Colors.black54,
-                                ),
+                                style: TextStyle(color: Colors.black54),
                               ),
                             ],
                           ),
@@ -147,13 +137,14 @@ class OrcamentoPage extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // 💰 TOTAL BOX
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
-                      vertical: 16, horizontal: 16),
+                    vertical: 16,
+                    horizontal: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.principalEscura,
                     borderRadius: BorderRadius.circular(20),
@@ -163,10 +154,7 @@ class OrcamentoPage extends StatelessWidget {
                     children: [
                       Text(
                         "Total",
-                        style: TextStyle(
-                          color: AppColors.branco,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: AppColors.branco, fontSize: 14),
                       ),
                       SizedBox(height: 4),
                       Text(
@@ -184,16 +172,13 @@ class OrcamentoPage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // 🔰 PROGRESSO
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Column(
                   children: [
-
                     Stack(
                       alignment: Alignment.center,
                       children: [
-
                         // LINHA
                         Positioned(
                           left: 0,
@@ -226,14 +211,34 @@ class OrcamentoPage extends StatelessWidget {
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Orçamento",
-                            style: TextStyle(color: AppColors.branco, fontSize: 12)),
-                        Text("Em andamento",
-                            style: TextStyle(color: AppColors.branco, fontSize: 12)),
-                        Text("Esperando pagamento",
-                            style: TextStyle(color: AppColors.branco, fontSize: 12)),
-                        Text("Finalizado",
-                            style: TextStyle(color: AppColors.branco, fontSize: 12)),
+                        Text(
+                          "Orçamento",
+                          style: TextStyle(
+                            color: AppColors.branco,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          "Em andamento",
+                          style: TextStyle(
+                            color: AppColors.branco,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          "Esperando pagamento",
+                          style: TextStyle(
+                            color: AppColors.branco,
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          "Finalizado",
+                          style: TextStyle(
+                            color: AppColors.branco,
+                            fontSize: 12,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -242,7 +247,6 @@ class OrcamentoPage extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // 📦 CARD VALORES
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
@@ -254,13 +258,15 @@ class OrcamentoPage extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Subtotal",
-                              style: TextStyle(
-                                  color: AppColors.preto.withOpacity(0.6))),
+                          Text(
+                            "Subtotal",
+                            style: TextStyle(
+                              color: AppColors.preto.withOpacity(0.6),
+                            ),
+                          ),
                           const Text("R\$ 000,00"),
                         ],
                       ),
@@ -270,9 +276,12 @@ class OrcamentoPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Taxa Bicos",
-                              style: TextStyle(
-                                  color: AppColors.preto.withOpacity(0.6))),
+                          Text(
+                            "Taxa Bicos",
+                            style: TextStyle(
+                              color: AppColors.preto.withOpacity(0.6),
+                            ),
+                          ),
                           const Text("R\$ 15,00"),
                         ],
                       ),
@@ -310,7 +319,6 @@ class OrcamentoPage extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              // 💬 CONVERSA
               Center(
                 child: Container(
                   width: 120,
@@ -320,10 +328,7 @@ class OrcamentoPage extends StatelessWidget {
                     color: Colors.white.withOpacity(0.1),
                   ),
                   child: Center(
-                    child: Image.asset(
-                      "assets/conversa.png",
-                      width: 32,
-                    ),
+                    child: Image.asset("assets/conversa.png", width: 32),
                   ),
                 ),
               ),
@@ -334,9 +339,7 @@ class OrcamentoPage extends StatelessWidget {
               Center(
                 child: Text(
                   "Ja realizou o pagamento?",
-                  style: TextStyle(
-                    color: AppColors.branco.withOpacity(0.8),
-                  ),
+                  style: TextStyle(color: AppColors.branco.withOpacity(0.8)),
                 ),
               ),
 
@@ -370,8 +373,11 @@ class OrcamentoPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline,
-                        color: AppColors.branco.withOpacity(0.6), size: 16),
+                    Icon(
+                      Icons.error_outline,
+                      color: AppColors.branco.withOpacity(0.6),
+                      size: 16,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       "Algo de errado? Fale conosco",

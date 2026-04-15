@@ -31,12 +31,15 @@ class SobreApp extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  
+
                   Positioned(
-                    bottom: -20, 
-                    right: 20, 
+                    bottom: -20,
+                    right: 20,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.branco,
                         borderRadius: BorderRadius.circular(12),
@@ -58,7 +61,7 @@ class SobreApp extends StatelessWidget {
                             ),
                             child: const Icon(
                               Icons.location_on,
-                              color: AppColors.principal, 
+                              color: AppColors.principal,
                               size: 16,
                             ),
                           ),
@@ -90,7 +93,7 @@ class SobreApp extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 56),
 
               // --- O TÍTULO ---
@@ -115,7 +118,7 @@ class SobreApp extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 16),
 
               // --- O SUBTÍTULO ---
@@ -129,7 +132,7 @@ class SobreApp extends StatelessWidget {
                   height: 1.5,
                 ),
               ),
-              
+
               const Spacer(),
 
               // --- OS PONTINHOS DE PAGINAÇÃO ---
@@ -143,7 +146,7 @@ class SobreApp extends StatelessWidget {
                   _construirBolinha(ativa: false),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
 
               // --- O BOTÃO PRÓXIMO ---
@@ -155,7 +158,9 @@ class SobreApp extends StatelessWidget {
                     // Navegação certinha para a escolha de perfil!
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const EscolhaPerfil()),
+                      MaterialPageRoute(
+                        builder: (context) => const EscolhaPerfil(),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(

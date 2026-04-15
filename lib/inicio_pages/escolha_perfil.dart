@@ -2,7 +2,7 @@ import 'package:bicos_app/inicio_pages/cadastro_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-import 'login.dart'; // A tela de login importada aqui!
+import 'login.dart';
 
 class EscolhaPerfil extends StatelessWidget {
   const EscolhaPerfil({super.key});
@@ -18,7 +18,7 @@ class EscolhaPerfil extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              
+
               // --- O TÍTULO ---
               RichText(
                 text: TextSpan(
@@ -35,14 +35,14 @@ class EscolhaPerfil extends StatelessWidget {
                     ),
                     TextSpan(
                       text: 'começar hoje?',
-                      style: TextStyle(color: AppColors.destaque), 
+                      style: TextStyle(color: AppColors.destaque),
                     ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               // --- O SUBTÍTULO ---
               Text(
                 'Selecione o perfil que melhor descreve\nseu objetivo na plataforma Bicos.',
@@ -53,16 +53,17 @@ class EscolhaPerfil extends StatelessWidget {
                   height: 1.5,
                 ),
               ),
-              
+
               const SizedBox(height: 40),
 
               // --- CARD 1: SOU CLIENTE ---
               _construirCardPerfil(
                 icon: Icons.person_search_outlined,
-                iconBgColor: const Color(0xFFE8E0F0), 
+                iconBgColor: const Color(0xFFE8E0F0),
                 iconColor: AppColors.principal,
                 title: 'Quero Contratar',
-                description: 'Procuro por profissionais qualificados e confiáveis para realizar serviços na minha residência ou empresa.',
+                description:
+                    'Procuro por profissionais qualificados e confiáveis para realizar serviços na minha residência ou empresa.',
                 buttonText: 'Sou Cliente',
                 onPressed: () {
                   // NAVEGANDO PARA O LOGIN
@@ -78,16 +79,19 @@ class EscolhaPerfil extends StatelessWidget {
               // --- CARD 2: SOU PROFISSIONAL ---
               _construirCardPerfil(
                 icon: Icons.work_outline,
-                iconBgColor: AppColors.destaque, 
+                iconBgColor: AppColors.destaque,
                 iconColor: AppColors.principalEscura,
                 title: 'Quero Trabalhar',
-                description: 'Sou um prestador de serviços e quero oferecer minhas habilidades para encontrar novos clientes e oportunidades.',
+                description:
+                    'Sou um prestador de serviços e quero oferecer minhas habilidades para encontrar novos clientes e oportunidades.',
                 buttonText: 'Sou Profissional',
                 onPressed: () {
                   // AGORA TAMBÉM NAVEGA PARA O LOGIN!
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const CadastroPrestadorPage()),
+                    MaterialPageRoute(
+                      builder: (context) => const CadastroPrestadorPage(),
+                    ),
                   );
                 },
               ),
@@ -131,7 +135,7 @@ class EscolhaPerfil extends StatelessWidget {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: AppColors.principalEscura, 
+              color: AppColors.principalEscura,
             ),
           ),
           const SizedBox(height: 8),
@@ -151,7 +155,7 @@ class EscolhaPerfil extends StatelessWidget {
             child: OutlinedButton(
               onPressed: onPressed,
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.principal), 
+                side: const BorderSide(color: AppColors.principal),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -164,11 +168,15 @@ class EscolhaPerfil extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.principal, 
+                      color: AppColors.principal,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward, color: AppColors.principal, size: 18),
+                  const Icon(
+                    Icons.arrow_forward,
+                    color: AppColors.principal,
+                    size: 18,
+                  ),
                 ],
               ),
             ),

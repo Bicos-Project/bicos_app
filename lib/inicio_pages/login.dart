@@ -25,11 +25,7 @@ class _LoginState extends State<Login> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-
-                Image.asset(
-                  'assets/bicos_logo1.png',
-                  height: 80,
-                ),
+                Image.asset('assets/bicos_logo1.png', height: 80),
 
                 const SizedBox(height: 24),
 
@@ -112,9 +108,7 @@ class _LoginState extends State<Login> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const Cadastro(),
-                      ),
+                      MaterialPageRoute(builder: (context) => const Cadastro()),
                     );
                   },
                   child: RichText(
@@ -173,9 +167,7 @@ class _LoginState extends State<Login> {
         filled: true,
         fillColor: const Color(0xFFD2C3D9),
         hintText: dica,
-        hintStyle: TextStyle(
-          color: AppColors.principalEscura.withOpacity(0.5),
-        ),
+        hintStyle: TextStyle(color: AppColors.principalEscura.withOpacity(0.5)),
         prefixIcon: Icon(icone, color: AppColors.principalEscura),
         suffixIcon: esSenha
             ? IconButton(
