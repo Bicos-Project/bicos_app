@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.principal,
       ),
 
-      // 🔥 PRIMEIRA TELA DO APP
+      // PRIMEIRA TELA DO APP
       home: const TelaInicial(),
     );
   }
