@@ -29,10 +29,8 @@ class _MainNavigationState extends State<MainNavigation> {
       extendBody: true,
       backgroundColor: Colors.transparent,
 
-      // ── BODY: mostra a página ativa ──────────────────────────
-      body: IndexedStack(index: _currentIndex, children: _pages),
 
-      // ── BOTTOM NAV ───────────────────────────────────────────
+      body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: SafeArea(
         child: _construirBottomNav(),
       ),
@@ -50,12 +48,12 @@ class _MainNavigationState extends State<MainNavigation> {
         height: 80,
         child: Stack(
           children: [
-            // Fundo (imagem)
+
             Positioned.fill(
               child: Image.asset('assets/bottom.png', fit: BoxFit.cover),
             ),
 
-            // Itens por cima
+ 
             Positioned.fill(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -117,7 +115,6 @@ class _MainNavigationState extends State<MainNavigation> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Tenta carregar o asset; se não existir, usa ícone Material
             _iconeNav(iconeAsset, icone, ativo),
             if (ativo) ...[
               const SizedBox(width: 6),
@@ -138,7 +135,7 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   Widget _iconeNav(String asset, IconData fallback, bool ativo) {
-    // Usa Image.asset se o arquivo existir, com tratamento de erro via errorBuilder
+
     return Image.asset(
       asset,
       width: 22,
