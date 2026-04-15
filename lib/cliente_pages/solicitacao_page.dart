@@ -89,8 +89,6 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-              // 🔥 HEADER
               SizedBox(
                 height: 70,
                 child: ClipRRect(
@@ -180,7 +178,8 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
                     maxLines: 5,
                     style: TextStyle(color: AppColors.preto),
                     decoration: InputDecoration(
-                      hintText: "O que você precisa hoje? Descreva o trabalho...",
+                      hintText:
+                          "O que você precisa hoje? Descreva o trabalho...",
                       border: InputBorder.none,
                     ),
                   ),
@@ -307,10 +306,7 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
                       const SizedBox(height: 12),
                       const Text(
                         "Toque para enviar imagens",
-                        style: TextStyle(
-                          color: AppColors.branco,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: AppColors.branco, fontSize: 14),
                       ),
                     ],
                   ),
@@ -335,7 +331,6 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
 
               const SizedBox(height: 30),
 
-              // 🔥 BOTÃO FINAL
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: GestureDetector(

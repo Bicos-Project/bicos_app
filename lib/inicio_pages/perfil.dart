@@ -50,7 +50,10 @@ class Perfil extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios, color: AppColors.branco),
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        color: AppColors.branco,
+                      ),
                       onPressed: () {
                         Navigator.pop(context); // Volta pra tela anterior
                       },
@@ -93,21 +96,41 @@ class Perfil extends StatelessWidget {
               const SizedBox(height: 32),
 
               // --- CAMPOS DE DADOS ---
-              _construirCampo('E-mail', 'mariana.o@example.com', editavel: true),
+              _construirCampo(
+                'E-mail',
+                'mariana.o@example.com',
+                editavel: true,
+              ),
               const SizedBox(height: 16),
-              _construirCampo('CPF', '133.••••••-13', editavel: false), // Sem lápis
+              _construirCampo(
+                'CPF',
+                '133.••••••-13',
+                editavel: false,
+              ), // Sem lápis
               const SizedBox(height: 16),
               _construirCampo('CEP', '51320-165', editavel: true),
               const SizedBox(height: 16),
-              _construirCampo('Logradouro', 'Rua dos Engenhos', editavel: false), // Sem lápis
+              _construirCampo(
+                'Logradouro',
+                'Rua dos Engenhos',
+                editavel: false,
+              ), // Sem lápis
               const SizedBox(height: 16),
 
               // --- NÚMERO E COMPLEMENTO (Lado a Lado) ---
               Row(
                 children: [
-                  Expanded(child: _construirCampo('Número', '12', editavel: true)),
+                  Expanded(
+                    child: _construirCampo('Número', '12', editavel: true),
+                  ),
                   const SizedBox(width: 16),
-                  Expanded(child: _construirCampo('Complemento', 'S/C', editavel: true)),
+                  Expanded(
+                    child: _construirCampo(
+                      'Complemento',
+                      'S/C',
+                      editavel: true,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -149,7 +172,11 @@ class Perfil extends StatelessWidget {
                 ),
               ),
               if (editavel)
-                Icon(Icons.edit, color: AppColors.branco.withOpacity(0.5), size: 16),
+                Icon(
+                  Icons.edit,
+                  color: AppColors.branco.withOpacity(0.5),
+                  size: 16,
+                ),
             ],
           ),
         ),

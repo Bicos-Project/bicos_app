@@ -1,6 +1,8 @@
 import 'package:bicos_app/core/app_colors.dart';
 import 'package:bicos_app/prestador_pages/visualizacao_proposta.dart';
+import 'package:bicos_app/prestador_pages/historico_servico_realizado.dart';
 import 'package:flutter/material.dart';
+import 'package:bicos_app/prestador_pages/ver_mais_solicitacoes.dart';
 
 class HomePagePrestador extends StatefulWidget {
   const HomePagePrestador({super.key, required this.title});
@@ -31,7 +33,7 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
       child: Scaffold(
         backgroundColor: AppColors.principal,
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(80),
+          preferredSize: const Size.fromHeight(60),
           child: _buildHeader(),
         ),
         body: SingleChildScrollView(
@@ -57,16 +59,18 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
               _buildRatingCard(),
 
               const SizedBox(height: 32),
-              _buildSectionTitle('Solicitações recebidas', '3 novas'),
+              _buildSectionTitle('Solicitações recebidas', '2 novas'),
               const SizedBox(height: 16),
 
               // Lista de Solicitações
               ...solicitacoes.map((s) => _buildSolicitacaoCard(s)).toList(),
-
-              const SizedBox(height: 32),
+              _buildVerMaisSolicitacoesButton(),
+              const SizedBox(height: 20),
               _buildSectionTitle('Serviços em andamento', '1 em progresso'),
               const SizedBox(height: 24),
               _buildJobStatusCard(),
+              const SizedBox(height: 10),
+              _buildVerMaisServicosButton(),
             ],
           ),
         ),
@@ -80,29 +84,41 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
         bottomLeft: Radius.circular(30),
         bottomRight: Radius.circular(30),
       ),
-      child: Stack(
-        children: [
-          Image.asset(
-            "assets/header.png",
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset("assets/bicos_logo2.png", height: 30),
-                  const CircleAvatar(
-                    radius: 18,
-                    backgroundImage: AssetImage("assets/perfil.png"),
-                  ),
-                ],
+      child: AppBar(
+        automaticallyImplyLeading:
+            false, // Remove o botão voltar padrão se necessário
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Stack(
+          children: [
+            Image.asset(
+              "assets/header.png",
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.fill,
+            ),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset("assets/bicos_logo2.png", height: 40),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.asset(
+                        "assets/perfil.png",
+                        height: 40,
+                        width: 40,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -166,7 +182,7 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
   Widget _buildSolicitacaoCard(Map<String, String> data) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -193,23 +209,89 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizacaoPropostaPage())); // Lógica para aceitar a solicitação
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.destaque,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+          // ✅ Substituído GestureDetector + ElevatedButton mal construído por ElevatedButton direto
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VisualizacaoPropostaPage(),
                 ),
-                child: const Text('Aceitar'),
               );
             },
-          )
-        ]
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.branco,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+            ),
+            child: const Text('Visualizar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVerMaisServicosButton() {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: SizedBox(
+        width: 95,
+        height: 30,
+        child: ElevatedButton(
+          onPressed: () {
+            // Lógica para ver mais detalhes do serviço em andamento
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HistoricoServicoRealizadoPage(),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.principal,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50),
+              side: const BorderSide(color: AppColors.destaque, width: 2),
+            ),
+          ),
+          child: const Text(
+            'Ver Mais',
+            style: TextStyle(color: AppColors.destaque, fontSize: 12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVerMaisSolicitacoesButton() {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: SizedBox(
+        width: 95,
+        height: 30,
+        child: ElevatedButton(
+          onPressed: () {
+            // Lógica para ver mais detalhes do serviço em andamento
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => VerMaisSolicitacoesPage(),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.principal,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50),
+              side: const BorderSide(color: AppColors.destaque, width: 2),
+            ),
+          ),
+          child: const Text(
+            'Ver Mais',
+            style: TextStyle(color: AppColors.destaque, fontSize: 12),
+          ),
+        ),
       ),
     );
   }
@@ -220,13 +302,11 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        
       ),
-      
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           const Text(
             'Manutenção Elétrica',
             style: TextStyle(fontWeight: FontWeight.bold),

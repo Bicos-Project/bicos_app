@@ -82,7 +82,8 @@ class _LoginPrestadorState extends State<LoginPrestador> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomePagePrestador(title: 'Home'),
+                          builder: (context) =>
+                              const HomePagePrestador(title: 'Home'),
                         ),
                       );
                     },

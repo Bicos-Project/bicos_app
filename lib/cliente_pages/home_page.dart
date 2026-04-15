@@ -21,22 +21,22 @@ class HomePage extends StatelessWidget {
     {
       "nome": "Josefino Barros",
       "imagem": "assets/eletricista.png",
-      "categoria": "Eletricista"
+      "categoria": "Eletricista",
     },
     {
       "nome": "Carlos Telles",
       "imagem": "assets/pedreiro.png",
-      "categoria": "Pedreiro"
+      "categoria": "Pedreiro",
     },
     {
       "nome": "Ana Graças",
       "imagem": "assets/cabeleireira.png",
-      "categoria": "Cabeleireira"
+      "categoria": "Cabeleireira",
     },
     {
       "nome": "Judite Anésio",
       "imagem": "assets/trancista.png",
-      "categoria": "Trancista"
+      "categoria": "Trancista",
     },
   ];
 
@@ -48,7 +48,6 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               // HEADER
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
@@ -91,7 +90,6 @@ class HomePage extends StatelessWidget {
               ),
 
               const SizedBox(height: 20),
-              
 
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -172,7 +170,6 @@ class HomePage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // ❤️ FAVORITOS HEADER
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
@@ -197,7 +194,6 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
 
-                    // 🔥 BOTÃO VER TODOS (CORRIGIDO)
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -211,9 +207,7 @@ class HomePage extends StatelessWidget {
                         children: [
                           Text(
                             "Ver todos",
-                            style: TextStyle(
-                              color: AppColors.destaque,
-                            ),
+                            style: TextStyle(color: AppColors.destaque),
                           ),
                           const SizedBox(width: 4),
                           Image.asset(
@@ -270,7 +264,8 @@ class HomePage extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         fav["nome"]!,
@@ -290,10 +285,7 @@ class HomePage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              Image.asset(
-                                "assets/coracao.png",
-                                width: 24,
-                              ),
+                              Image.asset("assets/coracao.png", width: 24),
                             ],
                           ),
                         ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../core/app_text_styles.dart';
-import 'sobre_app.dart'; 
+import 'sobre_app.dart';
 
 class TelaInicial extends StatelessWidget {
   const TelaInicial({super.key});
@@ -12,7 +12,7 @@ class TelaInicial extends StatelessWidget {
       backgroundColor: AppColors.principal,
       // O GestureDetector cobrindo a tela toda para avançar com 1 toque
       body: GestureDetector(
-        behavior: HitTestBehavior.opaque, 
+        behavior: HitTestBehavior.opaque,
         onTap: () {
           Navigator.pushReplacement(
             context,
@@ -37,13 +37,12 @@ class TelaInicial extends StatelessWidget {
                     'Bicos',
                     // Usando a fonte gigante e pintando com o verde de destaque
                     style: AppTextStyles.tituloGigante.copyWith(
-                      color: AppColors.destaque, 
+                      color: AppColors.destaque,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 32), // Espaço para o subtítulo
-              
               // O Subtítulo
               Text(
                 'Transformando a sua\ncomunidade.',

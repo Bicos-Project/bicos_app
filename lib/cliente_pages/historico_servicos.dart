@@ -47,11 +47,14 @@ class HistoricoServicos extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        
         // 2. Aplica o degradê em toda a tela
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('assets/background.png'), fit: BoxFit.fill)
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/background.png'),
+            fit: BoxFit.fill,
+          ),
         ),
         child: SafeArea(
           child: Column(
