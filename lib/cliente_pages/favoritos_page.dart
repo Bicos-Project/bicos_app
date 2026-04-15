@@ -57,7 +57,6 @@ class _FavoritosPageState extends State<FavoritosPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 🏷️ título categoria (PNG branco)
         Row(
           children: [
             Image.asset(
@@ -81,7 +80,7 @@ class _FavoritosPageState extends State<FavoritosPage> {
 
         const SizedBox(height: 12),
 
-        // 📌 itens
+
         ...items.map((item) {
           return Card(
             margin: const EdgeInsets.symmetric(vertical: 6),
