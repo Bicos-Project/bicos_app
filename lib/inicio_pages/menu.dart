@@ -20,7 +20,7 @@ class MenuApp extends StatelessWidget {
               Row(
                 children: [
                   Image.asset(
-                    'assets/bicos_logo1.png', // O ícone do alfinete com a chave
+                    'assets/bicos_logo1.png',
                     height: 32,
                   ),
                   const SizedBox(width: 8),
@@ -61,11 +61,11 @@ class MenuApp extends StatelessWidget {
                         border: Border.all(
                           color: AppColors.destaque,
                           width: 1.5,
-                        ), // Bordinha verde neon!
+                        ),
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/vera.png', // A foto que acabamos de adicionar
+                          'assets/vera.png', 
                           width: 56,
                           height: 56,
                           fit: BoxFit.cover,
@@ -131,10 +131,10 @@ class MenuApp extends StatelessWidget {
                 icone: Icons.logout_outlined,
                 titulo: 'Sair',
                 ehSair:
-                    true, // Avisamos a "receita" que esse é o botão de sair (para ficar vermelho)
+                    true,
                 onTap: () {
                   print("Clicou em Sair");
-                  // Como é Sair, podemos mandar o usuário de volta para a tela Inicial ou Login
+
                   Navigator.popUntil(context, (route) => route.isFirst);
                 },
               ),
@@ -152,16 +152,16 @@ class MenuApp extends StatelessWidget {
     required VoidCallback onTap,
     bool ehSair = false,
   }) {
-    // Definimos as cores dependendo se é o botão "Sair" ou não
+
     final corFundo = ehSair
         ? const Color(0xFF6B2745)
-        : const Color(0xFF46295C); // Vermelho escuro vs Roxo claro
+        : const Color(0xFF46295C);
     final corBorda = ehSair
         ? Colors.transparent
         : AppColors.branco.withOpacity(0.1);
     final corIcone = ehSair
         ? const Color(0xFFFF9EAA)
-        : AppColors.destaque; // Rosa claro para sair, verde neon para os outros
+        : AppColors.destaque; 
 
     return InkWell(
       onTap: onTap,
