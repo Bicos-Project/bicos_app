@@ -66,7 +66,6 @@ class OrcamentoPage extends StatelessWidget {
 
                 const SizedBox(height: 10),
 
-                // BOTÃO VOLTAR
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: IconButton(
@@ -75,7 +74,6 @@ class OrcamentoPage extends StatelessWidget {
                   ),
                 ),
 
-                // CARD DO PRESTADOR
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
@@ -144,7 +142,6 @@ class OrcamentoPage extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                // TOTAL DESTAQUE
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
@@ -153,7 +150,7 @@ class OrcamentoPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.principalEscura.withOpacity(
                         0.5,
-                      ), // Leve transparência para o degrade aparecer
+                      ),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Column(
@@ -182,7 +179,7 @@ class OrcamentoPage extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // STEPS / LINHA DO TEMPO
+        
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Column(
@@ -253,7 +250,7 @@ class OrcamentoPage extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // DETALHAMENTO DE VALORES
+ 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
@@ -320,7 +317,6 @@ class OrcamentoPage extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-                // BOTÃO DE CONVERSA (MELHORADO)
                 Center(
                   child: GestureDetector(
                     onTap: () {
@@ -359,19 +355,17 @@ class OrcamentoPage extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                // BOTÃO CONFIRMAR
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: InkWell(
                     onTap: () {
-                      // NAVEGANDO PARA O LOGIN
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const AvaliacaoServico(),
                         ),
                       );
-                      // Ação de confirmação
+   
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
@@ -395,7 +389,7 @@ class OrcamentoPage extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                // TEXTO FINAL
+      
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
