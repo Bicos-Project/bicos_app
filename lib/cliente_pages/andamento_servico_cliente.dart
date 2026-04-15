@@ -380,7 +380,6 @@ class AndamentoServicoClientePage extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            // TODO: abrir chat de suporte
           },
           child: const Text(
             'FALE CONOSCO',
