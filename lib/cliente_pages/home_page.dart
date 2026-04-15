@@ -162,7 +162,7 @@ class _HomePageState extends State<HomePage>
                   _construirHeaderFavoritos(),
                   const SizedBox(height: 14),
                   _construirListaFavoritos(),
-                  // AUMENTADO PARA 110: Garante que a barra não tampe o conteúdo
+
                   const SizedBox(height: 110),
                 ],
               ),
@@ -173,7 +173,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  // (MANTIDO IGUAL)
+
   Widget _construirHeader() {
     return Stack(
       children: [
@@ -201,7 +201,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  // (MANTIDO IGUAL)
+
   Widget _construirSaudacao() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -244,7 +244,6 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  // (MANTIDO IGUAL)
   Widget _construirBuscaRapida() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -280,7 +279,6 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  // (MANTIDO IGUAL)
   Widget _construirGridCategorias() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -341,8 +339,7 @@ class _HomePageState extends State<HomePage>
             cursor: SystemMouseCursors.click,
             child: GestureDetector(
               onTap: () {
-                // Se a função foi fornecida pela MainNavigation, usa ela para mudar a aba.
-                // Se não, faz o push tradicional.
+
                 if (widget.onMudarAbaFavoritos != null) {
                   widget.onMudarAbaFavoritos!();
                 } else {
@@ -377,7 +374,6 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  // (MANTIDO IGUAL)
   Widget _construirListaFavoritos() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -396,7 +392,7 @@ class _HomePageState extends State<HomePage>
   }
 }
 
-// ── CARD CATEGORIA (MANTIDO IGUAL) ────────────────────────────────────────────
+// ── CARD CATEGORIA ────────────────────────────────────────────
 
 class _CategoriaCard extends StatefulWidget {
   final Map<String, dynamic> categoria;
