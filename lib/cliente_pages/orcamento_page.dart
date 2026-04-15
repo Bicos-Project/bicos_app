@@ -1,8 +1,7 @@
 import 'package:bicos_app/cliente_pages/avaliacao.dart';
-import 'package:bicos_app/prestador_pages/chat.dart';
+import 'package:bicos_app/cliente_pages/chat_cliente.dart';
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
-import 'package:bicos_app/prestador_pages/chat.dart';
 
 class OrcamentoPage extends StatelessWidget {
   const OrcamentoPage({super.key});
