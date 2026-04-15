@@ -131,44 +131,44 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       body: Container(
         child: FadeTransition(
-            opacity: _fadeAnim,
-            child: SlideTransition(
-              position: _slideAnim,
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _construirHeader(),
-                    const SizedBox(height: 24),
-                    _construirSaudacao(),
-                    const SizedBox(height: 20),
-                    _construirBuscaRapida(),
-                    const SizedBox(height: 24),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        'Categorias',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.branco,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
+          opacity: _fadeAnim,
+          child: SlideTransition(
+            position: _slideAnim,
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _construirHeader(),
+                  const SizedBox(height: 24),
+                  _construirSaudacao(),
+                  const SizedBox(height: 20),
+                  _construirBuscaRapida(),
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'Categorias',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.branco,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 14),
-                    _construirGridCategorias(),
-                    const SizedBox(height: 28),
-                    _construirHeaderFavoritos(),
-                    const SizedBox(height: 14),
-                    _construirListaFavoritos(),
-                    // AUMENTADO PARA 110: Garante que a barra não tampe o conteúdo
-                    const SizedBox(height: 110),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 14),
+                  _construirGridCategorias(),
+                  const SizedBox(height: 28),
+                  _construirHeaderFavoritos(),
+                  const SizedBox(height: 14),
+                  _construirListaFavoritos(),
+                  // AUMENTADO PARA 110: Garante que a barra não tampe o conteúdo
+                  const SizedBox(height: 110),
+                ],
               ),
             ),
           ),
+        ),
       ),
     );
   }
@@ -177,10 +177,7 @@ class _HomePageState extends State<HomePage>
   Widget _construirHeader() {
     return Stack(
       children: [
-        Image.asset(
-          'assets/header.png',
-          fit: BoxFit.fill,
-        ),
+        Image.asset('assets/header.png', fit: BoxFit.fill),
         Positioned.fill(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),

@@ -182,9 +182,6 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
                   ),
                 ),
               ),
-
-              // ── BOTTOM NAV ───────────────────────────────────
-              _construirBottomNav(),
             ],
           ),
         ),
@@ -360,73 +357,6 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _construirBottomNav() {
-    // Índice 3 = HISTÓRICO ativo (contexto de onde viemos)
-    const int indexAtivo = 3;
-
-    final itens = [
-      {'icone': Icons.favorite_border, 'label': 'FAVORITOS', 'index': 0},
-      {'icone': Icons.home_outlined, 'label': 'HOME', 'index': 1},
-      {'icone': Icons.menu, 'label': 'MENU', 'index': 2},
-      {'icone': Icons.history, 'label': 'HISTÓRICO', 'index': 3},
-    ];
-
-    return Stack(
-      children: [
-        Image.asset(
-          'assets/bottom.png',
-          width: double.infinity,
-          fit: BoxFit.fitWidth,
-        ),
-        Positioned.fill(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: itens.map((item) {
-              final ativo = (item['index'] as int) == indexAtivo;
-              return GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ativo ? 14 : 8,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ativo ? AppColors.destaque : Colors.transparent,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        item['icone'] as IconData,
-                        color: ativo
-                            ? AppColors.principalEscura
-                            : Colors.white70,
-                        size: 22,
-                      ),
-                      if (ativo) ...[
-                        const SizedBox(width: 6),
-                        Text(
-                          item['label'] as String,
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.principalEscura,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
     );
   }
 }

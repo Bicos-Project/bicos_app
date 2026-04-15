@@ -1,3 +1,4 @@
+import 'package:bicos_app/cliente_pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
@@ -81,7 +82,7 @@ class _LoginState extends State<Login> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const MainNavigation(),
+                          builder: (context) => const HomePage(),
                         ),
                       );
                     },
