@@ -32,7 +32,7 @@ class HistoricoServicos extends StatelessWidget {
       data: '07/04/2026',
       status: 'em_andamento',
       imagemAsset:
-          'assets/eletricista.png', // troque pela imagem real do prestador
+          'assets/eletricista.png',
     ),
     Servico(
       nome: 'Pedreiro',
@@ -40,7 +40,7 @@ class HistoricoServicos extends StatelessWidget {
       data: '19/02/2026',
       status: 'finalizado',
       imagemAsset:
-          'assets/pedreiro.png', // troque pela imagem real do prestador
+          'assets/pedreiro.png', 
     ),
   ];
 
@@ -145,7 +145,7 @@ class HistoricoServicos extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       padding: EdgeInsets.symmetric(horizontal: ativo ? 16 : 8, vertical: 8),
       decoration: BoxDecoration(
-        // Se estiver ativo, ganha fundo amarelo, se não, fica transparente
+
         color: ativo ? AppColors.destaque : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
       ),
@@ -154,7 +154,7 @@ class HistoricoServicos extends StatelessWidget {
         children: [
           Icon(
             icone,
-            // Ícone muda de cor conforme o estado
+ 
             color: ativo
                 ? AppColors.principalEscura
                 : AppColors.branco.withOpacity(0.8),
@@ -180,8 +180,8 @@ class HistoricoServicos extends StatelessWidget {
   Widget _construirCardServico(Servico servico, BuildContext context) {
     final bool emAndamento = servico.status == 'em_andamento';
     final Color corStatus = emAndamento
-        ? const Color(0xFFFFA726) // laranja para "Em andamento"
-        : const Color(0xFF4CAF50); // verde para "Finalizado"
+        ? const Color(0xFFFFA726)
+        : const Color(0xFF4CAF50);
     final String textoStatus = emAndamento ? 'Em andamento' : 'Finalizado';
 
     return Container(
