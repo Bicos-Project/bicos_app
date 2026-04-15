@@ -327,7 +327,7 @@ class OrcamentoPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ChatVendedor(),
+                          builder: (context) => const ChatClientePage(),
                         ),
                       );
                     },
