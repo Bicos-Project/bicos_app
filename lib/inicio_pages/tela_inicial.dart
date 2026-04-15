@@ -10,7 +10,6 @@ class TelaInicial extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.principal,
-      // O GestureDetector cobrindo a tela toda para avançar com 1 toque
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
