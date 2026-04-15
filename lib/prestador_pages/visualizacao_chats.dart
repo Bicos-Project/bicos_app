@@ -13,7 +13,7 @@ class VisualizacaoChats extends StatelessWidget {
         "nome": "Vera Azevedo",
         "mensagem": "Combinado! Aguardo você.",
         "data": "06/04/2026",
-        "foto": "assets/perfil1.png", // Substitua pelos seus assets
+        "foto": "assets/perfil1.png", 
       },
       {
         "nome": "Clarisse",
