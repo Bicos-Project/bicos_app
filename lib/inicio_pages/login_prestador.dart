@@ -1,10 +1,8 @@
 import 'package:bicos_app/inicio_pages/cadastro_prestador.dart';
-import 'package:bicos_app/prestador_pages/home_page_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-import '../inicio_pages/login_prestador.dart';
-import 'package:bicos_app/prestador_pages/main_navigation_prestador.dart';
+import 'package:bicos_app/components/main_navigation_prestador.dart';
 
 class LoginPrestador extends StatefulWidget {
   const LoginPrestador({super.key});

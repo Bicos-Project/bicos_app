@@ -111,7 +111,7 @@ class MenuApp extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Perfil()),
+                    MaterialPageRoute(builder: (context) => const PerfilPage()),
                   );
                 },
               ),

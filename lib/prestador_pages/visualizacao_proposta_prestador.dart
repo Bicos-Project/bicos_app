@@ -1,7 +1,6 @@
 import 'package:bicos_app/core/app_colors.dart';
 import 'package:bicos_app/prestador_pages/chat_prestador.dart';
 import 'package:flutter/material.dart';
-import '../prestador_pages/main_navigation_prestador.dart';
 
 class VisualizacaoPropostaPage extends StatelessWidget {
   const VisualizacaoPropostaPage({super.key});
@@ -12,7 +11,7 @@ class VisualizacaoPropostaPage extends StatelessWidget {
         backgroundColor: AppColors.principal,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(80),
-          child: _buildHeader(),
+          child: _construirHeader(),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -135,36 +134,30 @@ class VisualizacaoPropostaPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(30),
-        bottomRight: Radius.circular(30),
-      ),
-      child: Stack(
-        children: [
-          Image.asset(
-            "assets/header.png",
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset("assets/bicos_logo2.png", height: 30),
-                  const CircleAvatar(
-                    radius: 18,
-                    backgroundImage: AssetImage("assets/perfil.png"),
+  Widget _construirHeader() {
+    return Stack(
+      children: [
+        Image.asset('assets/header.png', fit: BoxFit.fill),
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset('assets/bicos_logo2.png', height: 32),
+                Container(
+                  width: 40,
+                  height: 40,
+                  child: ClipOval(
+                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

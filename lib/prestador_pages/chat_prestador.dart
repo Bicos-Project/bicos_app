@@ -61,7 +61,7 @@ class _ChatVendedorState extends State<ChatVendedor> {
     ),
   ];
 
-  bool _outroEstaDigitando =
+  final bool _outroEstaDigitando =
       true; // Para exibir o indicador "Carlos está digitando"
 
   void _enviarMensagem() {

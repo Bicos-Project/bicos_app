@@ -3,8 +3,8 @@ import '../core/app_colors.dart';
 import '../core/app_text_styles.dart';
 import 'sobre_app.dart';
 
-class TelaInicial extends StatelessWidget {
-  const TelaInicial({super.key});
+class TelaInicialPage extends StatelessWidget {
+  const TelaInicialPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class TelaInicial extends StatelessWidget {
         onTap: () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const SobreApp()),
+            MaterialPageRoute(builder: (context) => const SobreAppPage()),
           );
         },
         child: SizedBox(
@@ -29,12 +29,11 @@ class TelaInicial extends StatelessWidget {
                 children: [
                   Image.asset(
                     'assets/bicos_logo1.png',
-                    height: 80, // Ajuste a altura da logo se precisar
+                    height: 80,
                   ),
                   const SizedBox(width: 16), // Espaço entre a logo e o texto
                   Text(
                     'Bicos',
-                    // Usando a fonte gigante e pintando com o verde de destaque
                     style: AppTextStyles.tituloGigante.copyWith(
                       color: AppColors.destaque,
                     ),

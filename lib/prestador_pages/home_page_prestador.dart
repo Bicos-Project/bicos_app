@@ -1,7 +1,5 @@
 import 'package:bicos_app/core/app_colors.dart';
-import 'package:bicos_app/prestador_pages/andamento_servico.dart';
 import 'package:bicos_app/prestador_pages/visualizacao_proposta_prestador.dart';
-import 'package:bicos_app/prestador_pages/solicitacoes_recebidas.dart';
 import 'package:flutter/material.dart';
 import 'package:bicos_app/prestador_pages/ver_mais_solicitacoes.dart';
 

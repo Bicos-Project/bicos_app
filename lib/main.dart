@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       ),
 
       // PRIMEIRA TELA DO APP
-      home: const TelaInicial(),
+      home: const TelaInicialPage(),
     );
   }
 }

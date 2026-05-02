@@ -232,7 +232,6 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
       ),
     );
   }
-──
 
   Widget _construirHeader() {
     return Stack(

@@ -1,6 +1,6 @@
 import 'package:bicos_app/core/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:bicos_app/prestador_pages/main_navigation_prestador.dart';
+import 'package:bicos_app/components/main_navigation_prestador.dart';
 
 class AnunciarServicoPage extends StatefulWidget {
   const AnunciarServicoPage({super.key});

@@ -2,9 +2,9 @@ import 'package:bicos_app/inicio_pages/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-import 'home_page.dart';
-import 'favoritos_page.dart';
-import 'historico_servicos.dart';
+import '../cliente_pages/home_page.dart';
+import '../cliente_pages/favoritos_page.dart';
+import '../cliente_pages/historico_servicos.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});

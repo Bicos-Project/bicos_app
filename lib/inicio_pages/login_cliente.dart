@@ -1,9 +1,8 @@
-import 'package:bicos_app/cliente_pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-import 'cadastro.dart';
-import '../cliente_pages/main_navigation.dart';
+import 'cadastro_cliente.dart';
+import '../components/main_navigation_cliente.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,11 +11,11 @@ class Login extends StatefulWidget {
   State<Login> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends State<Login> { // Variável para controlar a visibilidade da senha
   bool _senhaOculta = true;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { // Tela de Login para Clientes
     return Scaffold(
       backgroundColor: AppColors.principal,
       body: SafeArea(
@@ -30,7 +29,7 @@ class _LoginState extends State<Login> {
 
                 const SizedBox(height: 24),
 
-                RichText(
+                RichText( // Texto de boas-vindas com estilo
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     style: GoogleFonts.plusJakartaSans(
@@ -39,7 +38,7 @@ class _LoginState extends State<Login> {
                       fontWeight: FontWeight.w400,
                       height: 1.3,
                     ),
-                    children: [
+                    children: [ // O texto "Bem vindo de volta ao Bicos!" com "Bicos" em destaque
                       const TextSpan(text: 'Bem vindo de volta\nao '),
                       TextSpan(
                         text: 'Bicos',
@@ -55,7 +54,7 @@ class _LoginState extends State<Login> {
 
                 const SizedBox(height: 48),
 
-                _construirLabel('E-mail'),
+                _construirLabel('E-mail'), // Label para o campo de e-mail
                 const SizedBox(height: 8),
                 _construirCampoTexto(
                   dica: 'Digite seu e-mail',
@@ -64,7 +63,7 @@ class _LoginState extends State<Login> {
 
                 const SizedBox(height: 24),
 
-                _construirLabel('Senha'),
+                _construirLabel('Senha'), // Label para o campo de senha
                 const SizedBox(height: 8),
                 _construirCampoTexto(
                   dica: '••••••••••••',
@@ -74,7 +73,7 @@ class _LoginState extends State<Login> {
 
                 const SizedBox(height: 32),
 
-                SizedBox(
+                SizedBox( // Botão de Login
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
@@ -105,7 +104,7 @@ class _LoginState extends State<Login> {
 
                 const SizedBox(height: 48),
 
-                GestureDetector(
+                GestureDetector( // Link para a tela de cadastro
                   onTap: () {
                     Navigator.push(
                       context,
@@ -142,7 +141,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _construirLabel(String texto) {
+  Widget _construirLabel(String texto) { // Widget para construir os labels dos campos
     return Align(
       alignment: Alignment.centerLeft,
       child: Text(
@@ -156,12 +155,12 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _construirCampoTexto({
+  Widget _construirCampoTexto({ // Widget para construir os campos de texto, com opção de ser campo de senha
     required String dica,
     required IconData icone,
     bool esSenha = false,
   }) {
-    return TextField(
+    return TextField(  // Campo de texto customizado
       obscureText: esSenha ? _senhaOculta : false,
       style: const TextStyle(color: AppColors.principalEscura),
       decoration: InputDecoration(
