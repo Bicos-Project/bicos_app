@@ -81,16 +81,6 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
     return Scaffold(
       
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
-
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment(0, -0.4),
-            radius: 1.2,
-            colors: [Color(0xFF4A1060), Color(0xFF3B0A52), AppColors.principal],
-          ),
-        ),
         child: SafeArea(
           child: SingleChildScrollView(
             child: Column(

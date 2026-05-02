@@ -55,87 +55,18 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
   int get _estrelasExibidas =>
       _estrelasPressPreview > 0 ? _estrelasPressPreview : _estrelasSelecionadas;
 
-  void _enviarAvaliacao() {
-    if (_estrelasSelecionadas == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Selecione pelo menos uma estrela!',
-            style: GoogleFonts.plusJakartaSans(),
-          ),
-          backgroundColor: AppColors.principal,
-        ),
-      );
-      return;
-    }
-    HapticFeedback.heavyImpact();
-    // TODO: enviar avaliação para o backend
-    Navigator.pop(context);
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.principal,
+      appBar: PreferredSize(
+        preferredSize: const Size(double.infinity, 80),
+        child: _construirHeader(),
+      ),
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.center,
-            radius: 1.0,
-            colors: [
-              Color.fromARGB(255, 52, 7, 63),
-              Color.fromARGB(255, 64, 18, 75),
-              AppColors.principal,
-            ],
-          ),
-        ),
         child: SafeArea(
           child: Column(
             children: [
-              // ── HEADER ───────────────────────────────────────
-              Stack(
-                children: [
-                  Image.asset(
-                    'assets/header.png',
-                    width: double.infinity,
-                    fit: BoxFit.fitWidth,
-                  ),
-                  Positioned.fill(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset('assets/bicos_logo2.png', height: 34),
-                          Container(
-                            width: 42,
-                            height: 42,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppColors.destaque,
-                                width: 2,
-                              ),
-                            ),
-                            child: ClipOval(
-                              child: Image.asset(
-                                'assets/perfil.png',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
 
               // ── CONTEÚDO ─────────────────────────────────────
               Expanded(
@@ -190,6 +121,36 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
   }
 
   // ── WIDGETS ──────────────────────────────────────────────────────────
+
+    Widget _construirHeader() {
+    return Stack(
+      children: [
+        Image.asset(
+          'assets/header.png',
+          fit: BoxFit.fill,
+        ),
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset('assets/bicos_logo2.png', height: 32),
+                Container(
+                  width: 40,
+                  height: 40,
+                  child: ClipOval(
+                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _construirCardFinalizado() {
     return Container(

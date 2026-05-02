@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
 
-class Perfil extends StatelessWidget {
-  const Perfil({super.key});
+class PerfilPage extends StatelessWidget {
+  const PerfilPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -15,9 +15,8 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
   bool _senhaOculta = true;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.principal,
+  Widget build(BuildContext context) { 
+    return Scaffold( // Tela de Cadastro para Prestadores
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -32,7 +31,7 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
 
                 const SizedBox(height: 16),
 
-                RichText(
+                RichText( // Texto de boas-vindas com estilo
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     style: GoogleFonts.plusJakartaSans(
@@ -57,13 +56,13 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
 
                 const SizedBox(height: 32),
 
-                _construirLabel('Nome'),
+                _construirLabel('Nome'), // Label para o campo de nome
                 _construirCampoTexto(
                   dica: 'Digite seu nome',
                   icone: Icons.person_outline,
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 16), //  Espaçamento entre os campos
 
                 _construirLabel('E-mail'),
                 _construirCampoTexto(
@@ -73,7 +72,7 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
 
                 const SizedBox(height: 16),
 
-                _construirLabel('CPF'),
+                _construirLabel('CPF'), // Label para o campo de CPF
                 _construirCampoTexto(
                   dica: 'Ex: 000.000.000-00',
                   icone: Icons.person_outline,
@@ -81,7 +80,7 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
 
                 const SizedBox(height: 16),
 
-                _construirLabel('Senha'),
+                _construirLabel('Senha'), //  Label para o campo de senha
                 _construirCampoTexto(
                   dica: '••••••••••••',
                   icone: Icons.lock_outline,
@@ -90,7 +89,7 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
 
                 const SizedBox(height: 16),
 
-                _construirLabel('CEP'),
+                _construirLabel('CEP'), //  Label para o campo de CEP
                 _construirCampoTexto(
                   dica: 'Ex: 00000-00',
                   icone: Icons.home_outlined,
@@ -98,7 +97,7 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
 
                 const SizedBox(height: 16),
 
-                _construirLabel('Logradouro'),
+                _construirLabel('Logradouro'), // Label para o campo de logradouro
                 _construirCampoTexto(
                   dica: 'Ex: Rua dos engenhos',
                   icone: Icons.home_outlined,
@@ -107,9 +106,9 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
                 const SizedBox(height: 16),
 
                 Row(
-                  children: [
-                    Expanded(
-                      child: Column(
+                  children: [ 
+                    Expanded( // Lado a lado para número e complemento
+                      child: Column( // Número (lado esquerdo)
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _construirLabel('Número'),
@@ -121,7 +120,7 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Expanded(
+                    Expanded( // Complemento (lado direito)
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -139,10 +138,10 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
                 const SizedBox(height: 32),
 
    
-                SizedBox(
+                SizedBox( // Botão de Criar Perfil
                   width: double.infinity,
                   height: 56,
-                  child: ElevatedButton(
+                  child: ElevatedButton( 
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
@@ -170,7 +169,7 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
 
                 const SizedBox(height: 32),
 
-                GestureDetector(
+                GestureDetector( // Link para a tela de login, com texto estilizado
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
                     Navigator.push(
@@ -187,7 +186,7 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
                         color: AppColors.branco,
                         fontSize: 14,
                       ),
-                      children: [
+                      children: [ // Texto "Já tem conta?" normal e "Faça Login aqui!" com destaque
                         const TextSpan(text: 'Já tem conta?\n'),
                         TextSpan(
                           text: 'Faça Login aqui!',

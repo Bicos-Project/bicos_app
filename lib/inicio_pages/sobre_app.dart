@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-import 'escolha_perfil.dart'; // Importamos a tela nova aqui no topo!
+import 'escolha_perfil.dart';
 
-class SobreApp extends StatelessWidget {
-  const SobreApp({super.key});
+class SobreAppPage extends StatelessWidget {
+  const SobreAppPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.principal,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -32,7 +31,7 @@ class SobreApp extends StatelessWidget {
                     ),
                   ),
 
-                  Positioned(
+                  Positioned( // O card flutuante --- IGNORE ---
                     bottom: -20,
                     right: 20,
                     child: Container(
@@ -51,7 +50,7 @@ class SobreApp extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Row(
+                      child: Row( // O conteúdo do card flutuante --- IGNORE ---
                         children: [
                           Container(
                             padding: const EdgeInsets.all(6),
@@ -70,14 +69,14 @@ class SobreApp extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'LOCALIZAÇÃO',
+                                'LOCALIZAÇÃO', // O texto "LOCALIZAÇÃO" dentro do card flutuante --- IGNORE ---
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.grey[600],
                                 ),
                               ),
-                              Text(
+                              Text( // O texto "Próximo a você" dentro do card flutuante --- IGNORE ---
                                 'Próximo a você',
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,

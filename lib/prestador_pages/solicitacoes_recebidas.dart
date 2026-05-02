@@ -1,7 +1,7 @@
 import 'package:bicos_app/prestador_pages/visualizacao_proposta_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/app_colors.dart'; 
+import '../core/app_colors.dart';
 
 class SolicitacoesRecebidas extends StatelessWidget {
   const SolicitacoesRecebidas({super.key});
@@ -10,10 +10,10 @@ class SolicitacoesRecebidas extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.principal,
-      
+
       // --- SEU HEADER AQUI ---
-      appBar: _construirSeuHeader(),
-      
+      appBar: _construirHeader(),
+
       // --- RESTO DA TELA NO BODY ---
       body: Column(
         children: [
@@ -34,7 +34,10 @@ class SolicitacoesRecebidas extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.destaque,
                     borderRadius: BorderRadius.circular(20),
@@ -76,49 +79,32 @@ class SolicitacoesRecebidas extends StatelessWidget {
   }
 
   // --- O MÉTODO COM O SEU CÓDIGO DE HEADER ---
-  PreferredSizeWidget _construirSeuHeader() {
+  PreferredSizeWidget _construirHeader() {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(60), // Define a altura do seu header
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          flexibleSpace: Stack(
-            children: [
-              Image.asset(
-                "assets/header.png",
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.fill,
-              ),
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Image.asset("assets/bicos_logo2.png", height: 40),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: Image.asset(
-                          "assets/perfil.png",
-                          height: 40,
-                          width: 40,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ],
+      preferredSize: const Size.fromHeight(56),
+      child: Stack(
+        children: [
+          Image.asset('assets/header.png', fit: BoxFit.fill),
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset('assets/bicos_logo2.png', height: 32),
+                  Container(
+                    width: 40,
+                    height: 40,
+                    child: ClipOval(
+                      child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -150,7 +136,10 @@ class SolicitacoesRecebidas extends StatelessWidget {
                   height: 60,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    width: 60, height: 60, color: Colors.grey, child: const Icon(Icons.person),
+                    width: 60,
+                    height: 60,
+                    color: Colors.grey,
+                    child: const Icon(Icons.person),
                   ),
                 ),
               ),
@@ -201,7 +190,12 @@ class SolicitacoesRecebidas extends StatelessWidget {
               height: 40,
               child: OutlinedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder:  (context) => const VisualizacaoPropostaPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const VisualizacaoPropostaPage(),
+                    ),
+                  );
                 },
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: AppColors.principal),

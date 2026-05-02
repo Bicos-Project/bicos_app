@@ -1,4 +1,4 @@
-import 'package:bicos_app/core/app_text_styles.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
@@ -16,21 +16,6 @@ class _AvaliacaoPrestadorPageState extends State<AvaliacaoPrestadorPage> {
   int _nota = 0;
 
   // Função auxiliar para lidar com erros de asset de forma segura
-  Widget _exibirImagemSegura(String? caminho, IconData fallback, double tamanho) {
-    if (caminho == null || caminho.isEmpty) {
-      return Icon(fallback, color: AppColors.principal, size: tamanho);
-    }
-    return Image.asset(
-      caminho,
-      height: tamanho,
-      width: tamanho,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        return Icon(fallback, color: AppColors.principal, size: tamanho);
-      },
-    );
-  }
-
   Widget _construirHeader() {
     return Stack(
       children: [
@@ -57,12 +42,10 @@ class _AvaliacaoPrestadorPageState extends State<AvaliacaoPrestadorPage> {
       ],
     );
   }
-
   @override
   Widget build(BuildContext context) {
     // Usamos o Scaffold para estruturar a página
     return Scaffold(
-      backgroundColor: AppColors.principal, // Roxo/vinho de fundo do protótipo
       appBar: PreferredSize(preferredSize: const Size(double.infinity, 80), child: _construirHeader()),
       body: SafeArea(
         child: SingleChildScrollView(

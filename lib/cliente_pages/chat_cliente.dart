@@ -1,9 +1,4 @@
 import 'package:bicos_app/cliente_pages/andamento_servico_cliente.dart';
-import 'package:bicos_app/cliente_pages/avaliacao.dart';
-import 'package:bicos_app/prestador_pages/andamento_servico.dart';
-import 'package:bicos_app/prestador_pages/home_page_prestador.dart';
-import 'package:bicos_app/prestador_pages/visualizacao_chats.dart';
-import 'package:bicos_app/prestador_pages/visualizacao_proposta_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';

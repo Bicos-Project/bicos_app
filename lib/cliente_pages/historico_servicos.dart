@@ -1,5 +1,4 @@
 import 'package:bicos_app/cliente_pages/chat_cliente.dart';
-import 'package:bicos_app/prestador_pages/chat_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
@@ -47,133 +46,78 @@ class HistoricoServicos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-          child: Column(
-            children: [
-              // ── HEADER ──
-              Stack(
+      appBar: PreferredSize(
+        preferredSize: const Size(double.infinity, 80),
+        child: _construirHeader(),
+      ),
+      body: Column(
+        children: [ // Added 'children: ['
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(
-                    'assets/header.png',
-                    fit: BoxFit.fill,
-                  ),
-                  Positioned.fill(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset('assets/bicos_logo2.png', height: 40),
-                          Container(
-                            width: 42,
-                            height: 42,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppColors.destaque,
-                                width: 2,
-                              ),
-                            ),
-                            child: ClipOval(
-                              child: Image.asset(
-                                'assets/perfil.png',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                  const SizedBox(height: 12),
+                  // Botão voltar
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: AppColors.branco,
+                      size: 20,
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Histórico de serviços',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.branco,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ..._servicos.map(
+                    (s) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: _construirCardServico(s, context),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
-
-              // ── CONTEÚDO SCROLLÁVEL ──
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 12),
-                      // Botão voltar
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(
-                          Icons.arrow_back_ios_new,
-                          color: AppColors.branco,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Histórico de serviços',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.branco,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      ..._servicos.map(
-                        (s) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: _construirCardServico(s, context),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-      ),
-    );
-  }
-
-  Widget _construirItemNav({
-    required IconData icone,
-    required String label,
-    required bool ativo,
-  }) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      padding: EdgeInsets.symmetric(horizontal: ativo ? 16 : 8, vertical: 8),
-      decoration: BoxDecoration(
-
-        color: ativo ? AppColors.destaque : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icone,
- 
-            color: ativo
-                ? AppColors.principalEscura
-                : AppColors.branco.withOpacity(0.8),
-            size: 22,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.plusJakartaSans(
-              color: ativo
-                  ? AppColors.principalEscura
-                  : AppColors.branco.withOpacity(0.8),
-              fontSize: 10,
-              fontWeight: ativo ? FontWeight.w800 : FontWeight.w500,
-              letterSpacing: 0.5,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _construirHeader() {
+    return Stack(
+      children: [
+        Image.asset('assets/header.png', fit: BoxFit.fill),
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset('assets/bicos_logo2.png', height: 32),
+                Container(
+                  width: 40,
+                  height: 40,
+                  child: ClipOval(
+                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

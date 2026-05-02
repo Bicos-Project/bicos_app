@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
-import '../cliente_pages/main_navigation.dart';
+import '../components/main_navigation_cliente.dart';
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
@@ -15,23 +15,22 @@ class _CadastroState extends State<Cadastro> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.principal,
+    return Scaffold( // Tela de Cadastro para Clientes
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
+        child: Center( // Centraliza o conteúdo
+          child: SingleChildScrollView( // Permite rolagem caso o teclado cubra os campos
             padding: const EdgeInsets.symmetric(
               horizontal: 24.0,
               vertical: 32.0,
             ),
-            child: Column(
+            child: Column( // Coluna para organizar os campos verticalmente
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset('assets/bicos_logo1.png', height: 60),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 16), // Espaço entre logo e texto
 
-                RichText(
+                RichText( // Texto de boas-vindas com estilo
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     style: GoogleFonts.plusJakartaSans(
@@ -40,7 +39,7 @@ class _CadastroState extends State<Cadastro> {
                       fontWeight: FontWeight.w400,
                       height: 1.3,
                     ),
-                    children: [
+                    children: [ // O texto "Bem vindo ao Bicos!" com "Bicos" em destaque
                       const TextSpan(text: 'Bem vindo\nao '),
                       TextSpan(
                         text: 'Bicos',
@@ -54,9 +53,9 @@ class _CadastroState extends State<Cadastro> {
                   ),
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 32), 
 
-                _construirLabel('Nome'),
+                _construirLabel('Nome'), // Label para o campo de nome
                 _construirCampoTexto(
                   dica: 'Digite seu nome',
                   icone: Icons.person_outline,
@@ -64,7 +63,7 @@ class _CadastroState extends State<Cadastro> {
 
                 const SizedBox(height: 16),
 
-                _construirLabel('E-mail'),
+                _construirLabel('E-mail'),  // Label para o campo de e-mail
                 _construirCampoTexto(
                   dica: 'Digite seu e-mail',
                   icone: Icons.alternate_email,
@@ -72,7 +71,7 @@ class _CadastroState extends State<Cadastro> {
 
                 const SizedBox(height: 16),
 
-                _construirLabel('CPF'),
+                _construirLabel('CPF'), // Label para o campo de CPF
                 _construirCampoTexto(
                   dica: 'Ex: 000.000.000-00',
                   icone: Icons.person_outline,
@@ -80,7 +79,7 @@ class _CadastroState extends State<Cadastro> {
 
                 const SizedBox(height: 16),
 
-                _construirLabel('Senha'),
+                _construirLabel('Senha'), // Label para o campo de senha
                 _construirCampoTexto(
                   dica: '••••••••••••',
                   icone: Icons.lock_outline,
@@ -89,7 +88,7 @@ class _CadastroState extends State<Cadastro> {
 
                 const SizedBox(height: 16),
 
-                _construirLabel('CEP'),
+                _construirLabel('CEP'),   // Label para o campo de CEP
                 _construirCampoTexto(
                   dica: 'Ex: 00000-00',
                   icone: Icons.home_outlined,
@@ -97,7 +96,7 @@ class _CadastroState extends State<Cadastro> {
 
                 const SizedBox(height: 16),
 
-                _construirLabel('Logradouro'),
+                _construirLabel('Logradouro'), // Label para o campo de logradouro
                 _construirCampoTexto(
                   dica: 'Ex: Rua dos engenhos',
                   icone: Icons.home_outlined,
@@ -107,11 +106,11 @@ class _CadastroState extends State<Cadastro> {
 
                 Row(
                   children: [
-                    Expanded(
+                    Expanded( // Lado a lado para número e complemento
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _construirLabel('Número'),
+                          _construirLabel('Número'), // Label para o campo de número
                           _construirCampoTexto(
                             dica: 'Ex: 12',
                             icone: Icons.home_outlined,
@@ -121,7 +120,7 @@ class _CadastroState extends State<Cadastro> {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: Column(
+                      child: Column(  // Complemento (lado direito)
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _construirLabel('Complemento'),
@@ -137,8 +136,7 @@ class _CadastroState extends State<Cadastro> {
 
                 const SizedBox(height: 32),
 
-                // 🔥 BOTÃO CRIAR PERFIL
-                SizedBox(
+                SizedBox( // Botão de criar perfil
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
@@ -169,7 +167,7 @@ class _CadastroState extends State<Cadastro> {
 
                 const SizedBox(height: 32),
 
-                GestureDetector(
+                GestureDetector( // Link para a tela de login, com texto estilizado
                   onTap: () {
                     Navigator.pop(context);
                   },
@@ -202,7 +200,7 @@ class _CadastroState extends State<Cadastro> {
     );
   }
 
-  Widget _construirLabel(String texto) {
+  Widget _construirLabel(String texto) { // Widget para construir as labels dos campos de forma consistente
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
@@ -219,7 +217,7 @@ class _CadastroState extends State<Cadastro> {
     );
   }
 
-  Widget _construirCampoTexto({
+  Widget _construirCampoTexto({ // Widget para construir os campos de texto de forma consistente
     required String dica,
     required IconData icone,
     bool esSenha = false,
@@ -247,7 +245,7 @@ class _CadastroState extends State<Cadastro> {
                 },
               )
             : null,
-        border: OutlineInputBorder(
+        border: OutlineInputBorder( // Borda customizada para os campos de texto
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
