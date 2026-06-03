@@ -1,15 +1,19 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
-import 'solicitacao_page.dart';
-import 'favoritos_page.dart';
-import 'package:bicos_app/cliente_pages/slide_prestador_reformas.dart';
+import '../providers/auth_provider.dart';
+import '../services/categoria_service.dart';
+import '../providers/favoritos_provider.dart';
+import '../models/categoria_model.dart';
+import '../models/prestador_model.dart';
+import 'busca_page.dart';
+import 'categoria_prestadores_page.dart';
 
 class HomePage extends StatefulWidget {
-  final VoidCallback? onMudarAbaFavoritos;
-
-  const HomePage({super.key, this.onMudarAbaFavoritos});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -21,78 +25,18 @@ class _HomePageState extends State<HomePage>
   late Animation<double> _fadeAnim;
   late Animation<Offset> _slideAnim;
 
-  final List<Map<String, dynamic>> categorias = const [
-    {
-      "nome": "Beleza e Estética",
-      "imagem": "assets/beleza.png",
-      "emoji": "💅",
-      "rota": null,
-    },
-    {
-      "nome": "Serviços Domésticos",
-      "imagem": "assets/servicos_domesticos.png",
-      "emoji": "🏠",
-      "rota": null,
-    },
-    {
-      "nome": "Reparos Rápidos",
-      "imagem": "assets/reparos_rapidos.png",
-      "emoji": "🔧",
-      "rota": null,
-    },
-    {
-      "nome": "Alimentação",
-      "imagem": "assets/alimentacao.png",
-      "emoji": "🍽️",
-      "rota": null,
-    },
-    {
-      "nome": "Obras e Reformas",
-      "imagem": "assets/obras.png",
-      "emoji": "🔨",
-      "rota": "obras",
-    },
-    {
-      "nome": "Logística Local",
-      "imagem": "assets/logistica.png",
-      "emoji": "🚚",
-      "rota": null,
-    },
-    {
-      "nome": "Manutenção Eletrônica",
-      "imagem": "assets/eletronica.png",
-      "emoji": "⚡",
-      "rota": null,
-    },
-    {
-      "nome": "Cuidadores",
-      "imagem": "assets/cuidadores.png",
-      "emoji": "🤝",
-      "rota": null,
-    },
-  ];
+  List<Categoria> _categorias = [];
+  bool _isLoading = true;
 
-  final List<Map<String, String>> favoritos = const [
-    {
-      "nome": "Josefino Barros",
-      "imagem": "assets/eletricista.png",
-      "categoria": "Eletricista",
-    },
-    {
-      "nome": "Carlos Telles",
-      "imagem": "assets/pedreiro.png",
-      "categoria": "Pedreiro",
-    },
-    {
-      "nome": "Ana Graças",
-      "imagem": "assets/cabeleireira.png",
-      "categoria": "Cabeleireira",
-    },
-    {
-      "nome": "Judite Anésio",
-      "imagem": "assets/trancista.png",
-      "categoria": "Trancista",
-    },
+  static const List<Map<String, dynamic>> _categoriasFallback = [
+    {'nome': 'Beleza e Estética', 'imagem': 'assets/beleza.png', 'emoji': '💅'},
+    {'nome': 'Serviços Domésticos', 'imagem': 'assets/servicos_domesticos.png', 'emoji': '🏠'},
+    {'nome': 'Reparos Rápidos', 'imagem': 'assets/reparos_rapidos.png', 'emoji': '🔧'},
+    {'nome': 'Alimentação', 'imagem': 'assets/alimentacao.png', 'emoji': '🍽️'},
+    {'nome': 'Obras e Reformas', 'imagem': 'assets/obras.png', 'emoji': '🔨'},
+    {'nome': 'Logística Local', 'imagem': 'assets/logistica.png', 'emoji': '🚚'},
+    {'nome': 'Manutenção Eletrônica', 'imagem': 'assets/eletronica.png', 'emoji': '⚡'},
+    {'nome': 'Cuidadores', 'imagem': 'assets/cuidadores.png', 'emoji': '🤝'},
   ];
 
   @override
@@ -108,6 +52,21 @@ class _HomePageState extends State<HomePage>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
     _animController.forward();
+    _carregarCategorias();
+  }
+
+  Future<void> _carregarCategorias() async {
+    try {
+      final categorias = await CategoriaService.listar();
+      if (!mounted) return;
+      setState(() {
+        _categorias = categorias;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -116,55 +75,69 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
-  void _navegarCategoria(Map<String, dynamic> categoria) {
+  void _navegarCategoria(String nome) {
     HapticFeedback.lightImpact();
-    if (categoria["rota"] == "obras") {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const ObrasEReformas()),
-      );
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CategoriaPrestadoresPage(categoria: nome),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: FadeTransition(
-          opacity: _fadeAnim,
-          child: SlideTransition(
-            position: _slideAnim,
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _construirHeader(),
-                  const SizedBox(height: 24),
-                  _construirSaudacao(),
-                  const SizedBox(height: 20),
-                  _construirBuscaRapida(),
-                  const SizedBox(height: 24),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      'Categorias',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.branco,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+      body: RefreshIndicator(
+        onRefresh: _carregarCategorias,
+        color: AppColors.destaque,
+        backgroundColor: AppColors.principal,
+        child: Container(
+          child: FadeTransition(
+            opacity: _fadeAnim,
+            child: SlideTransition(
+              position: _slideAnim,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _construirHeader(),
+                    const SizedBox(height: 24),
+                    _construirSaudacao(),
+                    const SizedBox(height: 20),
+                    _construirBuscaRapida(),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Categorias',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.branco,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 14),
-                  _construirGridCategorias(),
-                  const SizedBox(height: 28),
-                  _construirHeaderFavoritos(),
-                  const SizedBox(height: 14),
-                  _construirListaFavoritos(),
-
-                  const SizedBox(height: 110),
-                ],
+                    const SizedBox(height: 14),
+                    _isLoading
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.destaque,
+                              ),
+                            ),
+                          )
+                        : _construirGridCategorias(),
+                    if (context.watch<FavoritosProvider>().favoritos.isNotEmpty) ...[
+                      _construirHeaderFavoritos(),
+                      const SizedBox(height: 14),
+                      _construirListaFavoritos(),
+                    ],
+                    const SizedBox(height: 32),
+                  ],
+                ),
               ),
             ),
           ),
@@ -172,7 +145,6 @@ class _HomePageState extends State<HomePage>
       ),
     );
   }
-
 
   Widget _construirHeader() {
     return Stack(
@@ -186,12 +158,32 @@ class _HomePageState extends State<HomePage>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Image.asset('assets/bicos_logo2.png', height: 32),
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: ClipOval(
-                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
-                  ),
+                Consumer<AuthProvider>(
+                  builder: (context, auth, _) {
+                    return Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.principalEscura,
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: auth.avatarPath != null
+                          ? ClipOval(
+                              child: Image.file(
+                                File(auth.avatarPath!),
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.person,
+                              size: 24,
+                              color: AppColors.branco,
+                            ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -201,8 +193,8 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-
   Widget _construirSaudacao() {
+    final nome = context.watch<AuthProvider>().nome ?? 'Usuário';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -220,7 +212,7 @@ class _HomePageState extends State<HomePage>
                   ),
                 ),
                 TextSpan(
-                  text: 'Usuário!',
+                  text: '$nome!',
                   style: GoogleFonts.plusJakartaSans(
                     color: AppColors.branco,
                     fontSize: 32,
@@ -247,45 +239,60 @@ class _HomePageState extends State<HomePage>
   Widget _construirBuscaRapida() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          color: AppColors.branco.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.branco.withOpacity(0.15),
-            width: 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            const SizedBox(width: 16),
-            Icon(
-              Icons.search,
-              color: AppColors.branco.withOpacity(0.5),
-              size: 20,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.text,
+        child: GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BuscaPage(query: ''),
             ),
-            const SizedBox(width: 10),
-            Text(
-              'Buscar serviço ou profissional...',
-              style: GoogleFonts.plusJakartaSans(
-                color: AppColors.branco.withOpacity(0.4),
-                fontSize: 14,
+          ),
+          child: Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: AppColors.branco.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: AppColors.branco.withOpacity(0.15),
+                width: 1,
               ),
             ),
-          ],
+            child: Row(
+              children: [
+                const SizedBox(width: 16),
+                Icon(
+                  Icons.search,
+                  color: AppColors.branco.withOpacity(0.5),
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'Buscar serviço ou profissional...',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.branco.withOpacity(0.4),
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
   Widget _construirGridCategorias() {
+    final lista = _categorias.isNotEmpty
+        ? _categorias.map((c) => {'nome': c.nome, 'imagem': c.assetName}).toList()
+        : _categoriasFallback;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: categorias.length,
+        itemCount: lista.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           mainAxisSpacing: 10,
@@ -293,11 +300,11 @@ class _HomePageState extends State<HomePage>
           childAspectRatio: 2.2,
         ),
         itemBuilder: (context, index) {
-          final cat = categorias[index];
+          final cat = lista[index];
           return _CategoriaCard(
-            categoria: cat,
-            temRota: cat["rota"] != null,
-            onTap: () => _navegarCategoria(cat),
+            nome: cat['nome'] as String,
+            imagem: cat['imagem'] as String,
+            onTap: () => _navegarCategoria(cat['nome'] as String),
           );
         },
       ),
@@ -308,64 +315,37 @@ class _HomePageState extends State<HomePage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: AppColors.destaque.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.favorite,
-                  color: AppColors.destaque,
-                  size: 16,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                'Favoritos',
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.branco,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: AppColors.destaque.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.favorite,
+              color: AppColors.destaque,
+              size: 16,
+            ),
           ),
+          const SizedBox(width: 10),
+          Text(
+            'Favoritos',
+            style: GoogleFonts.plusJakartaSans(
+              color: AppColors.branco,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const Spacer(),
           MouseRegion(
             cursor: SystemMouseCursors.click,
             child: GestureDetector(
-              onTap: () {
-
-                if (widget.onMudarAbaFavoritos != null) {
-                  widget.onMudarAbaFavoritos!();
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const FavoritosPage()),
-                  );
-                }
-              },
-              child: Row(
-                children: [
-                  Text(
-                    'Ver todos',
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.destaque,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: AppColors.destaque,
-                    size: 12,
-                  ),
-                ],
+              onTap: () => context.read<FavoritosProvider>().carregar(),
+              child: const Icon(
+                Icons.refresh,
+                color: AppColors.destaque,
+                size: 14,
               ),
             ),
           ),
@@ -375,16 +355,14 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _construirListaFavoritos() {
+    final favs = context.watch<FavoritosProvider>().favoritos;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
-        children: favoritos.map((fav) {
+        children: favs.map((p) {
           return _FavoritoCard(
-            fav: fav,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SolicitacaoPage()),
-            ),
+            prestador: p,
+            onTap: () => _navegarCategoria(p.categoria),
           );
         }).toList(),
       ),
@@ -392,142 +370,11 @@ class _HomePageState extends State<HomePage>
   }
 }
 
-// ── CARD CATEGORIA ────────────────────────────────────────────
-
-class _CategoriaCard extends StatefulWidget {
-  final Map<String, dynamic> categoria;
-  final bool temRota;
-  final VoidCallback onTap;
-
-  const _CategoriaCard({
-    required this.categoria,
-    required this.temRota,
-    required this.onTap,
-  });
-
-  @override
-  State<_CategoriaCard> createState() => _CategoriaCardState();
-}
-
-class _CategoriaCardState extends State<_CategoriaCard> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapUp: (_) {
-          setState(() => _pressed = false);
-          widget.onTap();
-        },
-        onTapCancel: () => setState(() => _pressed = false),
-        child: AnimatedScale(
-          scale: _pressed ? 0.96 : 1.0,
-          duration: const Duration(milliseconds: 120),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 120),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-            decoration: BoxDecoration(
-              color: _pressed
-                  ? AppColors.branco.withOpacity(0.92)
-                  : AppColors.branco,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: widget.temRota
-                      ? AppColors.destaque.withOpacity(_pressed ? 0.3 : 0.12)
-                      : Colors.black.withOpacity(0.06),
-                  blurRadius: widget.temRota ? 12 : 6,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-              border: widget.temRota
-                  ? Border.all(
-                      color: AppColors.destaque.withOpacity(0.4),
-                      width: 1.5,
-                    )
-                  : null,
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: widget.temRota
-                        ? AppColors.destaque.withOpacity(0.15)
-                        : AppColors.principal.withOpacity(0.07),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Image.asset(
-                      widget.categoria["imagem"]!,
-                      width: 26,
-                      height: 26,
-                      errorBuilder: (_, __, ___) => Text(
-                        widget.categoria["emoji"] as String,
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        widget.categoria["nome"]!,
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.principalEscura,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          height: 1.2,
-                        ),
-                      ),
-                      if (widget.temRota) ...[
-                        const SizedBox(height: 3),
-                        Row(
-                          children: [
-                            Text(
-                              'Ver serviços',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.principal,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(width: 2),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 8,
-                              color: AppColors.principal,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ── CARD FAVORITO (MANTIDO IGUAL) ─────────────────────────────────────────────
-
 class _FavoritoCard extends StatefulWidget {
-  final Map<String, String> fav;
+  final Prestador prestador;
   final VoidCallback onTap;
 
-  const _FavoritoCard({required this.fav, required this.onTap});
+  const _FavoritoCard({required this.prestador, required this.onTap});
 
   @override
   State<_FavoritoCard> createState() => _FavoritoCardState();
@@ -571,7 +418,7 @@ class _FavoritoCardState extends State<_FavoritoCard> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
-                      widget.fav["imagem"]!,
+                      widget.prestador.imagemAsset,
                       width: 52,
                       height: 52,
                       fit: BoxFit.cover,
@@ -584,7 +431,7 @@ class _FavoritoCardState extends State<_FavoritoCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.fav["nome"]!,
+                          widget.prestador.nome,
                           style: GoogleFonts.plusJakartaSans(
                             color: AppColors.principalEscura,
                             fontSize: 14,
@@ -602,7 +449,7 @@ class _FavoritoCardState extends State<_FavoritoCard> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            widget.fav["categoria"]!,
+                            widget.prestador.especialidade,
                             style: GoogleFonts.plusJakartaSans(
                               color: AppColors.principal,
                               fontSize: 11,
@@ -613,23 +460,133 @@ class _FavoritoCardState extends State<_FavoritoCard> {
                       ],
                     ),
                   ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.favorite,
-                        color: Colors.red.shade400,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 10),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: AppColors.principalEscura.withOpacity(0.3),
-                        size: 14,
-                      ),
-                    ],
+                  Icon(
+                    Icons.favorite,
+                    color: Colors.red.shade400,
+                    size: 20,
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CategoriaCard extends StatefulWidget {
+  final String nome;
+  final String imagem;
+  final VoidCallback onTap;
+
+  const _CategoriaCard({
+    required this.nome,
+    required this.imagem,
+    required this.onTap,
+  });
+
+  @override
+  State<_CategoriaCard> createState() => _CategoriaCardState();
+}
+
+class _CategoriaCardState extends State<_CategoriaCard> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapUp: (_) {
+          setState(() => _pressed = false);
+          widget.onTap();
+        },
+        onTapCancel: () => setState(() => _pressed = false),
+        child: AnimatedScale(
+          scale: _pressed ? 0.96 : 1.0,
+          duration: const Duration(milliseconds: 120),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 120),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            decoration: BoxDecoration(
+              color: _pressed
+                  ? AppColors.branco.withOpacity(0.92)
+                  : AppColors.branco,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.destaque.withOpacity(_pressed ? 0.3 : 0.12),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+              border: Border.all(
+                color: AppColors.destaque.withOpacity(0.4),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.destaque.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      widget.imagem,
+                      width: 26,
+                      height: 26,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.category,
+                        size: 20,
+                        color: AppColors.principal,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.nome,
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.principalEscura,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Row(
+                        children: [
+                          Text(
+                            'Ver serviços',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.principal,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 2),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 8,
+                            color: AppColors.principal,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),

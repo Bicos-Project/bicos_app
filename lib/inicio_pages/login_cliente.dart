@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import 'cadastro_cliente.dart';
 import '../components/main_navigation_cliente.dart';
+import '../providers/auth_provider.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -11,129 +13,180 @@ class Login extends StatefulWidget {
   State<Login> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> { // Variável para controlar a visibilidade da senha
+class _LoginState extends State<Login> {
   bool _senhaOculta = true;
+  final _emailController = TextEditingController();
+  final _senhaController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context) { // Tela de Login para Clientes
+  void dispose() {
+    _emailController.dispose();
+    _senhaController.dispose();
+    super.dispose();
+  }
+
+  void _entrar() {
+    if (!_formKey.currentState!.validate()) return;
+    context.read<AuthProvider>().clearError();
+    context
+        .read<AuthProvider>()
+        .loginCliente(_emailController.text.trim(), _senhaController.text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.principal,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset('assets/bicos_logo1.png', height: 80),
-
-                const SizedBox(height: 24),
-
-                RichText( // Texto de boas-vindas com estilo
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 24,
-                      color: AppColors.branco,
-                      fontWeight: FontWeight.w400,
-                      height: 1.3,
-                    ),
-                    children: [ // O texto "Bem vindo de volta ao Bicos!" com "Bicos" em destaque
-                      const TextSpan(text: 'Bem vindo de volta\nao '),
-                      TextSpan(
-                        text: 'Bicos',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.w800,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      const TextSpan(text: '!'),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 48),
-
-                _construirLabel('E-mail'), // Label para o campo de e-mail
-                const SizedBox(height: 8),
-                _construirCampoTexto(
-                  dica: 'Digite seu e-mail',
-                  icone: Icons.alternate_email,
-                ),
-
-                const SizedBox(height: 24),
-
-                _construirLabel('Senha'), // Label para o campo de senha
-                const SizedBox(height: 8),
-                _construirCampoTexto(
-                  dica: '••••••••••••',
-                  icone: Icons.lock_outline,
-                  esSenha: true,
-                ),
-
-                const SizedBox(height: 32),
-
-                SizedBox( // Botão de Login
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MainNavigation(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5A3A70),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      'Entrar',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.branco,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 48),
-
-                GestureDetector( // Link para a tela de cadastro
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Cadastro()),
-                    );
-                  },
-                  child: RichText(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/bicos_logo1.png', height: 80),
+                  const SizedBox(height: 24),
+                  RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
                       style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24,
                         color: AppColors.branco,
-                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        height: 1.3,
                       ),
                       children: [
-                        const TextSpan(text: 'Não possui conta?\n'),
+                        const TextSpan(text: 'Bem vindo de volta\nao '),
                         TextSpan(
-                          text: 'Cadastre-se aqui!',
-                          style: TextStyle(
-                            color: AppColors.destaque,
-                            fontWeight: FontWeight.w700,
-                            decoration: TextDecoration.underline,
-                            decorationColor: AppColors.destaque,
+                          text: 'Bicos',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w800,
+                            fontStyle: FontStyle.italic,
                           ),
                         ),
+                        const TextSpan(text: '!'),
                       ],
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 48),
+                  _construirLabel('E-mail'),
+                  const SizedBox(height: 8),
+                  _construirCampoTexto(
+                    dica: 'Digite seu e-mail',
+                    icone: Icons.alternate_email,
+                    controller: _emailController,
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) return 'E-mail obrigatório';
+                      if (!v.contains('@')) return 'E-mail inválido';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  _construirLabel('Senha'),
+                  const SizedBox(height: 8),
+                  _construirCampoTexto(
+                    dica: '••••••••••••',
+                    icone: Icons.lock_outline,
+                    esSenha: true,
+                    controller: _senhaController,
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Senha obrigatória';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                  Consumer<AuthProvider>(
+                    builder: (context, auth, _) {
+                      if (auth.isAuthenticated) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const MainNavigation(),
+                            ),
+                          );
+                        });
+                      }
+                      if (auth.error != null) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(auth.error!),
+                              backgroundColor: Colors.red.shade700,
+                            ),
+                          );
+                          auth.clearError();
+                        });
+                      }
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: auth.isLoading ? null : _entrar,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF5A3A70),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: auth.isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.branco,
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
+                              : Text(
+                                  'Entrar',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: AppColors.branco,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 48),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Cadastro(),
+                        ),
+                      );
+                    },
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.branco,
+                          fontSize: 14,
+                        ),
+                        children: [
+                          const TextSpan(text: 'Não possui conta?\n'),
+                          TextSpan(
+                            text: 'Cadastre-se aqui!',
+                            style: TextStyle(
+                              color: AppColors.destaque,
+                              fontWeight: FontWeight.w700,
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.destaque,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -141,7 +194,7 @@ class _LoginState extends State<Login> { // Variável para controlar a visibilid
     );
   }
 
-  Widget _construirLabel(String texto) { // Widget para construir os labels dos campos
+  Widget _construirLabel(String texto) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Text(
@@ -155,19 +208,24 @@ class _LoginState extends State<Login> { // Variável para controlar a visibilid
     );
   }
 
-  Widget _construirCampoTexto({ // Widget para construir os campos de texto, com opção de ser campo de senha
+  Widget _construirCampoTexto({
     required String dica,
     required IconData icone,
     bool esSenha = false,
+    required TextEditingController controller,
+    String? Function(String?)? validator,
   }) {
-    return TextField(  // Campo de texto customizado
+    return TextFormField(
+      controller: controller,
       obscureText: esSenha ? _senhaOculta : false,
       style: const TextStyle(color: AppColors.principalEscura),
+      validator: validator,
       decoration: InputDecoration(
         filled: true,
         fillColor: const Color(0xFFD2C3D9),
         hintText: dica,
-        hintStyle: TextStyle(color: AppColors.principalEscura.withOpacity(0.5)),
+        hintStyle:
+            TextStyle(color: AppColors.principalEscura.withOpacity(0.5)),
         prefixIcon: Icon(icone, color: AppColors.principalEscura),
         suffixIcon: esSenha
             ? IconButton(

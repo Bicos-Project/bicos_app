@@ -24,7 +24,7 @@ class _AnunciarServicoPageState extends State<AnunciarServicoPage> {
         style: const TextStyle(
           color: Colors.white,
           fontSize: 15,
-          fontWeight: FontWeight(600),
+          fontWeight: FontWeight.w600,
         ),
         textAlign: TextAlign.center,
       ),
