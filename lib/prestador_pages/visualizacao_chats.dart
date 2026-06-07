@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../components/app_header.dart';
 import '../core/app_colors.dart';
 
 class VisualizacaoChats extends StatelessWidget {
@@ -32,10 +33,7 @@ class VisualizacaoChats extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        PreferredSize(
-          preferredSize: const Size(double.infinity, 80),
-          child: _construirHeader(),
-        ),
+        const AppHeader(showAvatar: true),
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -63,33 +61,6 @@ class VisualizacaoChats extends StatelessWidget {
                 const SizedBox(
                   height: 100,
                 ), // Espaço para a Bottom Navigation Bar
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _construirHeader() {
-    return Stack(
-      children: [
-        Image.asset('assets/header.png', fit: BoxFit.fill),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset('assets/bicos_logo2.png', height: 32),
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: ClipOval(
-                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
-                  ),
-                ),
               ],
             ),
           ),

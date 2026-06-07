@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import '../models/cliente_model.dart';
 import 'api_client.dart';
 
@@ -21,6 +23,17 @@ class ClienteService {
     final response = await ApiClient.instance.put(
       '/clientes/$id',
       data: request.toJson(),
+    );
+    return ClienteResponse.fromJson(response.data);
+  }
+
+  static Future<ClienteResponse> atualizarFoto(int id, File file) async {
+    final formData = FormData.fromMap({
+      'foto': await MultipartFile.fromFile(file.path, filename: 'foto.jpg'),
+    });
+    final response = await ApiClient.instance.put(
+      '/clientes/$id/foto',
+      data: formData,
     );
     return ClienteResponse.fromJson(response.data);
   }

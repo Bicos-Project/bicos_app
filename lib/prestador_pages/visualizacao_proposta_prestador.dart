@@ -1,24 +1,28 @@
+import 'package:bicos_app/components/app_header.dart';
 import 'package:bicos_app/core/app_colors.dart';
+import 'package:bicos_app/models/solicitacao_response.dart';
 import 'package:bicos_app/prestador_pages/chat_prestador.dart';
 import 'package:flutter/material.dart';
 
 class VisualizacaoPropostaPage extends StatelessWidget {
-  const VisualizacaoPropostaPage({super.key});
+  final SolicitacaoResponse solicitacao;
+
+  const VisualizacaoPropostaPage({super.key, required this.solicitacao});
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
         backgroundColor: AppColors.principal,
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(80),
-          child: _construirHeader(),
+          preferredSize: const Size.fromHeight(76),
+          child: const AppHeader(showAvatar: true),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             children: [
               const SizedBox(height: 20),
-              // Card Principal Branco
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
@@ -29,12 +33,30 @@ class VisualizacaoPropostaPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Ajuste de chuveiro',
-                      style: TextStyle(
+                    Text(
+                      solicitacao.anuncioTitulo ?? 'Serviço',
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'CLIENTE',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.cinza,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      solicitacao.clienteNome,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -54,53 +76,59 @@ class VisualizacaoPropostaPage extends StatelessWidget {
                         border: Border.all(color: AppColors.cinza.withOpacity(0.2), width: 1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Text(
-                        'O meu chuveiro está com um vazamento muito forte.',
-                        style: TextStyle(color: AppColors.cinza),
+                      child: Text(
+                        solicitacao.descricao,
+                        style: const TextStyle(color: AppColors.cinza),
                       ),
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      'IMAGENS',
+                      'STATUS',
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.cinza,
                         letterSpacing: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        'assets/chuveiro.png', // Substitua pelo seu asset
-                        width: double.infinity,
-                        height: 150,
-                        fit: BoxFit.cover,
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: solicitacao.status == 'orcamento'
+                            ? Colors.orange.withOpacity(0.15)
+                            : AppColors.destaque.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        solicitacao.status.replaceAll('_', ' '),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: solicitacao.status == 'orcamento'
+                              ? Colors.orange
+                              : AppColors.principal,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Card Agendamento (Roxo Translúcido)
               _buildInfoCard(
                 title: 'AGENDAMENTO',
-                content: '07/04/2026, 16:00',
+                content: solicitacao.dataSolicitacao ?? 'A combinar',
                 icon: Icons.calendar_today_outlined,
               ),
               const SizedBox(height: 12),
-
-              // Card Localização (Roxo Translúcido)
               _buildInfoCard(
-                title: 'LOCALIZAÇÃO',
-                content: 'Endereço ou Bairro',
-                subContent: 'PRIVACIDADE GARANTIDA',
-                icon: Icons.location_on_outlined,
+                title: 'SOLICITAÇÃO',
+                content: '#${solicitacao.id}',
+                icon: Icons.receipt_long_outlined,
               ),
               const SizedBox(height: 32),
-
-              // Botão de Ação Verde
               SizedBox(
                 width: double.infinity,
                 height: 55,
@@ -134,37 +162,9 @@ class VisualizacaoPropostaPage extends StatelessWidget {
     );
   }
 
-  Widget _construirHeader() {
-    return Stack(
-      children: [
-        Image.asset('assets/header.png', fit: BoxFit.fill),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset('assets/bicos_logo2.png', height: 32),
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: ClipOval(
-                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildInfoCard({
     required String title,
     required String content,
-    String? subContent,
     required IconData icon,
   }) {
     return Container(
@@ -192,11 +192,6 @@ class VisualizacaoPropostaPage extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (subContent != null)
-                Text(
-                  subContent,
-                  style: const TextStyle(color: AppColors.branco, fontSize: 10),
-                ),
             ],
           ),
           Icon(icon, color: AppColors.destaque, size: 24),

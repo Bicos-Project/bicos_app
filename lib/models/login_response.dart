@@ -5,6 +5,7 @@ class LoginResponse {
   final String nome;
   final String email;
   final String perfil;
+  final String? fotoUrl;
 
   LoginResponse({
     required this.token,
@@ -13,6 +14,7 @@ class LoginResponse {
     required this.nome,
     required this.email,
     required this.perfil,
+    this.fotoUrl,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class LoginResponse {
       nome: json['nome'] ?? '',
       email: json['email'] ?? '',
       perfil: json['perfil'] ?? '',
+      fotoUrl: json['fotoUrl'],
     );
   }
 }

@@ -1,12 +1,13 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../components/app_header.dart';
 import '../core/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../services/categoria_service.dart';
 import '../providers/favoritos_provider.dart';
+import '../components/app_image.dart';
 import '../models/categoria_model.dart';
 import '../models/prestador_model.dart';
 import 'busca_page.dart';
@@ -102,7 +103,7 @@ class _HomePageState extends State<HomePage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _construirHeader(),
+                    const AppHeader(showAvatar: true),
                     const SizedBox(height: 24),
                     _construirSaudacao(),
                     const SizedBox(height: 20),
@@ -143,53 +144,6 @@ class _HomePageState extends State<HomePage>
           ),
         ),
       ),
-    );
-  }
-
-  Widget _construirHeader() {
-    return Stack(
-      children: [
-        Image.asset('assets/header.png', fit: BoxFit.fill),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset('assets/bicos_logo2.png', height: 32),
-                Consumer<AuthProvider>(
-                  builder: (context, auth, _) {
-                    return Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.principalEscura,
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: auth.avatarPath != null
-                          ? ClipOval(
-                              child: Image.file(
-                                File(auth.avatarPath!),
-                                width: 40,
-                                height: 40,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : const Icon(
-                              Icons.person,
-                              size: 24,
-                              color: AppColors.branco,
-                            ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -417,11 +371,10 @@ class _FavoritoCardState extends State<_FavoritoCard> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
+                    child: AppImage(
                       widget.prestador.imagemAsset,
                       width: 52,
                       height: 52,
-                      fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(width: 14),

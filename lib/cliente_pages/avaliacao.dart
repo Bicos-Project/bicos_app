@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:bicos_app/cliente_pages/slide_prestador_reformas.dart';
+import 'package:bicos_app/components/app_header.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
 
@@ -60,8 +61,8 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size(double.infinity, 80),
-        child: _construirHeader(),
+        preferredSize: const Size.fromHeight(76),
+        child: const AppHeader(showAvatar: true),
       ),
       body: Container(
         child: SafeArea(
@@ -121,36 +122,6 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
   }
 
   // ── WIDGETS ──────────────────────────────────────────────────────────
-
-    Widget _construirHeader() {
-    return Stack(
-      children: [
-        Image.asset(
-          'assets/header.png',
-          fit: BoxFit.fill,
-        ),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset('assets/bicos_logo2.png', height: 32),
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: ClipOval(
-                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _construirCardFinalizado() {
     return Container(

@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../components/app_header.dart';
 import '../core/app_colors.dart';
 
 
@@ -15,38 +16,11 @@ class _AvaliacaoPrestadorPageState extends State<AvaliacaoPrestadorPage> {
   // Estado para armazenar a nota (0 a 5)
   int _nota = 0;
 
-  // Função auxiliar para lidar com erros de asset de forma segura
-  Widget _construirHeader() {
-    return Stack(
-      children: [
-        Image.asset('assets/header.png', fit: BoxFit.fill),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset('assets/bicos_logo2.png', height: 32),
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: ClipOval(
-                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
   @override
   Widget build(BuildContext context) {
     // Usamos o Scaffold para estruturar a página
     return Scaffold(
-      appBar: PreferredSize(preferredSize: const Size(double.infinity, 80), child: _construirHeader()),
+      appBar: PreferredSize(preferredSize: const Size.fromHeight(76), child: const AppHeader(showAvatar: true)),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

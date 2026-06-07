@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../components/app_header.dart';
 import '../core/app_colors.dart';
 import '../models/prestador_model.dart';
 import '../providers/favoritos_provider.dart';
 import '../data/prestadores_data.dart';
+import '../components/app_image.dart';
 import 'categoria_prestadores_page.dart';
 
 class BuscaPage extends StatefulWidget {
@@ -39,14 +41,15 @@ class _BuscaPageState extends State<BuscaPage> {
       setState(() => _resultados = []);
       return;
     }
+
     final todos = todosPrestadores();
-    setState(() {
-      _resultados = todos.where((p) {
-        return p.nome.toLowerCase().contains(termo) ||
-            p.especialidade.toLowerCase().contains(termo) ||
-            p.categoria.toLowerCase().contains(termo);
-      }).toList();
-    });
+    final mockResults = todos.where((p) {
+      return p.nome.toLowerCase().contains(termo) ||
+          p.especialidade.toLowerCase().contains(termo) ||
+          p.categoria.toLowerCase().contains(termo);
+    }).toList();
+
+    setState(() => _resultados = mockResults);
   }
 
   void _navegarCategoria(String categoria) {
@@ -59,6 +62,10 @@ class _BuscaPageState extends State<BuscaPage> {
     );
   }
 
+  Widget _imagemBusca(String src) {
+    return AppImage(src, width: 48, height: 48);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,81 +73,11 @@ class _BuscaPageState extends State<BuscaPage> {
       body: SafeArea(
         child: Column(
           children: [
-            _construirHeader(),
+            AppHeader(showBack: true, searchController: _controller, onSearchChanged: _buscar),
             const SizedBox(height: 16),
             Expanded(child: _construirResultados()),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _construirHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Row(
-        children: [
-          MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: const Icon(
-                Icons.arrow_back_ios_new,
-                color: AppColors.branco,
-                size: 20,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Container(
-              height: 46,
-              decoration: BoxDecoration(
-                color: AppColors.branco.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: AppColors.branco.withOpacity(0.15),
-                ),
-              ),
-              child: TextField(
-                controller: _controller,
-                onChanged: _buscar,
-                textInputAction: TextInputAction.search,
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.branco,
-                  fontSize: 14,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'Buscar serviço ou profissional...',
-                  hintStyle: GoogleFonts.plusJakartaSans(
-                    color: AppColors.branco.withOpacity(0.4),
-                    fontSize: 14,
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: AppColors.branco.withOpacity(0.5),
-                    size: 20,
-                  ),
-                  suffixIcon: _controller.text.isNotEmpty
-                      ? GestureDetector(
-                          onTap: () {
-                            _controller.clear();
-                            _buscar('');
-                          },
-                          child: Icon(
-                            Icons.close,
-                            color: AppColors.branco.withOpacity(0.5),
-                            size: 18,
-                          ),
-                        )
-                      : null,
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -202,19 +139,7 @@ class _BuscaPageState extends State<BuscaPage> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        p.imagemAsset,
-                        width: 48,
-                        height: 48,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          width: 48,
-                          height: 48,
-                          color: AppColors.principalEscura,
-                          child: const Icon(Icons.person,
-                              color: AppColors.branco, size: 24),
-                        ),
-                      ),
+                      child: _imagemBusca(p.imagemAsset),
                     ),
                     const SizedBox(width: 12),
                     Expanded(

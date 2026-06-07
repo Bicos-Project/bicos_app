@@ -1,70 +1,49 @@
-import 'package:bicos_app/cliente_pages/avaliacao.dart';
-import 'package:bicos_app/cliente_pages/chat_cliente.dart';
 import 'package:flutter/material.dart';
+import '../components/app_header.dart';
+import '../components/app_image.dart';
 import '../core/app_colors.dart';
+import '../models/prestador_model.dart';
+import '../models/solicitacao_response.dart';
 
 class OrcamentoPage extends StatelessWidget {
-  const OrcamentoPage({super.key});
+  final SolicitacaoResponse solicitacao;
+  final Prestador prestador;
+
+  const OrcamentoPage({
+    super.key,
+    required this.solicitacao,
+    required this.prestador,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final imagem = prestador.fotosUrls.isNotEmpty
+        ? prestador.fotosUrls.first
+        : prestador.imagemAsset;
+
     return Scaffold(
       body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF1E0A3C),
+              Color(0xFF2D1B69),
+              Color(0xFF1A1A3E),
+            ],
+          ),
+        ),
         child: SafeArea(
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    bottom: Radius.circular(40),
-                  ),
-                  child: SizedBox(
-                    height: 90,
-                    child: Stack(
-                      children: [
-                        Image.asset(
-                          "assets/header.png",
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                        Positioned(
-                          left: 16,
-                          top: 30,
-                          child: Image.asset(
-                            "assets/bicos_logo2.png",
-                            height: 30,
-                          ),
-                        ),
-                        Positioned(
-                          right: 16,
-                          top: 30,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image.asset(
-                              "assets/perfil.png",
-                              height: 35,
-                              width: 35,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                AppHeader(
+                  title: 'Solicitação Enviada',
+                  emoji: '✅',
                 ),
-
-                const SizedBox(height: 10),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: IconButton(
-                    icon: Image.asset("assets/seta_voltar.png", height: 26),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-
+                const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
@@ -81,29 +60,28 @@ class OrcamentoPage extends StatelessWidget {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: Image.asset(
-                                "assets/eletricista.png",
+                              child: SizedBox(
                                 width: 64,
                                 height: 64,
-                                fit: BoxFit.cover,
+                                child: AppImage(imagem),
                               ),
                             ),
                             const SizedBox(width: 10),
-                            const Column(
+                            Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Josefino Barros",
-                                  style: TextStyle(
+                                  prestador.nome,
+                                  style: const TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Text(
-                                  "Eletricista",
-                                  style: TextStyle(color: Colors.black54),
+                                  prestador.especialidade,
+                                  style: const TextStyle(color: Colors.black54),
                                 ),
                               ],
                             ),
@@ -118,9 +96,9 @@ class OrcamentoPage extends StatelessWidget {
                             color: AppColors.destaque.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Text(
-                            "Enviado",
-                            style: TextStyle(
+                          child: Text(
+                            solicitacao.status,
+                            style: const TextStyle(
                               color: AppColors.principal,
                               fontWeight: FontWeight.w600,
                             ),
@@ -130,47 +108,39 @@ class OrcamentoPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.principalEscura.withOpacity(
-                        0.5,
-                      ),
+                      color: AppColors.principalEscura.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Column(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Total",
+                        const Text(
+                          "Descrição do serviço",
                           style: TextStyle(
                             color: AppColors.branco,
                             fontSize: 14,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          "R\$ __ , __",
-                          style: TextStyle(
+                          solicitacao.descricao,
+                          style: const TextStyle(
                             color: AppColors.branco,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-        
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Column(
@@ -238,10 +208,7 @@ class OrcamentoPage extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 24),
-
- 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
@@ -262,7 +229,7 @@ class OrcamentoPage extends StatelessWidget {
                                 color: AppColors.preto.withOpacity(0.6),
                               ),
                             ),
-                            const Text("R\$ 000,00"),
+                            const Text("A definir"),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -275,7 +242,7 @@ class OrcamentoPage extends StatelessWidget {
                                 color: AppColors.preto.withOpacity(0.6),
                               ),
                             ),
-                            const Text("R\$ 15,00"),
+                            const Text("A definir"),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -284,15 +251,15 @@ class OrcamentoPage extends StatelessWidget {
                           color: AppColors.preto.withOpacity(0.1),
                         ),
                         const SizedBox(height: 16),
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               "Total à pagar",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              "R\$ 00,00",
+                              "A definir",
                               style: TextStyle(
                                 color: AppColors.principal,
                                 fontWeight: FontWeight.bold,
@@ -305,103 +272,16 @@ class OrcamentoPage extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 30),
-
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ChatClientePage(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.1),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
-                        ),
-                      ),
-                      child: Center(
-                        child: Image.asset("assets/conversa.png", width: 32),
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
+                const SizedBox(height: 24),
                 Center(
                   child: Text(
-                    "Já realizou o pagamento?",
-                    style: TextStyle(color: AppColors.branco.withOpacity(0.8)),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AvaliacaoServico(),
-                        ),
-                      );
-   
-                    },
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: AppColors.destaque,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          "Confirmar Pagamento",
-                          style: TextStyle(
-                            color: AppColors.preto,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                    "ID da solicitação: #${solicitacao.id}",
+                    style: TextStyle(
+                      color: AppColors.branco.withOpacity(0.5),
+                      fontSize: 12,
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 12),
-
-      
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        color: AppColors.branco.withOpacity(0.6),
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        "Algo de errado? Fale conosco",
-                        style: TextStyle(
-                          color: AppColors.branco.withOpacity(0.6),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
                 const SizedBox(height: 30),
               ],
             ),

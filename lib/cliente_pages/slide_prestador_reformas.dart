@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../components/app_header.dart';
 import '../core/app_colors.dart';
+import '../components/app_image.dart';
 
 
 class Prestador {
@@ -92,10 +94,7 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
         child: SafeArea(
           child: Column(
             children: [
-  
-              _construirHeader(),
-
-   
+              const AppHeader(showBack: true, emoji: '🔨', title: 'Obras e Reformas'),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -233,54 +232,6 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
     );
   }
 
-  Widget _construirHeader() {
-    return Stack(
-      children: [
-        Image.asset(
-          'assets/header.png',
-          width: double.infinity,
-          fit: BoxFit.fitWidth,
-        ),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Botão voltar
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: AppColors.branco,
-                      size: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                // Ícone martelo
-                const Text('🔨', style: TextStyle(fontSize: 20)),
-                const SizedBox(width: 8),
-                // Título
-                Text(
-                  'Obras e Reformas',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.destaque,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-
   Widget _construirCard(Prestador p) {
     return Container(
       decoration: BoxDecoration(
@@ -305,18 +256,7 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    p.imagemAsset,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: const Color(0xFFD2C3D9),
-                      child: const Icon(
-                        Icons.person,
-                        size: 64,
-                        color: AppColors.principalEscura,
-                      ),
-                    ),
-                  ),
+                  _construirImagem(p.imagemAsset),
 
                   Positioned(
                     top: 12,
@@ -485,6 +425,10 @@ class _ObrasEReformasState extends State<ObrasEReformas> {
         ),
       ),
     );
+  }
+
+  Widget _construirImagem(String src) {
+    return AppImage(src, height: 300, fit: BoxFit.cover);
   }
 
   Widget _construirBadge({required Widget child, required Color cor}) {

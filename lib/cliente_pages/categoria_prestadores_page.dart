@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../components/app_header.dart';
 import '../core/app_colors.dart';
 import '../models/prestador_model.dart';
+import '../models/prestador_cadastro_request.dart';
 import '../providers/favoritos_provider.dart';
 import '../data/prestadores_data.dart';
+import '../components/app_image.dart';
+import '../services/prestador_service.dart';
+import 'perfil_prestador_page.dart';
 import 'solicitacao_page.dart';
 
 String emojiDaCategoria(String categoria) {
@@ -37,11 +42,42 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
   int _paginaAtual = 0;
   late List<Prestador> _prestadores;
 
+  Widget _construirImagem(String src) {
+    return AppImage(src, fit: BoxFit.cover);
+  }
+
   @override
   void initState() {
     super.initState();
     _prestadores = prestadoresDaCategoria(widget.categoria);
+    _carregarDaApi();
     _pageController = PageController(viewportFraction: 0.78, initialPage: 0);
+  }
+
+  Future<void> _carregarDaApi() async {
+    try {
+      final lista = await PrestadorService.listarPorCategoria(widget.categoria);
+      if (!mounted || lista.isEmpty) return;
+
+      setState(() {
+        _prestadores = lista.map((r) => _paraPrestadorMock(r)).toList();
+      });
+    } catch (_) {}
+  }
+
+  Prestador _paraPrestadorMock(PrestadorResponse r) {
+    final fotosUrls = r.fotos.map((f) => f.url).toList();
+    return Prestador(
+      id: r.id,
+      nome: r.nome,
+      especialidade: r.especialidade ?? '',
+      descricao: r.descricao ?? '',
+      imagemAsset: fotosUrls.isNotEmpty ? fotosUrls.first : '',
+      avaliacao: r.avaliacao,
+      distancia: '',
+      categoria: widget.categoria,
+      fotosUrls: fotosUrls,
+    );
   }
 
   @override
@@ -77,7 +113,7 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
         child: SafeArea(
           child: Column(
             children: [
-              _construirHeader(),
+              AppHeader(showBack: true, emoji: emojiDaCategoria(widget.categoria), title: widget.categoria),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -204,53 +240,6 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
     );
   }
 
-  Widget _construirHeader() {
-    return Stack(
-      children: [
-        Image.asset(
-          'assets/header.png',
-          width: double.infinity,
-          fit: BoxFit.fitWidth,
-        ),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: AppColors.branco,
-                      size: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  emojiDaCategoria(widget.categoria),
-                  style: const TextStyle(fontSize: 20),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  widget.categoria,
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.destaque,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _construirCard(Prestador p) {
     final isFav = context.watch<FavoritosProvider>().isFavorito(p.nome);
 
@@ -276,18 +265,7 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    p.imagemAsset,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: const Color(0xFFD2C3D9),
-                      child: const Icon(
-                        Icons.person,
-                        size: 64,
-                        color: AppColors.principalEscura,
-                      ),
-                    ),
-                  ),
+                  _construirImagem(p.imagemAsset),
                   Positioned(
                     top: 12,
                     left: 12,
@@ -301,7 +279,7 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
                                   color: AppColors.principalEscura, size: 13),
                               const SizedBox(width: 3),
                               Text(
-                                p.avaliacao.toString(),
+                                p.avaliacao == 0.0 ? '-' : p.avaliacao.toString(),
                                 style: GoogleFonts.plusJakartaSans(
                                   color: AppColors.principalEscura,
                                   fontSize: 12,
@@ -312,30 +290,32 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
                           ),
                           cor: AppColors.destaque,
                         ),
-                        const SizedBox(width: 6),
-                        _construirBadge(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.location_on_outlined,
-                                color: AppColors.principalEscura
-                                    .withOpacity(0.8),
-                                size: 13,
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                p.distancia,
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: AppColors.principalEscura,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
+                        if (p.distancia.isNotEmpty) ...[
+                          const SizedBox(width: 6),
+                          _construirBadge(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.location_on_outlined,
+                                  color: AppColors.principalEscura
+                                      .withOpacity(0.8),
+                                  size: 13,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 3),
+                                Text(
+                                  p.distancia,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: AppColors.principalEscura,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            cor: AppColors.branco,
                           ),
-                          cor: AppColors.branco,
-                        ),
+                        ],
                       ],
                     ),
                   ),
@@ -363,15 +343,16 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
                             ),
                           ),
                         ),
-                        Text(
-                          p.especialidade,
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.principal,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
+                        if (p.especialidade.isNotEmpty)
+                          Text(
+                            p.especialidade,
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.principal,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 6),
@@ -396,7 +377,7 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const SolicitacaoPage(),
+                              builder: (_) => SolicitacaoPage(prestador: p),
                             ),
                           );
                         },
@@ -424,7 +405,12 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
                           child: _construirBotaoSecundario(
                             icone: Icons.person_outline,
                             label: 'Ver perfil',
-                            onTap: () {},
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PerfilPrestadorPage(prestador: p),
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 10),

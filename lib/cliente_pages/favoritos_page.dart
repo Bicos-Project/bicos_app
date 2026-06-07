@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../components/app_header.dart';
 import '../core/app_colors.dart';
 import '../models/prestador_model.dart';
 import '../providers/favoritos_provider.dart';
+import '../components/app_image.dart';
 import 'categoria_prestadores_page.dart';
 
 class FavoritosPage extends StatefulWidget {
@@ -42,7 +44,15 @@ class _FavoritosPageState extends State<FavoritosPage> {
       body: SafeArea(
         child: Column(
           children: [
-            _construirHeader(),
+            AppHeader(
+              trailing: Row(
+                children: [
+                  const Icon(Icons.favorite, color: AppColors.destaque, size: 22),
+                  const SizedBox(width: 8),
+                  Text('Favoritos', style: GoogleFonts.plusJakartaSans(color: AppColors.branco, fontSize: 16, fontWeight: FontWeight.w700)),
+                ],
+              ),
+            ),
             const SizedBox(height: 12),
             Expanded(
               child: favoritos.isEmpty
@@ -109,43 +119,6 @@ class _FavoritosPageState extends State<FavoritosPage> {
     );
   }
 
-  Widget _construirHeader() {
-    return Stack(
-      children: [
-        Image.asset('assets/header.png', fit: BoxFit.fill),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset('assets/bicos_logo2.png', height: 32),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.favorite,
-                      color: AppColors.destaque,
-                      size: 22,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Favoritos',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.branco,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 class _FavoritoItem extends StatefulWidget {
@@ -199,18 +172,10 @@ class _FavoritoItemState extends State<_FavoritoItem> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
+                    child: AppImage(
                       widget.prestador.imagemAsset,
                       width: 52,
                       height: 52,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                        width: 52,
-                        height: 52,
-                        color: AppColors.principalEscura,
-                        child: const Icon(Icons.person,
-                            color: AppColors.branco, size: 28),
-                      ),
                     ),
                   ),
                   const SizedBox(width: 14),

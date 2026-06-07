@@ -16,26 +16,35 @@ class MainNavigationPrestador extends StatefulWidget {
 
 class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
   int _currentIndex = 1;
+  final _homeKey = GlobalKey<HomePagePrestadorState>();
 
-  final List<Widget> _pages = [
-    const VisualizacaoChats(), // index 0 → FAVORITOS
-    const HomePagePrestador(title: 'HOME',), // index 1 → HOME
-    const MenuApp(), // index 2 → MENU
-    const HistoricoServicoRealizadoPage(), // index 3 → HISTÓRICO
-    const AndamentoServicoPage(),
+  late final List<Widget> _pages;
 
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const VisualizacaoChats(), // index 0 → CHATS
+      HomePagePrestador(key: _homeKey, title: 'HOME'), // index 1 → HOME
+      const MenuApp(), // index 2 → MENU
+      const HistoricoServicoRealizadoPage(), // index 3 → HISTÓRICO
+      const AndamentoServicoPage(),
+    ];
+  }
+
+  void _onTabSelected(int index) {
+    setState(() => _currentIndex = index);
+    if (index == 1) {
+      _homeKey.currentState?.reloadData();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
       backgroundColor: AppColors.principal,
-
-      // ── BODY: mostra a página ativa ──────────────────────────
       body: IndexedStack(index: _currentIndex, children: _pages),
-
-      // ── BOTTOM NAV ───────────────────────────────────────────
       bottomNavigationBar: SafeArea(
         child: _construirBottomNav(),
       ),
@@ -52,12 +61,9 @@ class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
         height: 80,
         child: Stack(
           children: [
-            // Fundo (imagem)
             Positioned.fill(
               child: Image.asset('assets/bottom.png', fit: BoxFit.cover),
             ),
-
-            // Itens por cima
             Positioned.fill(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -104,7 +110,7 @@ class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
     final bool ativo = _currentIndex == index;
 
     return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
+      onTap: () => _onTabSelected(index),
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
@@ -119,7 +125,6 @@ class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Tenta carregar o asset; se não existir, usa ícone Material
             _iconeNav(iconeAsset, icone, ativo),
             if (ativo) ...[
               const SizedBox(width: 6),
@@ -140,7 +145,6 @@ class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
   }
 
   Widget _iconeNav(String asset, IconData fallback, bool ativo) {
-    // Usa Image.asset se o arquivo existir, com tratamento de erro via errorBuilder
     return Image.asset(
       asset,
       width: 22,

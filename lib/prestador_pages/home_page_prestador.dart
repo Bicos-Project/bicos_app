@@ -1,31 +1,71 @@
+import 'package:bicos_app/components/app_header.dart';
 import 'package:bicos_app/core/app_colors.dart';
+import 'package:bicos_app/models/solicitacao_response.dart';
 import 'package:bicos_app/prestador_pages/visualizacao_proposta_prestador.dart';
+import 'package:bicos_app/services/solicitacao_service.dart';
+import 'package:bicos_app/storage/auth_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:bicos_app/prestador_pages/ver_mais_solicitacoes.dart';
-
 
 class HomePagePrestador extends StatefulWidget {
   const HomePagePrestador({super.key, required this.title});
   final String title;
 
   @override
-  State<HomePagePrestador> createState() => _HomePagePrestadorState();
+  HomePagePrestadorState createState() => HomePagePrestadorState();
 }
 
-class _HomePagePrestadorState extends State<HomePagePrestador> {
-  // Simulação de dados das solicitações
-  final List<Map<String, String>> solicitacoes = [
-    {
-      "nome": "Ana Paula Silva",
-      "servico": "Troca de cabos",
-      "horario": "09:00",
-    },
-    {
-      "nome": "Vera Azevedo",
-      "servico": "Ajuste de chuveiro",
-      "horario": "09:00",
-    },
-  ];
+class HomePagePrestadorState extends State<HomePagePrestador> {
+  List<SolicitacaoResponse> _solicitacoes = [];
+  bool _isLoading = true;
+  String? _erro;
+  int? _prestadorId;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarSolicitacoes();
+  }
+
+  Future<void> reloadData() async {
+    setState(() {
+      _isLoading = true;
+      _erro = null;
+    });
+    await _carregarSolicitacoes();
+  }
+
+  Future<void> _carregarSolicitacoes() async {
+    final userData = await AuthStorage.getUserData();
+    _prestadorId = userData['id'] as int?;
+
+    if (_prestadorId == null) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _erro = 'ID do prestador não encontrado. Faça login novamente.';
+        });
+      }
+      return;
+    }
+
+    try {
+      final list = await SolicitacaoService.listarPorPrestador(_prestadorId!);
+      if (mounted) setState(() => _solicitacoes = list);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _erro = 'Erro ao carregar solicitações: $e');
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  int get _novasCount =>
+      _solicitacoes.where((s) => s.status == 'orcamento').length;
+
+  List<SolicitacaoResponse> get _servicosEmAndamento =>
+      _solicitacoes.where((s) => s.status == 'em_andamento' || s.status == 'esperando_pagamento').toList();
 
   @override
   Widget build(BuildContext context) {
@@ -33,100 +73,139 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
       child: Scaffold(
         backgroundColor: AppColors.principal,
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: _construirHeader(),
+          preferredSize: const Size.fromHeight(76),
+          child: const AppHeader(showAvatar: true),
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Olá, Usuário!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Text(
-                'Veja como andam os seus bicos.',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
-              ),
-              const SizedBox(height: 24),
-
-              // Card de Avaliação (Verde limão)
-              _buildRatingCard(),
-
-              const SizedBox(height: 32),
-              _buildSectionTitle('Solicitações recebidas', '2 novas'),
-              const SizedBox(height: 16),
-
-              // Lista de Solicitações
-              ...solicitacoes.map((s) => _buildSolicitacaoCard(s)).toList(),
-              _buildVerMaisSolicitacoesButton(),
-              const SizedBox(height: 20),
-              _buildSectionTitle('Serviços em andamento', '1 em progresso'),
-              const SizedBox(height: 24),
-              _buildJobStatusCard(),
-
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _construirHeader() {
-    return Stack(
-      children: [
-        Image.asset('assets/header.png', fit: BoxFit.fill),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+        body: RefreshIndicator(
+          onRefresh: reloadData,
+          color: AppColors.destaque,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(30.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset('assets/bicos_logo2.png', height: 32),
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: ClipOval(
-                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
+                const Text(
+                  'Olá, Usuário!',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                const Text(
+                  'Veja como andam os seus bicos.',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+                if (_prestadorId != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      'Seu ID: $_prestadorId',
+                      style: const TextStyle(
+                        color: Colors.white38,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 24),
+                _buildRatingCard(),
+                const SizedBox(height: 32),
+                _buildSectionTitle(
+                  'Solicitações recebidas',
+                  _isLoading ? '...' : '$_novasCount novas',
+                ),
+                const SizedBox(height: 16),
+                if (_isLoading)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: CircularProgressIndicator(color: AppColors.destaque),
+                    ),
+                  )
+                else if (_erro != null)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        const Icon(Icons.error_outline,
+                            color: Colors.redAccent, size: 32),
+                        const SizedBox(height: 8),
+                        Text(
+                          _erro!,
+                          style: const TextStyle(
+                            color: Colors.redAccent,
+                            fontSize: 13,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  )
+                else if (_solicitacoes.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text(
+                      'Nenhuma solicitação recebida',
+                      style: TextStyle(
+                        color: AppColors.branco.withOpacity(0.5),
+                        fontSize: 14,
+                      ),
+                    ),
+                  )
+                else
+                  ..._solicitacoes
+                      .where((s) => s.status == 'orcamento')
+                      .take(3)
+                      .map((s) => _buildSolicitacaoCard(s)),
+                if (_solicitacoes.where((s) => s.status == 'orcamento').length > 3)
+                  _buildVerMaisSolicitacoesButton(),
+                const SizedBox(height: 20),
+                _buildSectionTitle(
+                  'Serviços em andamento',
+                  '${_servicosEmAndamento.length} em andamento',
+                ),
+                const SizedBox(height: 24),
+                if (_servicosEmAndamento.isEmpty)
+                  _buildEmptyEmAndamento()
+                else
+                  ..._servicosEmAndamento.map(_buildServicoAndamentoCard),
               ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildRatingCard() {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFFDFF481),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: const [
-              Icon(Icons.stars, color: Color(0xFF5C2B67), size: 20),
-              SizedBox(width: 8),
-              Text(
-                'AVALIAÇÃO',
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: const [
+                  Icon(Icons.stars, color: Color(0xFF5C2B67), size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    'AVALIAÇÃO',
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const Text(
+                '4.9',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
             ],
-          ),
-          const Text(
-            '4.9',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -160,7 +239,7 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
     );
   }
 
-  Widget _buildSolicitacaoCard(Map<String, String> data) {
+  Widget _buildSolicitacaoCard(SolicitacaoResponse s) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(20),
@@ -170,33 +249,48 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
       ),
       child: Row(
         children: [
-          const CircleAvatar(backgroundColor: Colors.grey, radius: 20),
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: AppColors.principalEscura.withOpacity(0.1),
+            child: Text(
+              s.clienteNome.isNotEmpty
+                  ? s.clienteNome[0].toUpperCase()
+                  : '?',
+              style: const TextStyle(
+                color: AppColors.principalEscura,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  data['nome']!,
+                  s.clienteNome,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
                 Text(
-                  '${data['servico']} • 4h • Amanhã às ${data['horario']}',
+                  s.anuncioTitulo ?? s.descricao,
                   style: const TextStyle(color: Colors.grey, fontSize: 11),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-
           ElevatedButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => VisualizacaoPropostaPage(),
+                  builder: (context) =>
+                      VisualizacaoPropostaPage(solicitacao: s),
                 ),
               );
             },
@@ -221,7 +315,6 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
         height: 30,
         child: ElevatedButton(
           onPressed: () {
-            // Lógica para ver mais detalhes do serviço em andamento
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -245,35 +338,48 @@ class _HomePagePrestadorState extends State<HomePagePrestador> {
     );
   }
 
-  Widget _buildJobStatusCard() {
+  Widget _buildEmptyEmAndamento() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Text(
+        'Nenhum serviço em andamento',
+        style: TextStyle(
+          color: AppColors.branco.withOpacity(0.5),
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServicoAndamentoCard(SolicitacaoResponse s) {
+    final progress = s.status == 'esperando_pagamento' ? 0.75 : 0.5;
     return Container(
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Manutenção Elétrica',
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Text(
+            s.anuncioTitulo ?? s.descricao,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          const Text(
-            'Cliente: Marcos Oliveira • R. das Palmeiras, 452',
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+          const SizedBox(height: 4),
+          Text(
+            'Cliente: ${s.clienteNome}',
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
           ),
           const SizedBox(height: 12),
           LinearProgressIndicator(
-            value: 0.7,
-            backgroundColor: Colors.grey[200],
+            value: progress,
+            backgroundColor: Colors.grey,
             color: const Color(0xFFDFF481),
-            borderRadius: BorderRadius.circular(10),
           ),
         ],
       ),
     );
   }
-
 }

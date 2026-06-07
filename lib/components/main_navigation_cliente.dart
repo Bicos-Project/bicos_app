@@ -15,13 +15,27 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 1;
+  final _historicoKey = GlobalKey<HistoricoServicosState>();
 
-  final List<Widget> _pages = [
-    const FavoritosPage(), // index 0 → FAVORITOS
-    const HomePage(), // index 1 → HOME
-    const MenuApp(), // index 2 → MENU
-    const HistoricoServicos(), // index 3 → HISTÓRICO
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const FavoritosPage(), // index 0 → FAVORITOS
+      const HomePage(), // index 1 → HOME
+      const MenuApp(), // index 2 → MENU
+      HistoricoServicos(key: _historicoKey), // index 3 → HISTÓRICO
+    ];
+  }
+
+  void _onTabSelected(int index) {
+    setState(() => _currentIndex = index);
+    if (index == 3) {
+      _historicoKey.currentState?.reloadData();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +114,7 @@ class _MainNavigationState extends State<MainNavigation> {
     final bool ativo = _currentIndex == index;
 
     return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
+      onTap: () => _onTabSelected(index),
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),

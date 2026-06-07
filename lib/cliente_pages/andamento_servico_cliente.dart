@@ -1,5 +1,6 @@
 import 'package:bicos_app/cliente_pages/avaliacao.dart';
 import 'package:bicos_app/cliente_pages/chat_cliente.dart';
+import 'package:bicos_app/components/app_header.dart';
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 
@@ -11,8 +12,8 @@ class AndamentoServicoClientePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.principal,
       appBar: PreferredSize(
-        preferredSize: const Size(double.infinity, 80),
-        child: _construirHeader(),
+        preferredSize: const Size.fromHeight(76),
+        child: const AppHeader(showAvatar: true),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
@@ -35,36 +36,6 @@ class AndamentoServicoClientePage extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _construirHeader() {
-    return Stack(
-      children: [
-        Image.asset(
-          'assets/header.png',
-          fit: BoxFit.fill,
-        ),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset('assets/bicos_logo2.png', height: 32),
-                Container(
-                  width: 40,
-                  height: 40,
-                  child: ClipOval(
-                    child: Image.asset('assets/perfil.png', fit: BoxFit.cover),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 
