@@ -132,7 +132,7 @@ class _AndamentoServicoClientePageState
                   ),
                 ),
                 Text(
-                  _solicitacao.anuncioTitulo ?? _solicitacao.descricao,
+                  _solicitacao.descricao,
                   style: const TextStyle(color: Colors.grey, fontSize: 11),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

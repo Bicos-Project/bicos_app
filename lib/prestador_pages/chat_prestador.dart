@@ -22,6 +22,7 @@ class _ChatVendedorState extends State<ChatVendedor> {
 
   List<MensagemResponse> _mensagens = [];
   bool _isLoading = true;
+  bool _aceitou = false;
   int? _userId;
   String? _perfil;
 
@@ -80,13 +81,32 @@ class _ChatVendedorState extends State<ChatVendedor> {
   Future<void> _aceitar() async {
     try {
       await SolicitacaoService.avancarStatus(widget.solicitacao.id);
-      if (mounted) Navigator.pop(context);
+      if (!mounted) return;
+      setState(() => _aceitou = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Orçamento aceito! Serviço em andamento'),
+          backgroundColor: Color(0xFF4CAF50),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
     } catch (_) {}
   }
 
   Future<void> _recusar() async {
     try {
       await SolicitacaoService.recusar(widget.solicitacao.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Orçamento recusado! Solicitação negada'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      await Future.delayed(const Duration(seconds: 2));
       if (mounted) Navigator.pop(context);
     } catch (_) {}
   }
@@ -118,7 +138,7 @@ class _ChatVendedorState extends State<ChatVendedor> {
           child: Column(
             children: [
               _construirHeader(context),
-              if (widget.solicitacao.status == 'orcamento')
+              if (widget.solicitacao.status == 'orcamento' && !_aceitou)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
                   child: Row(
@@ -199,35 +219,13 @@ class _ChatVendedorState extends State<ChatVendedor> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      widget.solicitacao.anuncioTitulo ?? 'Serviço',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.fundoPreto.withOpacity(0.8),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Container(
-                      width: 7,
-                      height: 7,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF4CAF50),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Solicitação #${widget.solicitacao.id}',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.fundoPreto.withOpacity(0.8),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                Text(
+                  widget.solicitacao.categoriaNome ?? '',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.fundoPreto.withOpacity(0.8),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ],
             ),

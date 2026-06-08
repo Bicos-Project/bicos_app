@@ -11,6 +11,8 @@ class ApiClient {
 
   static Dio get instance => _dio;
 
+  static String getBaseUrl() => _dio.options.baseUrl;
+
   static void configure() {
     _dio.interceptors.add(
       InterceptorsWrapper(

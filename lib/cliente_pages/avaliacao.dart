@@ -5,7 +5,7 @@ import 'package:bicos_app/services/avaliacao_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:bicos_app/components/app_header.dart';
-import 'package:bicos_app/components/main_navigation_cliente.dart';
+import 'package:bicos_app/shared_pages/servico_concluido.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
 
@@ -77,7 +77,7 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const MainNavigation()),
+          MaterialPageRoute(builder: (_) => const ServicoConcluidoPage()),
           (route) => false,
         );
       }

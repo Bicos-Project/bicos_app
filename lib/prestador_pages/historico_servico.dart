@@ -147,7 +147,7 @@ class _HistoricoServicoRealizadoPageState
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      s.anuncioTitulo ?? s.descricao,
+                      s.descricao,
                       style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                     if (s.dataSolicitacao != null) ...[

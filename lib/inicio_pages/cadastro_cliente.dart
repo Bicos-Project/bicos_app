@@ -6,6 +6,7 @@ import '../components/main_navigation_cliente.dart';
 import '../models/cliente_model.dart';
 import '../models/endereco_model.dart';
 import '../services/cliente_service.dart';
+import '../services/geocoding_service.dart';
 import '../providers/auth_provider.dart';
 
 class Cadastro extends StatefulWidget {
@@ -17,17 +18,25 @@ class Cadastro extends StatefulWidget {
 
 class _CadastroState extends State<Cadastro> {
   bool _senhaOculta = true;
+  bool _confirmarSenhaOculta = true;
   bool _isLoading = false;
+  bool _isBuscandoCep = false;
   final _formKey = GlobalKey<FormState>();
 
   final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
   final _cpfController = TextEditingController();
   final _senhaController = TextEditingController();
+  final _confirmarSenhaController = TextEditingController();
   final _cepController = TextEditingController();
   final _logradouroController = TextEditingController();
   final _numeroController = TextEditingController();
   final _complementoController = TextEditingController();
+  final _bairroController = TextEditingController();
+  final _cidadeController = TextEditingController();
+  final _estadoController = TextEditingController();
+  final _latitudeController = TextEditingController();
+  final _longitudeController = TextEditingController();
 
   @override
   void dispose() {
@@ -35,11 +44,54 @@ class _CadastroState extends State<Cadastro> {
     _emailController.dispose();
     _cpfController.dispose();
     _senhaController.dispose();
+    _confirmarSenhaController.dispose();
     _cepController.dispose();
     _logradouroController.dispose();
     _numeroController.dispose();
     _complementoController.dispose();
+    _bairroController.dispose();
+    _cidadeController.dispose();
+    _estadoController.dispose();
+    _latitudeController.dispose();
+    _longitudeController.dispose();
     super.dispose();
+  }
+
+  Future<void> _buscarEndereco() async {
+    final cep = _cepController.text.trim();
+    if (cep.isEmpty) return;
+    setState(() => _isBuscandoCep = true);
+    try {
+      final viaCep = await GeocodingService.buscarCep(cep);
+      if (viaCep != null && mounted) {
+        _logradouroController.text = viaCep.logradouro;
+        _bairroController.text = viaCep.bairro;
+        _cidadeController.text = viaCep.cidade;
+        _estadoController.text = viaCep.estado;
+        final coord = await GeocodingService.geocode(
+          viaCep.logradouro,
+          viaCep.bairro,
+          viaCep.cidade,
+          viaCep.estado,
+        );
+        if (coord != null && mounted) {
+          _latitudeController.text = coord.latitude.toStringAsFixed(4);
+          _longitudeController.text = coord.longitude.toStringAsFixed(4);
+        }
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('CEP não encontrado')),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao buscar endereço')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isBuscandoCep = false);
+    }
   }
 
   Future<void> _cadastrar() async {
@@ -58,6 +110,11 @@ class _CadastroState extends State<Cadastro> {
           logradouro: _logradouroController.text.trim(),
           numero: _numeroController.text.trim(),
           complemento: _complementoController.text.trim(),
+          bairro: _bairroController.text.trim(),
+          cidade: _cidadeController.text.trim(),
+          estado: _estadoController.text.trim(),
+          latitude: double.tryParse(_latitudeController.text.trim()),
+          longitude: double.tryParse(_longitudeController.text.trim()),
         ),
       );
 
@@ -178,20 +235,64 @@ class _CadastroState extends State<Cadastro> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  _construirLabel('CEP'),
+                  _construirLabel('Confirmar Senha'),
                   _construirCampoTexto(
-                    dica: 'Ex: 00000-000',
-                    icone: Icons.home_outlined,
-                    controller: _cepController,
+                    dica: '••••••••••••',
+                    icone: Icons.lock_outline,
+                    esSenha: true,
+                    controller: _confirmarSenhaController,
+                    confirmarSenha: true,
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'CEP obrigatório';
+                      if (v == null || v.isEmpty) return 'Confirme sua senha';
+                      if (v != _senhaController.text) return 'Senhas não conferem';
                       return null;
                     },
                   ),
                   const SizedBox(height: 16),
+                  _construirLabel('CEP'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _construirCampoTexto(
+                          dica: 'Ex: 00000-000',
+                          icone: Icons.home_outlined,
+                          controller: _cepController,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) return 'CEP obrigatório';
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _isBuscandoCep ? null : _buscarEndereco,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.destaque,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                          ),
+                          child: _isBuscandoCep
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.principalEscura,
+                                  ),
+                                )
+                              : const Icon(Icons.search, color: AppColors.principalEscura),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
                   _construirLabel('Logradouro'),
                   _construirCampoTexto(
-                    dica: 'Ex: Rua dos engenhos',
+                    dica: 'Preenchido automaticamente pelo CEP',
                     icone: Icons.home_outlined,
                     controller: _logradouroController,
                   ),
@@ -223,6 +324,83 @@ class _CadastroState extends State<Cadastro> {
                               dica: 'Ex: CASA A',
                               icone: Icons.home_outlined,
                               controller: _complementoController,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _construirLabel('Bairro'),
+                            _construirCampoTexto(
+                              dica: 'Preenchido automaticamente',
+                              icone: Icons.location_city,
+                              controller: _bairroController,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _construirLabel('Cidade'),
+                            _construirCampoTexto(
+                              dica: 'Preenchido automaticamente',
+                              icone: Icons.location_city,
+                              controller: _cidadeController,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _construirLabel('Estado'),
+                            _construirCampoTexto(
+                              dica: 'UF',
+                              icone: Icons.map,
+                              controller: _estadoController,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _construirLabel('Latitude'),
+                            _construirCampoTexto(
+                              dica: 'Preenchida automaticamente',
+                              icone: Icons.explore_outlined,
+                              controller: _latitudeController,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _construirLabel('Longitude'),
+                            _construirCampoTexto(
+                              dica: 'Preenchida automaticamente',
+                              icone: Icons.explore_outlined,
+                              controller: _longitudeController,
                             ),
                           ],
                         ),
@@ -314,12 +492,15 @@ class _CadastroState extends State<Cadastro> {
     required String dica,
     required IconData icone,
     bool esSenha = false,
+    bool confirmarSenha = false,
     required TextEditingController controller,
     String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
-      obscureText: esSenha ? _senhaOculta : false,
+      obscureText: esSenha
+          ? (confirmarSenha ? _confirmarSenhaOculta : _senhaOculta)
+          : false,
       style: const TextStyle(color: AppColors.principalEscura),
       validator: validator,
       decoration: InputDecoration(
@@ -332,14 +513,18 @@ class _CadastroState extends State<Cadastro> {
         suffixIcon: esSenha
             ? IconButton(
                 icon: Icon(
-                  _senhaOculta
+                  (confirmarSenha ? _confirmarSenhaOculta : _senhaOculta)
                       ? Icons.visibility_off_outlined
                       : Icons.visibility_outlined,
                   color: AppColors.principalEscura,
                 ),
                 onPressed: () {
                   setState(() {
-                    _senhaOculta = !_senhaOculta;
+                    if (confirmarSenha) {
+                      _confirmarSenhaOculta = !_confirmarSenhaOculta;
+                    } else {
+                      _senhaOculta = !_senhaOculta;
+                    }
                   });
                 },
               )

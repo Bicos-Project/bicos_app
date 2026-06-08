@@ -3,8 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../components/main_navigation_prestador.dart';
+import '../models/categoria_model.dart';
 import '../models/prestador_cadastro_request.dart';
 import '../models/endereco_model.dart';
+import '../services/categoria_service.dart';
 import '../services/prestador_service.dart';
 import '../services/geocoding_service.dart';
 import '../providers/auth_provider.dart';
@@ -21,6 +23,9 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
   bool _senhaOculta = true;
   bool _isLoading = false;
   bool _isBuscandoCep = false;
+  bool _isLoadingCategorias = true;
+  int? _categoriaSelecionada;
+  List<Categoria> _categorias = [];
   final _formKey = GlobalKey<FormState>();
 
   final _nomeController = TextEditingController();
@@ -38,6 +43,26 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
   final _estadoController = TextEditingController();
   final _latitudeController = TextEditingController();
   final _longitudeController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarCategorias();
+  }
+
+  Future<void> _carregarCategorias() async {
+    try {
+      final categorias = await CategoriaService.listar();
+      if (mounted) {
+        setState(() {
+          _categorias = categorias;
+          _isLoadingCategorias = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _isLoadingCategorias = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -109,6 +134,7 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
         senha: _senhaController.text,
         descricao: _descricaoController.text.trim(),
         especialidade: _especialidadeController.text.trim(),
+        categoriaId: _categoriaSelecionada,
         endereco: EnderecoRequest(
           cep: _cepController.text.trim(),
           logradouro: _logradouroController.text.trim(),
@@ -252,6 +278,54 @@ class _CadastroPrestadorPageState extends State<CadastroPrestadorPage> {
                     icone: Icons.work_outline,
                     controller: _especialidadeController,
                   ),
+                  const SizedBox(height: 16),
+                  _construirLabel('Categoria'),
+                  _isLoadingCategorias
+                      ? const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.branco,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: _categorias.map((c) {
+                            final selected = _categoriaSelecionada == c.id;
+                            return GestureDetector(
+                              onTap: () => setState(
+                                  () => _categoriaSelecionada = c.id),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 18, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: selected
+                                      ? AppColors.destaque
+                                      : const Color(0xFFD2C3D9),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Text(
+                                  c.nome,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: selected
+                                        ? AppColors.principalEscura
+                                        : AppColors.principalEscura
+                                            .withOpacity(0.7),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
                   const SizedBox(height: 16),
                   _construirLabel('CEP'),
                   Row(

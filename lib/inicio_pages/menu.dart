@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../services/avatar_service.dart';
+import '../prestador_pages/editar_perfil_publico.dart';
 import 'perfil.dart';
 import 'escolha_perfil.dart';
 
@@ -151,11 +152,36 @@ class MenuApp extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 16),
+              Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  if (auth.perfil != 'PRESTADOR') {
+                    return const SizedBox.shrink();
+                  }
+                  return Column(
+                    children: [
+                      _construirBotaoMenu(
+                        icone: Icons.edit_outlined,
+                        titulo: 'Editar Perfil Público',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const EditarPerfilPublicoPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  );
+                },
+              ),
               _construirBotaoMenu(
                 icone: Icons.settings_outlined,
                 titulo: 'Configurações',
                 onTap: () {
-                  print("Clicou em Configurações");
+                  // Configurações
                 },
               ),
               const SizedBox(height: 16),

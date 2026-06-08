@@ -6,6 +6,7 @@ class Prestador {
   final String imagemAsset;
   final double avaliacao;
   final String distancia;
+  final double distanciaKm;
   final String categoria;
   final List<String> fotosUrls;
 
@@ -17,6 +18,7 @@ class Prestador {
     required this.imagemAsset,
     required this.avaliacao,
     required this.distancia,
+    this.distanciaKm = double.infinity,
     required this.categoria,
     this.fotosUrls = const [],
   });

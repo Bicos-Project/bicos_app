@@ -14,7 +14,7 @@ class MainNavigationPrestador extends StatefulWidget {
 }
 
 class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
-  int _currentIndex = 1;
+  int _currentIndex = 0;
   final _homeKey = GlobalKey<HomePagePrestadorState>();
 
   late final List<Widget> _pages;
@@ -23,16 +23,16 @@ class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
   void initState() {
     super.initState();
     _pages = [
-      const VisualizacaoChats(), // index 0 → CHATS
-      HomePagePrestador(key: _homeKey, title: 'HOME'), // index 1 → HOME
-      const MenuApp(), // index 2 → MENU
-      const HistoricoServicoRealizadoPage(), // index 3 → HISTÓRICO
+      HomePagePrestador(key: _homeKey, title: 'HOME'), // index 0 → HOME
+      const VisualizacaoChats(), // index 1 → CHATS
+      const HistoricoServicoRealizadoPage(), // index 2 → HISTÓRICO
+      const MenuApp(), // index 3 → MENU
     ];
   }
 
   void _onTabSelected(int index) {
     setState(() => _currentIndex = index);
-    if (index == 1) {
+    if (index == 0) {
       _homeKey.currentState?.reloadData();
     }
   }
@@ -68,27 +68,27 @@ class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
                 children: [
                   _construirItem(
                     index: 0,
-                    iconeAsset: 'assets/chat.png',
-                    icone: Icons.message,
-                    label: 'CHATS',
-                  ),
-                  _construirItem(
-                    index: 1,
                     iconeAsset: 'assets/home.png',
                     icone: Icons.home_outlined,
                     label: 'HOME',
                   ),
                   _construirItem(
-                    index: 2,
-                    iconeAsset: 'assets/menu.png',
-                    icone: Icons.menu,
-                    label: 'MENU',
+                    index: 1,
+                    iconeAsset: 'assets/chat.png',
+                    icone: Icons.message,
+                    label: 'CHATS',
                   ),
                   _construirItem(
-                    index: 3,
+                    index: 2,
                     iconeAsset: 'assets/historico.png',
                     icone: Icons.history,
                     label: 'HISTÓRICO',
+                  ),
+                  _construirItem(
+                    index: 3,
+                    iconeAsset: 'assets/menu.png',
+                    icone: Icons.menu,
+                    label: 'MENU',
                   ),
                 ],
               ),

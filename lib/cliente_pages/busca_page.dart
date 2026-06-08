@@ -5,10 +5,11 @@ import 'package:provider/provider.dart';
 import '../components/app_header.dart';
 import '../core/app_colors.dart';
 import '../models/prestador_model.dart';
+import '../models/prestador_cadastro_request.dart';
 import '../providers/favoritos_provider.dart';
-import '../data/prestadores_data.dart';
 import '../components/app_image.dart';
-import 'categoria_prestadores_page.dart';
+import '../services/prestador_service.dart';
+import 'perfil_prestador_page.dart';
 
 class BuscaPage extends StatefulWidget {
   final String query;
@@ -21,6 +22,7 @@ class BuscaPage extends StatefulWidget {
 class _BuscaPageState extends State<BuscaPage> {
   late final TextEditingController _controller;
   List<Prestador> _resultados = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -35,30 +37,39 @@ class _BuscaPageState extends State<BuscaPage> {
     super.dispose();
   }
 
-  void _buscar(String q) {
-    final termo = q.trim().toLowerCase();
+  Future<void> _buscar(String q) async {
+    final termo = q.trim();
     if (termo.isEmpty) {
       setState(() => _resultados = []);
       return;
     }
 
-    final todos = todosPrestadores();
-    final mockResults = todos.where((p) {
-      return p.nome.toLowerCase().contains(termo) ||
-          p.especialidade.toLowerCase().contains(termo) ||
-          p.categoria.toLowerCase().contains(termo);
-    }).toList();
-
-    setState(() => _resultados = mockResults);
+    setState(() => _isLoading = true);
+    try {
+      final lista = await PrestadorService.buscar(termo);
+      if (!mounted) return;
+      setState(() {
+        _resultados = lista.map((r) => _paraPrestador(r)).toList();
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+    }
   }
 
-  void _navegarCategoria(String categoria) {
-    HapticFeedback.lightImpact();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => CategoriaPrestadoresPage(categoria: categoria),
-      ),
+  Prestador _paraPrestador(PrestadorResponse r) {
+    final fotosUrls = r.fotos.map((f) => f.url).toList();
+    return Prestador(
+      id: r.id,
+      nome: r.nome,
+      especialidade: r.especialidade ?? '',
+      descricao: r.descricao ?? '',
+      imagemAsset: fotosUrls.isNotEmpty ? fotosUrls.first : '',
+      avaliacao: r.avaliacao,
+      distancia: '',
+      categoria: '',
+      fotosUrls: fotosUrls,
     );
   }
 
@@ -83,6 +94,12 @@ class _BuscaPageState extends State<BuscaPage> {
   }
 
   Widget _construirResultados() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.destaque),
+      );
+    }
+
     if (_resultados.isEmpty) {
       return Center(
         child: Column(
@@ -121,7 +138,15 @@ class _BuscaPageState extends State<BuscaPage> {
           child: MouseRegion(
             cursor: SystemMouseCursors.click,
             child: GestureDetector(
-              onTap: () => _navegarCategoria(p.categoria),
+              onTap: () {
+                HapticFeedback.lightImpact();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PerfilPrestadorPage(prestador: p),
+                  ),
+                );
+              },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 decoration: BoxDecoration(
@@ -155,33 +180,21 @@ class _BuscaPageState extends State<BuscaPage> {
                             ),
                           ),
                           const SizedBox(height: 3),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: AppColors.principal.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  p.especialidade,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.principal,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppColors.principal.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              p.especialidade,
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.principal,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
                               ),
-                              const SizedBox(width: 6),
-                              Text(
-                                p.categoria,
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: AppColors.principalEscura.withOpacity(0.4),
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ],
                       ),

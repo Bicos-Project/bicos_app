@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import '../components/app_header.dart';
 import '../core/app_colors.dart';
 import '../models/prestador_model.dart';
 import '../providers/auth_provider.dart';
-import '../services/anuncio_service.dart';
 import '../services/solicitacao_service.dart';
 import 'orcamento_page.dart';
 
@@ -19,33 +19,39 @@ class SolicitacaoPage extends StatefulWidget {
 
 class _SolicitacaoPageState extends State<SolicitacaoPage> {
   final _descricaoController = TextEditingController();
+  final _valorController = TextEditingController();
+  DateTime? _dataEstimada;
+  final _dataFormatador = DateFormat('dd/MM/yyyy');
   bool _isLoading = false;
-  bool _anuncioLoading = true;
   String? _error;
-  int? _anuncioId;
 
   @override
-  void initState() {
-    super.initState();
-    _carregarAnuncio();
+  void dispose() {
+    _descricaoController.dispose();
+    _valorController.dispose();
+    super.dispose();
   }
 
-  Future<void> _carregarAnuncio() async {
-    final prestadorId = widget.prestador.id;
-    if (prestadorId == null) {
-      setState(() => _anuncioLoading = false);
-      return;
-    }
-    try {
-      final anuncios = await AnuncioService.listarPorPrestador(prestadorId);
-      if (anuncios.isNotEmpty && mounted) {
-        setState(() => _anuncioId = anuncios.first.id);
-      } else if (mounted) {
-        setState(() => _error = 'Este prestador ainda não possui anúncio disponível.');
-      }
-    } catch (_) {
-    } finally {
-      if (mounted) setState(() => _anuncioLoading = false);
+  Future<void> _escolherData() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _dataEstimada ?? DateTime.now().add(const Duration(days: 7)),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.destaque,
+              onPrimary: AppColors.principalEscura,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() => _dataEstimada = picked);
     }
   }
 
@@ -54,8 +60,8 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
       setState(() => _error = 'Descreva o serviço que precisa.');
       return;
     }
-    if (_anuncioId == null) {
-      setState(() => _error = 'Prestador não possui anúncio disponível.');
+    if (widget.prestador.id == null) {
+      setState(() => _error = 'Prestador inválido.');
       return;
     }
 
@@ -66,10 +72,14 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
 
     try {
       final auth = context.read<AuthProvider>();
+      final valor = double.tryParse(
+          _valorController.text.trim().replaceAll(',', '.'));
       final solicitacao = await SolicitacaoService.criar(
         clienteId: auth.userId!,
-        anuncioId: _anuncioId!,
+        prestadorId: widget.prestador.id!,
         descricao: _descricaoController.text.trim(),
+        dataEstimada: _dataEstimada,
+        valorSugerido: valor,
       );
       if (!mounted) return;
       Navigator.pushReplacement(
@@ -86,12 +96,6 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
-  }
-
-  @override
-  void dispose() {
-    _descricaoController.dispose();
-    super.dispose();
   }
 
   @override
@@ -161,6 +165,87 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "DATA ESTIMADA",
+                    style: TextStyle(
+                      color: AppColors.branco,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: GestureDetector(
+                    onTap: _escolherData,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: AppColors.branco.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _dataEstimada != null
+                                ? _dataFormatador.format(_dataEstimada!)
+                                : 'Selecionar data...',
+                            style: TextStyle(
+                              color: _dataEstimada != null
+                                  ? AppColors.preto
+                                  : AppColors.preto.withOpacity(0.4),
+                              fontSize: 15,
+                            ),
+                          ),
+                          const Icon(Icons.calendar_today,
+                              color: AppColors.principal, size: 20),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "VALOR SUGERIDO (opcional)",
+                    style: TextStyle(
+                      color: AppColors.branco,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.branco.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: TextField(
+                      controller: _valorController,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      style: const TextStyle(color: AppColors.preto),
+                      decoration: const InputDecoration(
+                        prefixText: 'R\$ ',
+                        prefixStyle: TextStyle(color: AppColors.preto),
+                        hintText: "Ex: 150,00",
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ),
                 if (_error != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 12, left: 24, right: 24),
@@ -176,7 +261,7 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
-                      onPressed: _isLoading || _anuncioLoading ? null : _enviarSolicitacao,
+                      onPressed: _isLoading ? null : _enviarSolicitacao,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.destaque,
                         shape: RoundedRectangleBorder(
@@ -192,11 +277,9 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
                               color: AppColors.preto,
                             ),
                           )
-                        : Text(
-                            _anuncioId == null && !_anuncioLoading
-                                ? 'Indisponível'
-                                : 'Pedir Orçamento',
-                            style: const TextStyle(
+                        : const Text(
+                            'Pedir Orçamento',
+                            style: TextStyle(
                               color: AppColors.preto,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,

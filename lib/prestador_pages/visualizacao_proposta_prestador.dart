@@ -34,7 +34,7 @@ class VisualizacaoPropostaPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      solicitacao.anuncioTitulo ?? 'Serviço',
+                      solicitacao.descricao,
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,

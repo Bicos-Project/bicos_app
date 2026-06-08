@@ -11,8 +11,13 @@ import '../providers/favoritos_provider.dart';
 import '../components/app_image.dart';
 import '../models/categoria_model.dart';
 import '../models/prestador_model.dart';
+import '../models/solicitacao_response.dart';
+import '../services/solicitacao_service.dart';
+import '../storage/auth_storage.dart';
+import 'avaliacao.dart';
 import 'busca_page.dart';
 import 'categoria_prestadores_page.dart';
+import 'perfil_prestador_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,6 +34,8 @@ class _HomePageState extends State<HomePage>
 
   List<Categoria> _categorias = [];
   bool _isLoading = true;
+  List<SolicitacaoResponse> _avaliacoesPendentes = [];
+  bool _avaliacoesPendentesLoaded = false;
 
   static const List<Map<String, dynamic>> _categoriasFallback = [
     {'nome': 'Beleza e Estética', 'imagem': 'assets/beleza.png', 'emoji': '💅'},
@@ -55,6 +62,7 @@ class _HomePageState extends State<HomePage>
     ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
     _animController.forward();
     _carregarCategorias();
+    _carregarAvaliacoesPendentes();
   }
 
   Future<void> _carregarCategorias() async {
@@ -68,6 +76,25 @@ class _HomePageState extends State<HomePage>
     } catch (_) {
       if (!mounted) return;
       setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _carregarAvaliacoesPendentes() async {
+    try {
+      final userData = await AuthStorage.getUserData();
+      final clienteId = userData['id'] as int?;
+      if (clienteId == null) return;
+      final list = await SolicitacaoService.listarPorCliente(clienteId);
+      if (!mounted) return;
+      setState(() {
+        _avaliacoesPendentes = list
+            .where((s) => s.status == 'finalizado' && !s.clienteAvaliou)
+            .toList();
+        _avaliacoesPendentesLoaded = true;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _avaliacoesPendentesLoaded = true);
     }
   }
 
@@ -109,7 +136,12 @@ class _HomePageState extends State<HomePage>
                     _construirSaudacao(),
                     const SizedBox(height: 20),
                     _construirBuscaRapida(),
-                    const SizedBox(height: 24),
+                    if (_avaliacoesPendentesLoaded &&
+                        _avaliacoesPendentes.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      _construirAvaliacoesPendentesCard(),
+                      const SizedBox(height: 24),
+                    ],
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
@@ -147,6 +179,158 @@ class _HomePageState extends State<HomePage>
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _construirAvaliacoesPendentesCard() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.destaque.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.destaque.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.rate_review, color: AppColors.destaque, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Avaliações Pendentes',
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.branco,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Você tem ${_avaliacoesPendentes.length} serviço${_avaliacoesPendentes.length == 1 ? '' : 's'} para avaliar',
+            style: GoogleFonts.plusJakartaSans(
+              color: AppColors.branco.withValues(alpha: 0.6),
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ..._avaliacoesPendentes.map(_construirAvaliacaoItem),
+        ],
+      ),
+    );
+  }
+
+  Widget _construirAvaliacaoItem(SolicitacaoResponse s) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.branco.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: AppColors.destaque.withValues(alpha: 0.2),
+            child: Text(
+              s.prestadorNome.isNotEmpty
+                  ? s.prestadorNome[0].toUpperCase()
+                  : '?',
+              style: const TextStyle(
+                color: AppColors.destaque,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  s.prestadorNome,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.branco,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  s.descricao,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.branco.withValues(alpha: 0.5),
+                    fontSize: 11,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            height: 32,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AvaliacaoServico(solicitacao: s),
+                  ),
+                ).then((_) => _carregarAvaliacoesPendentes());
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.destaque,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text(
+                'Avaliar',
+                style: TextStyle(
+                  color: AppColors.principalEscura,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          SizedBox(
+            height: 32,
+            child: OutlinedButton(
+              onPressed: () {
+                setState(() {
+                  _avaliacoesPendentes.remove(s);
+                });
+              },
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.branco, width: 1),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text(
+                'Pular',
+                style: TextStyle(
+                  color: AppColors.branco,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -320,7 +504,15 @@ class _HomePageState extends State<HomePage>
         children: favs.map((p) {
           return _FavoritoCard(
             prestador: p,
-            onTap: () => _navegarCategoria(p.categoria),
+            onTap: () {
+              HapticFeedback.lightImpact();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PerfilPrestadorPage(prestador: p),
+                ),
+              );
+            },
           );
         }).toList(),
       ),

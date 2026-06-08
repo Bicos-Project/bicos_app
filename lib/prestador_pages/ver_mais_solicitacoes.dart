@@ -181,7 +181,7 @@ class _VerMaisSolicitacoesPageState extends State<VerMaisSolicitacoesPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        s.anuncioTitulo ?? s.descricao,
+                        s.descricao,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           color: Colors.grey[700],

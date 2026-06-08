@@ -9,6 +9,7 @@ class PrestadorCadastroRequest {
   final String? telefone;
   final String? descricao;
   final String? especialidade;
+  final int? categoriaId;
   final EnderecoRequest? endereco;
 
   PrestadorCadastroRequest({
@@ -19,6 +20,7 @@ class PrestadorCadastroRequest {
     this.telefone,
     this.descricao,
     this.especialidade,
+    this.categoriaId,
     this.endereco,
   });
 
@@ -31,6 +33,7 @@ class PrestadorCadastroRequest {
         if (descricao != null && descricao!.isNotEmpty) 'descricao': descricao,
         if (especialidade != null && especialidade!.isNotEmpty)
           'especialidade': especialidade,
+        if (categoriaId != null) 'categoriaId': categoriaId,
         if (endereco != null) 'endereco': endereco!.toJson(),
       };
 }
@@ -44,6 +47,7 @@ class PrestadorResponse {
   final String? descricao;
   final String? especialidade;
   final double avaliacao;
+  final Map<String, dynamic>? categoria;
   final EnderecoResponse? endereco;
   final List<PrestadorFoto> fotos;
 
@@ -56,9 +60,12 @@ class PrestadorResponse {
     this.descricao,
     this.especialidade,
     this.avaliacao = 0.0,
+    this.categoria,
     this.endereco,
     this.fotos = const [],
   });
+
+  String get categoriaNome => categoria?['nome'] as String? ?? '';
 
   factory PrestadorResponse.fromJson(Map<String, dynamic> json) {
     return PrestadorResponse(
@@ -70,6 +77,7 @@ class PrestadorResponse {
       descricao: json['descricao'],
       especialidade: json['especialidade'],
       avaliacao: (json['avaliacao'] as num?)?.toDouble() ?? 0.0,
+      categoria: json['categoria'] as Map<String, dynamic>?,
       endereco: json['endereco'] != null
           ? EnderecoResponse.fromJson(json['endereco'])
           : null,

@@ -9,7 +9,10 @@ import 'package:bicos_app/services/avaliacao_service.dart';
 import 'package:bicos_app/services/solicitacao_service.dart';
 import 'package:bicos_app/storage/auth_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:bicos_app/prestador_pages/editar_perfil_publico.dart';
 import 'package:bicos_app/prestador_pages/ver_mais_solicitacoes.dart';
+import 'package:bicos_app/prestador_pages/avaliacao_prestador.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePagePrestador extends StatefulWidget {
   const HomePagePrestador({super.key, required this.title});
@@ -79,6 +82,9 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
   List<SolicitacaoResponse> get _servicosEmAndamento =>
       _solicitacoes.where((s) => s.status == 'em_andamento' || s.status == 'esperando_pagamento').toList();
 
+  List<SolicitacaoResponse> get _avaliacoesPendentes =>
+      _solicitacoes.where((s) => s.status == 'finalizado' && !s.prestadorAvaliou).toList();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -120,9 +126,14 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
                       ),
                     ),
                   ),
+                const SizedBox(height: 20),
+                _buildEditarPerfilCard(),
                 const SizedBox(height: 24),
                 _buildRatingCard(),
-                const SizedBox(height: 32),
+                if (_avaliacoesPendentes.isNotEmpty) ...[
+                  _buildAvaliacoesPendentesCard(),
+                ],
+                const SizedBox(height: 48),
                 _buildSectionTitle(
                   'Solicitações recebidas',
                   _isLoading ? '...' : '$_novasCount novas',
@@ -185,6 +196,227 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvaliacoesPendentesCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.destaque.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.destaque.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.rate_review, color: AppColors.destaque, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Avaliações Pendentes',
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.branco,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Você tem ${_avaliacoesPendentes.length} cliente${_avaliacoesPendentes.length == 1 ? '' : 's'} para avaliar',
+            style: GoogleFonts.plusJakartaSans(
+              color: AppColors.branco.withValues(alpha: 0.6),
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ..._avaliacoesPendentes.map(_buildAvaliacaoItem),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvaliacaoItem(SolicitacaoResponse s) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.branco.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: AppColors.destaque.withValues(alpha: 0.2),
+            child: Text(
+              s.clienteNome.isNotEmpty
+                  ? s.clienteNome[0].toUpperCase()
+                  : '?',
+              style: const TextStyle(
+                color: AppColors.destaque,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  s.clienteNome,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.branco,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  s.descricao,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.branco.withValues(alpha: 0.5),
+                    fontSize: 11,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            height: 32,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        AvaliacaoPrestadorPage(solicitacao: s),
+                  ),
+                ).then((_) => reloadData());
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.destaque,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text(
+                'Avaliar',
+                style: TextStyle(
+                  color: AppColors.principalEscura,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          SizedBox(
+            height: 32,
+            child: OutlinedButton(
+              onPressed: () {
+                setState(() {
+                  _solicitacoes.remove(s);
+                });
+              },
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.branco, width: 1),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text(
+                'Pular',
+                style: TextStyle(
+                  color: AppColors.branco,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEditarPerfilCard() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const EditarPerfilPublicoPage(),
+          ),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.destaque.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColors.destaque.withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.destaque.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.edit_outlined,
+                color: AppColors.destaque,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Editar Perfil Público',
+                    style: TextStyle(
+                      color: AppColors.branco,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Atualize suas informações e categoria',
+                    style: TextStyle(
+                      color: Colors.white60,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: AppColors.destaque.withOpacity(0.5),
+            ),
+          ],
         ),
       ),
     );
@@ -316,7 +548,7 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
                   ),
                 ),
                 Text(
-                  s.anuncioTitulo ?? s.descricao,
+                  s.descricao,
                   style: const TextStyle(color: Colors.grey, fontSize: 11),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -413,7 +645,7 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              s.anuncioTitulo ?? s.descricao,
+              s.descricao,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),

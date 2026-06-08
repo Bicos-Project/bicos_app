@@ -4,17 +4,22 @@ import 'api_client.dart';
 class SolicitacaoService {
   static Future<SolicitacaoResponse> criar({
     required int clienteId,
-    required int anuncioId,
+    required int prestadorId,
     required String descricao,
     String? dataSolicitacao,
+    DateTime? dataEstimada,
+    double? valorSugerido,
   }) async {
     final response = await ApiClient.instance.post(
       '/solicitacoes',
       data: {
         'clienteId': clienteId,
-        'anuncioId': anuncioId,
+        'prestadorId': prestadorId,
         'descricao': descricao,
         if (dataSolicitacao != null) 'dataSolicitacao': dataSolicitacao,
+        if (dataEstimada != null)
+          'dataEstimada': dataEstimada.toIso8601String().split('T')[0],
+        if (valorSugerido != null) 'valorSugerido': valorSugerido,
       },
     );
     return SolicitacaoResponse.fromJson(response.data);
@@ -65,5 +70,9 @@ class SolicitacaoService {
       '/solicitacoes/$id/recusar',
     );
     return SolicitacaoResponse.fromJson(response.data);
+  }
+
+  static Future<SolicitacaoResponse> cancelar(int id) async {
+    return recusar(id);
   }
 }

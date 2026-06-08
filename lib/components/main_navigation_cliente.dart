@@ -14,8 +14,8 @@ class MainNavigation extends StatefulWidget {
 }
 
 class _MainNavigationState extends State<MainNavigation> {
-  int _currentIndex = 1;
-  final _historicoKey = GlobalKey<HistoricoServicosState>();
+  int _currentIndex = 0;
+  final _solicitacoesKey = GlobalKey<HistoricoServicosState>();
 
   late final List<Widget> _pages;
 
@@ -23,17 +23,17 @@ class _MainNavigationState extends State<MainNavigation> {
   void initState() {
     super.initState();
     _pages = [
-      const FavoritosPage(), // index 0 → FAVORITOS
-      const HomePage(), // index 1 → HOME
-      const MenuApp(), // index 2 → MENU
-      HistoricoServicos(key: _historicoKey), // index 3 → HISTÓRICO
+      const HomePage(), // index 0 → HOME
+      const FavoritosPage(), // index 1 → FAVORITOS
+      HistoricoServicos(key: _solicitacoesKey), // index 2 → SOLICITAÇÕES
+      const MenuApp(), // index 3 → MENU
     ];
   }
 
   void _onTabSelected(int index) {
     setState(() => _currentIndex = index);
-    if (index == 3) {
-      _historicoKey.currentState?.reloadData();
+    if (index == 2) {
+      _solicitacoesKey.currentState?.reloadData();
     }
   }
 
@@ -74,27 +74,27 @@ class _MainNavigationState extends State<MainNavigation> {
                 children: [
                   _construirItem(
                     index: 0,
-                    iconeAsset: 'assets/coracao.png',
-                    icone: Icons.favorite_border,
-                    label: 'FAVORITOS',
-                  ),
-                  _construirItem(
-                    index: 1,
                     iconeAsset: 'assets/home.png',
                     icone: Icons.home_outlined,
                     label: 'HOME',
                   ),
                   _construirItem(
+                    index: 1,
+                    iconeAsset: 'assets/coracao.png',
+                    icone: Icons.favorite_border,
+                    label: 'FAVORITOS',
+                  ),
+                  _construirItem(
                     index: 2,
-                    iconeAsset: 'assets/menu.png',
-                    icone: Icons.menu,
-                    label: 'MENU',
+                    iconeAsset: 'assets/historico.png',
+                    icone: Icons.history,
+                    label: 'SOLICITAÇÕES',
                   ),
                   _construirItem(
                     index: 3,
-                    iconeAsset: 'assets/historico.png',
-                    icone: Icons.history,
-                    label: 'HISTÓRICO',
+                    iconeAsset: 'assets/menu.png',
+                    icone: Icons.menu,
+                    label: 'MENU',
                   ),
                 ],
               ),

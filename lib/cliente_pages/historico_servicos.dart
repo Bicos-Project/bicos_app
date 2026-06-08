@@ -141,7 +141,7 @@ class HistoricoServicosState extends State<HistoricoServicos> {
                   prestador: Prestador(
                     id: s.prestadorId,
                     nome: s.prestadorNome,
-                    especialidade: s.anuncioTitulo ?? '',
+                    especialidade: '',
                     descricao: s.descricao,
                     imagemAsset: '',
                     avaliacao: 0,
@@ -191,7 +191,7 @@ class HistoricoServicosState extends State<HistoricoServicos> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      s.anuncioTitulo ?? s.descricao,
+                      s.descricao,
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: Colors.grey[600],

@@ -29,6 +29,23 @@ class AuthProvider extends ChangeNotifier {
   String? get error => _error;
   bool get isAuthenticated => _token != null;
 
+  Future<bool> init() async {
+    final token = await AuthStorage.getToken();
+    if (token == null) return false;
+
+    final userData = await AuthStorage.getUserData();
+    if (userData['id'] == null) return false;
+
+    _token = token;
+    _userId = userData['id'] as int?;
+    _nome = userData['nome'] as String?;
+    _email = userData['email'] as String?;
+    _perfil = userData['perfil'] as String?;
+    _avatarPath = await AvatarService.getSavedPath();
+    notifyListeners();
+    return true;
+  }
+
   Future<void> loginCliente(String email, String senha) async {
     _isLoading = true;
     _error = null;

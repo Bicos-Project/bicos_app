@@ -3,7 +3,7 @@ import 'package:bicos_app/services/avaliacao_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../components/app_header.dart';
-import '../components/main_navigation_prestador.dart';
+import '../shared_pages/servico_concluido.dart';
 import '../core/app_colors.dart';
 
 class AvaliacaoPrestadorPage extends StatefulWidget {
@@ -44,7 +44,7 @@ class _AvaliacaoPrestadorPageState extends State<AvaliacaoPrestadorPage> {
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const MainNavigationPrestador()),
+          MaterialPageRoute(builder: (_) => const ServicoConcluidoPage(isPrestador: true)),
           (route) => false,
         );
       }

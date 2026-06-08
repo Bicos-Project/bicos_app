@@ -173,35 +173,13 @@ class _ChatClientePageState extends State<ChatClientePage> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      widget.solicitacao.anuncioTitulo ?? 'Serviço',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.fundoPreto.withOpacity(0.8),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Container(
-                      width: 7,
-                      height: 7,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF4CAF50),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Solicitação #${widget.solicitacao.id}',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.fundoPreto.withOpacity(0.8),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                Text(
+                  widget.solicitacao.categoriaNome ?? '',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.fundoPreto.withOpacity(0.8),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ],
             ),

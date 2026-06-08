@@ -60,6 +60,18 @@ class PrestadorService {
     return PrestadorResponse.fromJson(response.data);
   }
 
+  static Future<List<PrestadorResponse>> buscar(String q) async {
+    final response = await ApiClient.instance.get(
+      '/prestadores/search',
+      queryParameters: {'q': q},
+    );
+    final list = response.data as List;
+    return list
+        .map((e) =>
+            PrestadorResponse.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
   static Future<List<PrestadorProximoResponse>> listarProximos({
     required double lat,
     required double lng,

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,9 +7,11 @@ import '../components/app_header.dart';
 import '../core/app_colors.dart';
 import '../models/prestador_model.dart';
 import '../models/prestador_cadastro_request.dart';
+import '../providers/auth_provider.dart';
 import '../providers/favoritos_provider.dart';
 import '../data/prestadores_data.dart';
 import '../components/app_image.dart';
+import '../services/cliente_service.dart';
 import '../services/prestador_service.dart';
 import 'perfil_prestador_page.dart';
 import 'solicitacao_page.dart';
@@ -41,6 +44,8 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
   late PageController _pageController;
   int _paginaAtual = 0;
   late List<Prestador> _prestadores;
+  double? _clienteLat;
+  double? _clienteLng;
 
   Widget _construirImagem(String src) {
     return AppImage(src, fit: BoxFit.cover);
@@ -50,9 +55,41 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
   void initState() {
     super.initState();
     _prestadores = prestadoresDaCategoria(widget.categoria);
+    _carregarCoordenadasCliente();
     _carregarDaApi();
     _pageController = PageController(viewportFraction: 0.78, initialPage: 0);
   }
+
+  Future<void> _carregarCoordenadasCliente() async {
+    try {
+      final auth = context.read<AuthProvider>();
+      if (auth.userId == null) return;
+      final cliente = await ClienteService.buscarPorId(auth.userId!);
+      if (!mounted) return;
+      if (cliente.endereco != null &&
+          cliente.endereco!.latitude != null &&
+          cliente.endereco!.longitude != null) {
+        setState(() {
+          _clienteLat = cliente.endereco!.latitude;
+          _clienteLng = cliente.endereco!.longitude;
+        });
+        _recalcularDistancias();
+      }
+    } catch (_) {}
+  }
+
+  void _recalcularDistancias() {
+    if (_respostasApi.isEmpty) return;
+    final ids = _respostasApi.map((r) => r.id).toSet();
+    var updated = _prestadores.map((p) {
+      final idx = _respostasApi.indexWhere((r) => r.id == p.id);
+      return idx >= 0 ? _paraPrestadorMock(_respostasApi[idx]) : p;
+    }).toList();
+    updated.sort((a, b) => a.distanciaKm.compareTo(b.distanciaKm));
+    if (mounted) setState(() => _prestadores = updated);
+  }
+
+  List<PrestadorResponse> _respostasApi = [];
 
   Future<void> _carregarDaApi() async {
     try {
@@ -60,13 +97,52 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
       if (!mounted || lista.isEmpty) return;
 
       setState(() {
+        _respostasApi = lista;
         _prestadores = lista.map((r) => _paraPrestadorMock(r)).toList();
+        _prestadores.sort((a, b) => a.distanciaKm.compareTo(b.distanciaKm));
       });
+      if (_clienteLat != null && _clienteLng != null) {
+        _recalcularDistancias();
+      }
     } catch (_) {}
+  }
+
+  double _calcularDistanciaKm(double lat1, double lng1, double lat2, double lng2) {
+    const R = 6371;
+    final dLat = _toRad(lat2 - lat1);
+    final dLng = _toRad(lng2 - lng1);
+    final a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_toRad(lat1)) * cos(_toRad(lat2)) * sin(dLng / 2) * sin(dLng / 2);
+    final c = 2 * asin(sqrt(a));
+    return R * c;
+  }
+
+  double _toRad(double deg) => deg * (pi / 180);
+
+  String _formatarDistancia(double km) {
+    if (km < 1) {
+      final m = (km * 1000).round();
+      return '${m}m';
+    }
+    return '${km.toStringAsFixed(1)} km';
   }
 
   Prestador _paraPrestadorMock(PrestadorResponse r) {
     final fotosUrls = r.fotos.map((f) => f.url).toList();
+    final cat = r.categoriaNome.isNotEmpty ? r.categoriaNome : widget.categoria;
+
+    String distancia = '';
+    double distanciaKm = double.infinity;
+    if (_clienteLat != null && _clienteLng != null &&
+        r.endereco?.latitude != null && r.endereco?.longitude != null) {
+      final km = _calcularDistanciaKm(
+        _clienteLat!, _clienteLng!,
+        r.endereco!.latitude!, r.endereco!.longitude!,
+      );
+      distancia = _formatarDistancia(km);
+      distanciaKm = km;
+    }
+
     return Prestador(
       id: r.id,
       nome: r.nome,
@@ -74,8 +150,9 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
       descricao: r.descricao ?? '',
       imagemAsset: fotosUrls.isNotEmpty ? fotosUrls.first : '',
       avaliacao: r.avaliacao,
-      distancia: '',
-      categoria: widget.categoria,
+      distancia: distancia,
+      distanciaKm: distanciaKm,
+      categoria: cat,
       fotosUrls: fotosUrls,
     );
   }

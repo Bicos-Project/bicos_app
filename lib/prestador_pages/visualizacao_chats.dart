@@ -120,7 +120,7 @@ class _VisualizacaoChatsState extends State<VisualizacaoChats> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      s.anuncioTitulo ?? s.descricao,
+                      s.descricao,
                       style: TextStyle(
                         color: AppColors.branco.withOpacity(0.7),
                         fontSize: 13,
