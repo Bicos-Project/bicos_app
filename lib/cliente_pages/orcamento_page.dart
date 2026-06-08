@@ -4,6 +4,8 @@ import '../components/app_image.dart';
 import '../core/app_colors.dart';
 import '../models/prestador_model.dart';
 import '../models/solicitacao_response.dart';
+import 'andamento_servico_cliente.dart';
+import 'chat_cliente.dart';
 
 class OrcamentoPage extends StatelessWidget {
   final SolicitacaoResponse solicitacao;
@@ -22,28 +24,25 @@ class OrcamentoPage extends StatelessWidget {
         : prestador.imagemAsset;
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF1E0A3C),
-              Color(0xFF2D1B69),
-              Color(0xFF1A1A3E),
-            ],
-          ),
-        ),
-        child: SafeArea(
+      backgroundColor: AppColors.principal,
+      body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AppHeader(
-                  title: 'Solicitação Enviada',
-                  emoji: '✅',
-                ),
+                const AppHeader(showBack: true, centerTitle: true, title: 'Solicitação'),
                 const SizedBox(height: 12),
+                const Padding(
+                  padding: EdgeInsets.only(left: 20, bottom: 4),
+                  child: Text(
+                    '✅ Solicitação Enviada',
+                    style: TextStyle(
+                      color: AppColors.branco,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
@@ -274,6 +273,63 @@ class OrcamentoPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 Center(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ChatClientePage(solicitacao: solicitacao),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                    label: const Text('Conversar com prestador'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.destaque,
+                      foregroundColor: const Color(0xFF425F23),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                if (solicitacao.status == 'em_andamento' ||
+                    solicitacao.status == 'esperando_pagamento' ||
+                    solicitacao.status == 'finalizado') ...[
+                  const SizedBox(height: 12),
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AndamentoServicoClientePage(
+                                solicitacao: solicitacao),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.track_changes_outlined, size: 18),
+                      label: const Text('Acompanhar serviço'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.branco,
+                        foregroundColor: AppColors.principal,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 24),
+                Center(
                   child: Text(
                     "ID da solicitação: #${solicitacao.id}",
                     style: TextStyle(
@@ -285,7 +341,6 @@ class OrcamentoPage extends StatelessWidget {
                 const SizedBox(height: 30),
               ],
             ),
-          ),
         ),
       ),
     );

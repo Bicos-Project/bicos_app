@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../components/app_header.dart';
+import '../components/mapa_home.dart';
 import '../core/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../services/categoria_service.dart';
@@ -131,6 +132,9 @@ class _HomePageState extends State<HomePage>
                             ),
                           )
                         : _construirGridCategorias(),
+                    const SizedBox(height: 16),
+                    const MapaHome(),
+                    const SizedBox(height: 16),
                     if (context.watch<FavoritosProvider>().favoritos.isNotEmpty) ...[
                       _construirHeaderFavoritos(),
                       const SizedBox(height: 14),

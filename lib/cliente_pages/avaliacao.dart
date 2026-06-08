@@ -1,16 +1,18 @@
 import 'dart:math' as math;
 
+import 'package:bicos_app/models/solicitacao_response.dart';
+import 'package:bicos_app/services/avaliacao_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:bicos_app/cliente_pages/slide_prestador_reformas.dart';
 import 'package:bicos_app/components/app_header.dart';
+import 'package:bicos_app/components/main_navigation_cliente.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
 
 class AvaliacaoServico extends StatefulWidget {
-  final String nomePrestador;
+  final SolicitacaoResponse solicitacao;
 
-  const AvaliacaoServico({super.key, this.nomePrestador = 'Mariana'});
+  const AvaliacaoServico({super.key, required this.solicitacao});
 
   @override
   State<AvaliacaoServico> createState() => _AvaliacaoServicoState();
@@ -18,8 +20,9 @@ class AvaliacaoServico extends StatefulWidget {
 
 class _AvaliacaoServicoState extends State<AvaliacaoServico> {
   int _estrelasSelecionadas = 0;
-  int _estrelasPressPreview = 0; // preview ao arrastar o dedo
+  int _estrelasPressPreview = 0;
   final TextEditingController _observacoesController = TextEditingController();
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -56,6 +59,38 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
   int get _estrelasExibidas =>
       _estrelasPressPreview > 0 ? _estrelasPressPreview : _estrelasSelecionadas;
 
+  Future<void> _enviar() async {
+    if (_estrelasSelecionadas == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione uma nota')),
+      );
+      return;
+    }
+    setState(() => _isSubmitting = true);
+    try {
+      await AvaliacaoService.criar(
+        nota: _estrelasSelecionadas,
+        comentario: _observacoesController.text.trim(),
+        solicitacaoId: widget.solicitacao.id,
+        avaliadorTipo: 'CLIENTE',
+      );
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const MainNavigation()),
+          (route) => false,
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao enviar avaliação')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +103,6 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
         child: SafeArea(
           child: Column(
             children: [
-
-              // ── CONTEÚDO ─────────────────────────────────────
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
@@ -79,36 +112,22 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Card "Serviço finalizado!"
                       _construirCardFinalizado(),
-
                       const SizedBox(height: 28),
-
-                      // Estrelas interativas
                       Center(child: _construirEstrelas()),
-
                       const SizedBox(height: 28),
-
-                      // Label
                       Text(
-                        'Descreva a sua experiência com ${widget.nomePrestador}:',
+                        'Descreva a sua experiência com ${widget.solicitacao.prestadorNome}:',
                         style: GoogleFonts.plusJakartaSans(
                           color: AppColors.branco,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
-                      // Campo de texto
                       _construirCampoTexto(),
-
                       const SizedBox(height: 32),
-
-                      // Botão enviar
                       _construirBotaoEnviar(),
-
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -120,8 +139,6 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
       ),
     );
   }
-
-  // ── WIDGETS ──────────────────────────────────────────────────────────
 
   Widget _construirCardFinalizado() {
     return Container(
@@ -140,7 +157,6 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
       ),
       child: Column(
         children: [
-          // Círculo verde com checkmark
           Container(
             width: 64,
             height: 64,
@@ -154,9 +170,7 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
               size: 36,
             ),
           ),
-
           const SizedBox(height: 16),
-
           Text(
             'Serviço finalizado!',
             style: GoogleFonts.plusJakartaSans(
@@ -247,7 +261,7 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
           fontSize: 14,
         ),
         decoration: InputDecoration(
-          hintText: 'Escreva aqui suas obeservações...',
+          hintText: 'Escreva aqui suas observações...',
           hintStyle: GoogleFonts.plusJakartaSans(
             color: AppColors.principalEscura.withOpacity(0.4),
             fontSize: 14,
@@ -266,12 +280,7 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
         width: double.infinity,
         height: 56,
         child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ObrasEReformas()),
-            );
-          },
+          onPressed: _isSubmitting ? null : _enviar,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF3D1F52),
             shape: RoundedRectangleBorder(
@@ -279,21 +288,28 @@ class _AvaliacaoServicoState extends State<AvaliacaoServico> {
             ),
             elevation: 4,
           ),
-          child: Text(
-            'Enviar avaliação',
-            style: GoogleFonts.plusJakartaSans(
-              color: AppColors.branco,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          child: _isSubmitting
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    color: AppColors.branco,
+                    strokeWidth: 2,
+                  ),
+                )
+              : Text(
+                  'Enviar avaliação',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.branco,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
         ),
       ),
     );
   }
 }
-
-// ── ESTRELA ARREDONDADA via CustomPainter ─────────────────────────────────
 
 class _EstrelaSVG extends StatelessWidget {
   final bool preenchida;
@@ -319,7 +335,6 @@ class _EstrelaPainter extends CustomPainter {
     final cx = size.width / 2;
     final cy = size.height / 2;
     final outerR = size.width / 2 * 0.92;
-    // innerR maior = pontas mais curtas e arredondadas
     final innerR = outerR * 0.52;
     const pontas = 5;
     const angOffset = -math.pi / 2;
@@ -331,7 +346,6 @@ class _EstrelaPainter extends CustomPainter {
       pontos.add(Offset(cx + r * math.cos(ang), cy + r * math.sin(ang)));
     }
 
-    // Curvas quadráticas com controlPoint mais "puxado" para arredondar
     final path = Path();
     for (int i = 0; i < pontos.length; i++) {
       final curr = pontos[i];
@@ -350,7 +364,6 @@ class _EstrelaPainter extends CustomPainter {
     path.close();
 
     if (preenchida) {
-      // Glow amarelo por baixo
       canvas.drawPath(
         path,
         Paint()
@@ -358,7 +371,6 @@ class _EstrelaPainter extends CustomPainter {
           ..style = PaintingStyle.fill
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
       );
-      // Preenchimento sólido com gradiente
       canvas.drawPath(
         path,
         Paint()

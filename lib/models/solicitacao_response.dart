@@ -9,6 +9,10 @@ class SolicitacaoResponse {
   final String? anuncioTitulo;
   final int prestadorId;
   final String prestadorNome;
+  final bool prestadorConfirmouPagamento;
+  final bool clienteConfirmouPagamento;
+  final bool clienteAvaliou;
+  final bool prestadorAvaliou;
 
   SolicitacaoResponse({
     required this.id,
@@ -21,6 +25,10 @@ class SolicitacaoResponse {
     this.anuncioTitulo,
     required this.prestadorId,
     required this.prestadorNome,
+    this.prestadorConfirmouPagamento = false,
+    this.clienteConfirmouPagamento = false,
+    this.clienteAvaliou = false,
+    this.prestadorAvaliou = false,
   });
 
   factory SolicitacaoResponse.fromJson(Map<String, dynamic> json) {
@@ -35,6 +43,12 @@ class SolicitacaoResponse {
       anuncioTitulo: json['anuncioTitulo'],
       prestadorId: json['prestadorId'] ?? 0,
       prestadorNome: json['prestadorNome'] ?? '',
+      prestadorConfirmouPagamento:
+          json['prestadorConfirmouPagamento'] ?? false,
+      clienteConfirmouPagamento:
+          json['clienteConfirmouPagamento'] ?? false,
+      clienteAvaliou: json['clienteAvaliou'] ?? false,
+      prestadorAvaliou: json['prestadorAvaliou'] ?? false,
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import '../models/prestador_cadastro_request.dart';
+import '../models/prestador_proximo_response.dart';
 import 'api_client.dart';
 
 class PrestadorService {
@@ -57,5 +58,25 @@ class PrestadorService {
       '/prestadores/$prestadorId/fotos/$fotoId',
     );
     return PrestadorResponse.fromJson(response.data);
+  }
+
+  static Future<List<PrestadorProximoResponse>> listarProximos({
+    required double lat,
+    required double lng,
+    double raioKm = 50,
+  }) async {
+    final response = await ApiClient.instance.get(
+      '/prestadores/proximos',
+      queryParameters: {
+        'lat': lat,
+        'lng': lng,
+        'raioKm': raioKm,
+      },
+    );
+    final list = response.data as List;
+    return list
+        .map((e) =>
+            PrestadorProximoResponse.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 }

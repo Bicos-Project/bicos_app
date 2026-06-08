@@ -1,7 +1,11 @@
 import 'package:bicos_app/components/app_header.dart';
 import 'package:bicos_app/core/app_colors.dart';
+import 'package:bicos_app/models/media_avaliacao.dart';
 import 'package:bicos_app/models/solicitacao_response.dart';
+import 'package:bicos_app/prestador_pages/andamento_servico.dart';
+import 'package:bicos_app/prestador_pages/minhas_avaliacoes.dart';
 import 'package:bicos_app/prestador_pages/visualizacao_proposta_prestador.dart';
+import 'package:bicos_app/services/avaliacao_service.dart';
 import 'package:bicos_app/services/solicitacao_service.dart';
 import 'package:bicos_app/storage/auth_storage.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +24,7 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
   bool _isLoading = true;
   String? _erro;
   int? _prestadorId;
+  MediaAvaliacao? _media;
 
   @override
   void initState() {
@@ -56,6 +61,13 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
       if (mounted) {
         setState(() => _erro = 'Erro ao carregar solicitações: $e');
       }
+    }
+
+    try {
+      final media = await AvaliacaoService.buscarMedia(_prestadorId!);
+      if (mounted) setState(() => _media = media);
+    } catch (_) {
+      // rating indisponível
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -179,35 +191,63 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
   }
 
   Widget _buildRatingCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFDFF481),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: const [
-                  Icon(Icons.stars, color: Color(0xFF5C2B67), size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    'AVALIAÇÃO',
-                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const Text(
-                '4.9',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-            ],
+    final nota = _media != null ? _media!.mediaNotas.toStringAsFixed(1) : '—';
+    final total = _media?.totalAvaliacoes ?? 0;
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const MinhasAvaliacoesPage(),
           ),
-        ],
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFDFF481),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: const [
+                    Icon(Icons.stars, color: Color(0xFF5C2B67), size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      'AVALIAÇÃO',
+                      style: TextStyle(
+                          fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                Text(
+                  nota,
+                  style: const TextStyle(
+                      fontSize: 32, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '$total avaliação${total == 1 ? '' : 'ões'}',
+                  style: const TextStyle(
+                      fontSize: 11, color: Color(0xFF5C2B67)),
+                ),
+                const SizedBox(height: 4),
+                const Icon(Icons.arrow_forward_ios,
+                    size: 14, color: Color(0xFF5C2B67)),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -353,32 +393,42 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
 
   Widget _buildServicoAndamentoCard(SolicitacaoResponse s) {
     final progress = s.status == 'esperando_pagamento' ? 0.75 : 0.5;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            s.anuncioTitulo ?? s.descricao,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AndamentoServicoPage(solicitacao: s),
           ),
-          const SizedBox(height: 4),
-          Text(
-            'Cliente: ${s.clienteNome}',
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
-          ),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: progress,
-            backgroundColor: Colors.grey,
-            color: const Color(0xFFDFF481),
-          ),
-        ],
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              s.anuncioTitulo ?? s.descricao,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Cliente: ${s.clienteNome}',
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+            const SizedBox(height: 12),
+            LinearProgressIndicator(
+              value: progress,
+              backgroundColor: Colors.grey,
+              color: const Color(0xFFDFF481),
+            ),
+          ],
+        ),
       ),
     );
   }

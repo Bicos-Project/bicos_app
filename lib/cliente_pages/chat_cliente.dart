@@ -1,79 +1,54 @@
-import 'package:bicos_app/cliente_pages/andamento_servico_cliente.dart';
+import 'package:bicos_app/models/mensagem_response.dart';
+import 'package:bicos_app/models/solicitacao_response.dart';
+import 'package:bicos_app/services/mensagem_service.dart';
+import 'package:bicos_app/storage/auth_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
 
-// Modelo de mensagem
-class Mensagem {
-  final String texto;
-  final bool isMinha;
-  final String horario;
-
-  const Mensagem({
-    required this.texto,
-    required this.isMinha,
-    required this.horario,
-  });
-}
-
 class ChatClientePage extends StatefulWidget {
-  const ChatClientePage({super.key});
+  final SolicitacaoResponse solicitacao;
+
+  const ChatClientePage({super.key, required this.solicitacao});
 
   @override
   State<ChatClientePage> createState() => _ChatClientePageState();
 }
 
-class _ChatClientePageState extends State<ChatClientePage
-> {
+class _ChatClientePageState extends State<ChatClientePage> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  // Mensagens de exemplo baseadas no protótipo
-  final List<Mensagem> _mensagens = [
-    const Mensagem(
-      texto:
-          'Oi Josefino! Tudo bem? Me chamo Carlos e teria interesse em consertar meu encanamento.',
-      isMinha: true,
-      horario: '14:25',
-    ),
-    const Mensagem(
-      texto: 'Teria disponibilidade? 😊',
-      isMinha: true,
-      horario: '14:26',
-    ),
-    const Mensagem(
-      texto:
-          'Olá Carlos! Teria sim, poderia me informar o estado atual do encanamento? O valor é fixo de R\$ 100 reais.',
-      isMinha: false,
-      horario: '14:26',
-    ),
-    const Mensagem(
-      texto: 'Está ocorrendo grande vazamento no quarto. Encanamento antigo.',
-      isMinha: true,
-      horario: '14:28',
-    ),
-    const Mensagem(
-      texto: 'Certo! Vamos agendar uma visita!',
-      isMinha: false,
-      horario: '14:28',
-    ),
-  ];
+  List<MensagemResponse> _mensagens = [];
+  bool _isLoading = true;
+  int? _userId;
+  String? _perfil;
 
-  bool _outroEstaDigitando =
-      true; // Para exibir o indicador "Carlos está digitando"
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
 
-  void _enviarMensagem() {
-    final texto = _controller.text.trim();
-    if (texto.isEmpty) return;
+  Future<void> _init() async {
+    final userData = await AuthStorage.getUserData();
+    _userId = userData['id'] as int?;
+    _perfil = userData['perfil'] as String?;
+    await _carregarMensagens();
+  }
 
-    setState(() {
-      _mensagens.add(
-        Mensagem(texto: texto, isMinha: true, horario: _horaAtual()),
-      );
-      _controller.clear();
-    });
+  Future<void> _carregarMensagens() async {
+    try {
+      final list = await MensagemService.listar(widget.solicitacao.id);
+      if (mounted) setState(() => _mensagens = list);
+    } catch (_) {
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+    _rolarParaFinal();
+  }
 
-    // Rola para o final após enviar
+  void _rolarParaFinal() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -85,9 +60,20 @@ class _ChatClientePageState extends State<ChatClientePage
     });
   }
 
-  String _horaAtual() {
-    final now = DateTime.now();
-    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+  Future<void> _enviarMensagem() async {
+    final texto = _controller.text.trim();
+    if (texto.isEmpty || _userId == null) return;
+
+    _controller.clear();
+    try {
+      await MensagemService.enviar(
+        solicitacaoId: widget.solicitacao.id,
+        remetenteId: _userId!,
+        tipoRemetente: _perfil ?? 'CLIENTE',
+        texto: texto,
+      );
+      await _carregarMensagens();
+    } catch (_) {}
   }
 
   @override
@@ -100,18 +86,14 @@ class _ChatClientePageState extends State<ChatClientePage
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Container(
-
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
           gradient: RadialGradient(
             center: Alignment.center,
-            radius:
-                1.0, 
+            radius: 1.0,
             colors: [
-            
               const Color.fromARGB(255, 64, 18, 75),
               AppColors.principal,
             ],
@@ -120,45 +102,28 @@ class _ChatClientePageState extends State<ChatClientePage
         child: SafeArea(
           child: Column(
             children: [
-              // ── HEADER ──
               _construirHeader(context),
-
-              // ── BOTÃO "VISUALIZAR SOLICITAÇÃO" ──
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _construirVisualizarProposta(),
-                  ],
-                ),
-              ),
-
-              // ── SEPARADOR COM DATA ──
-              _construirSeparadorData('PROPOSTA ENVIADA · HOJE ÀS 14:23'),
-
-              const SizedBox(height: 8),
-
-              // ── LISTA DE MENSAGENS ──
-              Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  itemCount: _mensagens.length + (_outroEstaDigitando ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (_outroEstaDigitando && index == _mensagens.length) {
-                      return _construirIndicadorDigitando();
-                    }
-                    final msg = _mensagens[index];
-                    return _construirBolhaMensagem(msg);
-                  },
-                ),
-              ),
-
-              // ── CAMPO DE TEXTO ──
+              _isLoading
+                  ? const Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                            color: AppColors.destaque),
+                      ),
+                    )
+                  : Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        itemCount: _mensagens.length,
+                        itemBuilder: (context, index) {
+                          final msg = _mensagens[index];
+                          return _construirBolhaMensagem(msg);
+                        },
+                      ),
+                    ),
               _construirCampoMensagem(),
             ],
           ),
@@ -166,7 +131,6 @@ class _ChatClientePageState extends State<ChatClientePage
       ),
     );
   }
-  // ── WIDGETS AUXILIARES ──────────────────────────────────────────────
 
   Widget _construirHeader(BuildContext context) {
     return Container(
@@ -174,46 +138,35 @@ class _ChatClientePageState extends State<ChatClientePage
       color: AppColors.branco,
       child: Row(
         children: [
-          // Botão voltar
           IconButton(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const AndamentoServicoClientePage()),
-            ),
+            onPressed: () => Navigator.pop(context),
             icon: const Icon(
               Icons.arrow_back_ios_new,
               color: AppColors.principal,
               size: 20,
             ),
           ),
-
-          // Avatar
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.destaque, width: 2),
-              color: const Color(0xFFD2C3D9),
-            ),
-            child: ClipOval(
-              child: Image.asset(
-                'assets/eletricista.png',
-                width: 42,
-                height: 42,
-                fit: BoxFit.cover,
+          CircleAvatar(
+            radius: 21,
+            backgroundColor: AppColors.principalEscura.withOpacity(0.1),
+            child: Text(
+              widget.solicitacao.prestadorNome.isNotEmpty
+                  ? widget.solicitacao.prestadorNome[0].toUpperCase()
+                  : '?',
+              style: const TextStyle(
+                color: AppColors.principalEscura,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
             ),
           ),
           const SizedBox(width: 12),
-
-          // Nome e status
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Josefino Barros',
+                  widget.solicitacao.prestadorNome,
                   style: GoogleFonts.plusJakartaSans(
                     color: AppColors.principalEscura,
                     fontSize: 16,
@@ -223,13 +176,14 @@ class _ChatClientePageState extends State<ChatClientePage
                 Row(
                   children: [
                     Text(
-                      'Eletricista · ',
+                      widget.solicitacao.anuncioTitulo ?? 'Serviço',
                       style: GoogleFonts.plusJakartaSans(
                         color: AppColors.fundoPreto.withOpacity(0.8),
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
+                    const SizedBox(width: 6),
                     Container(
                       width: 7,
                       height: 7,
@@ -240,7 +194,7 @@ class _ChatClientePageState extends State<ChatClientePage
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Online agora',
+                      'Solicitação #${widget.solicitacao.id}',
                       style: GoogleFonts.plusJakartaSans(
                         color: AppColors.fundoPreto.withOpacity(0.8),
                         fontSize: 12,
@@ -252,8 +206,6 @@ class _ChatClientePageState extends State<ChatClientePage
               ],
             ),
           ),
-
-          // Menu de opções
           IconButton(
             onPressed: () {},
             icon: const Icon(
@@ -267,71 +219,11 @@ class _ChatClientePageState extends State<ChatClientePage
     );
   }
 
-  Widget _construirVisualizarProposta() {
-    return OutlinedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const AndamentoServicoClientePage(),
-          ),
-        );
-      },
-      style: OutlinedButton.styleFrom(
-        side: const BorderSide(
-          color: AppColors.destaque,
-          width: 1.5,
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      ),
-      child: Text(
-        'Visualizar',
-        style: GoogleFonts.plusJakartaSans(
-          color: AppColors.destaque,
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  Widget _construirSeparadorData(String texto) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: Divider(
-              color: AppColors.branco.withOpacity(0.2),
-              thickness: 1,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Text(
-              texto,
-              style: GoogleFonts.plusJakartaSans(
-                color: AppColors.branco.withOpacity(0.5),
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Divider(
-              color: AppColors.branco.withOpacity(0.2),
-              thickness: 1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _construirBolhaMensagem(Mensagem msg) {
-    final isMinha = msg.isMinha;
+  Widget _construirBolhaMensagem(MensagemResponse msg) {
+    final isMinha = msg.remetenteId == _userId && msg.tipoRemetente == _perfil;
+    final hora = msg.dataHora != null
+        ? msg.dataHora!.substring(11, 16)
+        : '';
 
     return Padding(
       padding: EdgeInsets.only(
@@ -375,7 +267,7 @@ class _ChatClientePageState extends State<ChatClientePage
           ),
           const SizedBox(height: 4),
           Text(
-            msg.horario,
+            hora,
             style: GoogleFonts.plusJakartaSans(
               color: AppColors.branco.withOpacity(0.4),
               fontSize: 10,
@@ -383,70 +275,6 @@ class _ChatClientePageState extends State<ChatClientePage
           ),
         ],
       ),
-    );
-  }
-
-  Widget _construirIndicadorDigitando() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4, bottom: 4, right: 60),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.branco.withOpacity(0.15),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18),
-                topRight: Radius.circular(18),
-                bottomLeft: Radius.circular(4),
-                bottomRight: Radius.circular(18),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _construirPonto(delay: 0),
-                const SizedBox(width: 4),
-                _construirPonto(delay: 150),
-                const SizedBox(width: 4),
-                _construirPonto(delay: 300),
-                const SizedBox(width: 10),
-                Text(
-                  'Carlos está digitando',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.branco.withOpacity(0.7),
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _construirPonto({required int delay}) {
-    // Ponto animado simples usando TweenAnimationBuilder
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.4, end: 1.0),
-      duration: Duration(milliseconds: 600 + delay),
-      curve: Curves.easeInOut,
-      builder: (context, value, child) {
-        return Opacity(
-          opacity: value,
-          child: Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: AppColors.branco.withOpacity(0.7),
-              shape: BoxShape.circle,
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -464,7 +292,6 @@ class _ChatClientePageState extends State<ChatClientePage
       ),
       child: Row(
         children: [
-          // Botão anexo
           IconButton(
             onPressed: () {},
             icon: Icon(
@@ -475,8 +302,6 @@ class _ChatClientePageState extends State<ChatClientePage
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
           ),
-
-          // Botão câmera
           IconButton(
             onPressed: () {},
             icon: Icon(
@@ -487,10 +312,7 @@ class _ChatClientePageState extends State<ChatClientePage
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
           ),
-
           const SizedBox(width: 4),
-
-          // Campo de texto
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -525,13 +347,9 @@ class _ChatClientePageState extends State<ChatClientePage
               ),
             ),
           ),
-
           const SizedBox(width: 8),
-
-          // Botão enviar
           MouseRegion(
-            cursor:
-                SystemMouseCursors.click, // Aqui acontece a mágica do 'pointer'
+            cursor: SystemMouseCursors.click,
             child: GestureDetector(
               onTap: _enviarMensagem,
               child: Container(

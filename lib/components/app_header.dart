@@ -13,6 +13,7 @@ class AppHeader extends StatelessWidget {
   final String? emoji;
   final Widget? trailing;
   final bool showAvatar;
+  final bool centerTitle;
   final TextEditingController? searchController;
   final ValueChanged<String>? onSearchChanged;
   final String? searchHint;
@@ -24,6 +25,7 @@ class AppHeader extends StatelessWidget {
     this.emoji,
     this.trailing,
     this.showAvatar = false,
+    this.centerTitle = false,
     this.searchController,
     this.onSearchChanged,
     this.searchHint,
@@ -69,7 +71,7 @@ class AppHeader extends StatelessWidget {
                     _backButton(context)
                   else
                     _logo(context),
-                  if (emoji != null && title != null) ...[
+                  if (emoji != null && title != null && !centerTitle) ...[
                     const SizedBox(width: 10),
                     Text(emoji!, style: const TextStyle(fontSize: 20)),
                     const SizedBox(width: 6),
@@ -84,7 +86,7 @@ class AppHeader extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ] else if (title != null) ...[
+                  ] else if (title != null && !centerTitle) ...[
                     const SizedBox(width: 10),
                     Flexible(
                       child: Text(
@@ -111,6 +113,19 @@ class AppHeader extends StatelessWidget {
               ),
             ),
           ),
+          if (centerTitle && title != null)
+            Positioned.fill(
+              child: Center(
+                child: Text(
+                  title!,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.branco,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -7,6 +7,7 @@ import '../models/prestador_model.dart';
 import '../models/solicitacao_response.dart';
 import '../providers/auth_provider.dart';
 import '../services/solicitacao_service.dart';
+import 'andamento_servico_cliente.dart';
 import 'orcamento_page.dart';
 
 class HistoricoServicos extends StatefulWidget {
@@ -121,24 +122,36 @@ class HistoricoServicosState extends State<HistoricoServicos> {
       padding: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => OrcamentoPage(
-                solicitacao: s,
-                prestador: Prestador(
-                  id: s.prestadorId,
-                  nome: s.prestadorNome,
-                  especialidade: s.anuncioTitulo ?? '',
-                  descricao: s.descricao,
-                  imagemAsset: '',
-                  avaliacao: 0,
-                  distancia: '',
-                  categoria: '',
+          if (s.status == 'em_andamento' ||
+              s.status == 'esperando_pagamento' ||
+              s.status == 'finalizado') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    AndamentoServicoClientePage(solicitacao: s),
+              ),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => OrcamentoPage(
+                  solicitacao: s,
+                  prestador: Prestador(
+                    id: s.prestadorId,
+                    nome: s.prestadorNome,
+                    especialidade: s.anuncioTitulo ?? '',
+                    descricao: s.descricao,
+                    imagemAsset: '',
+                    avaliacao: 0,
+                    distancia: '',
+                    categoria: '',
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+          }
         },
         borderRadius: BorderRadius.circular(16),
         child: Container(

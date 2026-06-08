@@ -1,5 +1,4 @@
 import 'package:bicos_app/inicio_pages/menu.dart';
-import 'package:bicos_app/prestador_pages/andamento_servico.dart';
 import 'package:bicos_app/prestador_pages/home_page_prestador.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,7 +27,6 @@ class _MainNavigationPrestadorState extends State<MainNavigationPrestador> {
       HomePagePrestador(key: _homeKey, title: 'HOME'), // index 1 → HOME
       const MenuApp(), // index 2 → MENU
       const HistoricoServicoRealizadoPage(), // index 3 → HISTÓRICO
-      const AndamentoServicoPage(),
     ];
   }
 

@@ -1,10 +1,86 @@
 import 'package:bicos_app/components/app_header.dart';
+import 'package:bicos_app/models/solicitacao_response.dart';
 import 'package:bicos_app/prestador_pages/avaliacao_prestador.dart';
+import 'package:bicos_app/services/solicitacao_service.dart';
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 
-class AndamentoServicoPage extends StatelessWidget {
-  const AndamentoServicoPage({super.key});
+class AndamentoServicoPage extends StatefulWidget {
+  final SolicitacaoResponse solicitacao;
+
+  const AndamentoServicoPage({super.key, required this.solicitacao});
+
+  @override
+  State<AndamentoServicoPage> createState() => _AndamentoServicoPageState();
+}
+
+class _AndamentoServicoPageState extends State<AndamentoServicoPage> {
+  late SolicitacaoResponse _solicitacao;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _solicitacao = widget.solicitacao;
+  }
+
+  int get _etapaAtual {
+    switch (_solicitacao.status) {
+      case 'orcamento':
+        return 0;
+      case 'em_andamento':
+        return 1;
+      case 'esperando_pagamento':
+        return 2;
+      case 'finalizado':
+        return 3;
+      default:
+        return 0;
+    }
+  }
+
+  Future<void> _avancar() async {
+    setState(() => _isLoading = true);
+    try {
+      final updated = await SolicitacaoService.avancarStatus(_solicitacao.id);
+      if (mounted) setState(() => _solicitacao = updated);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao avançar status')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _confirmarPagamento() async {
+    setState(() => _isLoading = true);
+    try {
+      final updated = await SolicitacaoService.confirmarPagamento(
+          _solicitacao.id, 'PRESTADOR');
+      if (mounted) {
+        setState(() => _solicitacao = updated);
+        if (updated.status == 'finalizado') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AvaliacaoPrestadorPage(solicitacao: updated),
+            ),
+          );
+        }
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao confirmar pagamento')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,22 +97,16 @@ class AndamentoServicoPage extends StatelessWidget {
           children: [
             _buildClienteCard(),
             const SizedBox(height: 16),
-            _buildTotalCard(),
-            const SizedBox(height: 16),
             _buildProgressoServico(),
             const SizedBox(height: 16),
-            _buildResumoFinanceiro(),
+            _buildAcoes(),
             const SizedBox(height: 20),
-            _buildBotaoPagamento(context),
-            const SizedBox(height: 12),
-            _buildBotaoFinalizar(context),
-            const SizedBox(height: 20),
-            _buildLinkSuporte(),
           ],
         ),
       ),
     );
   }
+
   Widget _buildClienteCard() {
     return Container(
       padding: const EdgeInsets.all(14),
@@ -46,102 +116,63 @@ class AndamentoServicoPage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 24,
-            backgroundImage: AssetImage('assets/perfil.png'),
-            backgroundColor: Colors.grey,
+            backgroundColor: AppColors.principalEscura.withOpacity(0.1),
+            child: Text(
+              _solicitacao.clienteNome.isNotEmpty
+                  ? _solicitacao.clienteNome[0].toUpperCase()
+                  : '?',
+              style: const TextStyle(
+                color: AppColors.principalEscura,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Vera Azevedo',
-                  style: TextStyle(
+                Text(
+                  _solicitacao.clienteNome,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
                     color: AppColors.preto,
                   ),
                 ),
-                const Text(
-                  'Ajuste de chuveiro • 4h • Amanhã às 09:00',
-                  style: TextStyle(color: Colors.grey, fontSize: 11),
+                Text(
+                  _solicitacao.anuncioTitulo ?? _solicitacao.descricao,
+                  style: const TextStyle(color: Colors.grey, fontSize: 11),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  '#${_solicitacao.id}',
+                  style: const TextStyle(color: Colors.grey, fontSize: 10),
                 ),
               ],
             ),
           ),
-          const Text(
-            'Há 5 min',
-            style: TextStyle(color: Colors.grey, fontSize: 10),
-          ),
-          const SizedBox(width: 10),
-          OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: AppColors.principal),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: _solicitacao.status == 'em_andamento'
+                  ? Colors.orange.withOpacity(0.15)
+                  : AppColors.destaque.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: const Text(
-              'Visualizar',
-              style: TextStyle(color: AppColors.principal, fontSize: 12),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTotalCard() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: AppColors.principalEscura,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                'TOTAL',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1,
-                ),
+            child: Text(
+              _solicitacao.status.replaceAll('_', ' '),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: _solicitacao.status == 'em_andamento'
+                    ? Colors.orange
+                    : AppColors.principal,
               ),
-              SizedBox(height: 4),
-              Text(
-                'R\$ 100,00',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.branco,
-                ),
-              ),
-            ],
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.destaque,
-              foregroundColor: AppColors.principalEscura,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              elevation: 0,
-            ),
-            child: const Text(
-              'Adicionar valor',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -150,15 +181,13 @@ class AndamentoServicoPage extends StatelessWidget {
   }
 
   Widget _buildProgressoServico() {
-    // Etapas: Orçamento, Em andamento, Esperando pagamento, Finalizado
     const etapas = [
       'Orçamento',
       'Em andamento',
       'Esperando\npagamento',
       'Finalizado',
     ];
-    const labels = ['', 'Em andamento', '', 'Finalizado'];
-    const etapaAtual = 1; // 0-based, "Em andamento"
+    final etapaAtual = _etapaAtual;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
@@ -168,13 +197,12 @@ class AndamentoServicoPage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Labels de cima (Em andamento / Finalizado)
           Row(
             children: List.generate(etapas.length, (i) {
-              if (labels[i].isEmpty) return const Expanded(child: SizedBox());
+              if (i == 0 || i == 2) return const Expanded(child: SizedBox());
               return Expanded(
                 child: Text(
-                  labels[i],
+                  etapas[i],
                   textAlign: i == 1 ? TextAlign.center : TextAlign.right,
                   style: TextStyle(
                     fontSize: 10,
@@ -186,12 +214,9 @@ class AndamentoServicoPage extends StatelessWidget {
             }),
           ),
           const SizedBox(height: 6),
-
-          // Linha de progresso com círculos
           Row(
             children: List.generate(etapas.length * 2 - 1, (i) {
               if (i.isOdd) {
-                // Linha entre os círculos
                 final segmentoAtivo = (i ~/ 2) < etapaAtual;
                 return Expanded(
                   child: Container(
@@ -220,8 +245,6 @@ class AndamentoServicoPage extends StatelessWidget {
             }),
           ),
           const SizedBox(height: 6),
-
-          // Labels de baixo (Orçamento / Esperando pagamento)
           Row(
             children: List.generate(etapas.length, (i) {
               if (i == 1 || i == 3) return const Expanded(child: SizedBox());
@@ -239,139 +262,236 @@ class AndamentoServicoPage extends StatelessWidget {
     );
   }
 
-  Widget _buildResumoFinanceiro() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.branco,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        children: [
-          _buildLinhaFinanceira('Total', 'R\$ 100,00', destaque: false),
-          const Divider(height: 20, color: Color(0xFFEEEEEE)),
-          _buildLinhaFinanceira('Taxa Bicos', 'R\$ 15,00', destaque: false),
-          const Divider(height: 20, color: Color(0xFFEEEEEE)),
-          _buildLinhaFinanceira('Subtotal', 'R\$ 115,00', destaque: false),
-          const SizedBox(height: 12),
-          _buildLinhaFinanceira('Total à pagar', 'R\$ 115,00', destaque: true),
-        ],
-      ),
-    );
-  }
+  Widget _buildAcoes() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.destaque),
+      );
+    }
 
-  Widget _buildLinhaFinanceira(
-    String label,
-    String valor, {
-    required bool destaque,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: destaque ? 15 : 13,
-            fontWeight: destaque ? FontWeight.bold : FontWeight.normal,
-            color: destaque ? AppColors.preto : Colors.grey.shade700,
-          ),
-        ),
-        Text(
-          valor,
-          style: TextStyle(
-            fontSize: destaque ? 16 : 13,
-            fontWeight: destaque ? FontWeight.bold : FontWeight.normal,
-            color: destaque ? AppColors.principal : AppColors.preto,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBotaoPagamento(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Pagamento realizado com sucesso!')),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.destaque,
-          foregroundColor: AppColors.principalEscura,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          elevation: 0,
-        ),
-        child: const Text(
-          'Pagamento realizado',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBotaoFinalizar(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AvaliacaoPrestadorPage(),
+    if (_solicitacao.status == 'em_andamento') {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: _avancar,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.destaque,
+            foregroundColor: AppColors.principalEscura,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
             ),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.principalEscura,
-          side: const BorderSide(color: AppColors.principalEscura, width: 1.5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            elevation: 0,
           ),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-        ),
-        child: const Text(
-          'Finalizar serviço',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: AppColors.branco,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLinkSuporte() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(Icons.error_outline, color: Colors.white60, size: 14),
-        const SizedBox(width: 6),
-        const Text(
-          'ALGO DE ERRADO? ',
-          style: TextStyle(color: Colors.white60, fontSize: 11),
-        ),
-        GestureDetector(
-          onTap: () {
-            // TODO: abrir chat de suporte
-          },
           child: const Text(
-            'FALE CONOSCO',
-            style: TextStyle(
-              color: AppColors.destaque,
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              decoration: TextDecoration.underline,
-              decorationColor: AppColors.destaque,
-            ),
+            'Serviço realizado',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
-      ],
-    );
+      );
+    }
+
+    if (_solicitacao.status == 'esperando_pagamento') {
+      final confirmacoes = [
+        if (_solicitacao.prestadorConfirmouPagamento) 1,
+        if (_solicitacao.clienteConfirmouPagamento) 1,
+      ].length;
+      final jaConfirmou = _solicitacao.prestadorConfirmouPagamento;
+
+      return Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: AppColors.branco,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.destaque.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        jaConfirmou
+                            ? Icons.check_circle
+                            : Icons.payments_outlined,
+                        color: jaConfirmou
+                            ? Colors.green
+                            : AppColors.principalEscura,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            jaConfirmou
+                                ? 'Pagamento confirmado por você'
+                                : 'Aguardando sua confirmação',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.preto,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            jaConfirmou
+                                ? 'Aguardando ${_solicitacao.clienteNome}'
+                                : 'Você confirma o pagamento?',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.preto.withOpacity(0.6),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: confirmacoes == 2
+                            ? Colors.green.withOpacity(0.15)
+                            : AppColors.destaque.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '$confirmacoes/2',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: confirmacoes == 2
+                              ? Colors.green
+                              : AppColors.principalEscura,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (confirmacoes == 1) ...[
+                  const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppColors.principalEscura.withOpacity(0.06),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.schedule,
+                            size: 16,
+                            color: AppColors.principalEscura.withOpacity(0.6)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Aguardando confirmação de ${_solicitacao.clienteNome} para finalizar',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.principalEscura.withOpacity(0.7),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (!jaConfirmou) ...[
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _confirmarPagamento,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.destaque,
+                  foregroundColor: AppColors.principalEscura,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Confirmar pagamento',
+                  style:
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ],
+      );
+    }
+
+    if (_solicitacao.status == 'finalizado') {
+      if (_solicitacao.prestadorAvaliou) {
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.branco,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: const Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.green, size: 22),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Você já avaliou este cliente',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.preto,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    AvaliacaoPrestadorPage(solicitacao: _solicitacao),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.destaque,
+            foregroundColor: AppColors.principalEscura,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            elevation: 0,
+          ),
+          child: const Text(
+            'Avaliar cliente',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 }

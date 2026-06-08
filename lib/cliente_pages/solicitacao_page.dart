@@ -97,27 +97,16 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF1E0A3C),
-              Color(0xFF2D1B69),
-              Color(0xFF1A1A3E),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppHeader(
-                  title: 'Solicitar Serviço',
-                  emoji: '📋',
-                ),
+      backgroundColor: AppColors.principal,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppHeader(
+                title: 'Solicitar Serviço',
+                centerTitle: true,
+              ),
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -220,7 +209,6 @@ class _SolicitacaoPageState extends State<SolicitacaoPage> {
               ],
             ),
           ),
-        ),
       ),
     );
   }

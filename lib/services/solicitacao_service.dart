@@ -20,7 +20,8 @@ class SolicitacaoService {
     return SolicitacaoResponse.fromJson(response.data);
   }
 
-  static Future<List<SolicitacaoResponse>> listarPorCliente(int clienteId) async {
+  static Future<List<SolicitacaoResponse>> listarPorCliente(
+      int clienteId) async {
     final response = await ApiClient.instance.get(
       '/solicitacoes',
       queryParameters: {'clienteId': clienteId},
@@ -31,7 +32,8 @@ class SolicitacaoService {
         .toList();
   }
 
-  static Future<List<SolicitacaoResponse>> listarPorPrestador(int prestadorId) async {
+  static Future<List<SolicitacaoResponse>> listarPorPrestador(
+      int prestadorId) async {
     final response = await ApiClient.instance.get(
       '/solicitacoes',
       queryParameters: {'prestadorId': prestadorId},
@@ -40,5 +42,28 @@ class SolicitacaoService {
     return list
         .map((e) => SolicitacaoResponse.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  static Future<SolicitacaoResponse> avancarStatus(int id) async {
+    final response = await ApiClient.instance.patch(
+      '/solicitacoes/$id/avancar',
+    );
+    return SolicitacaoResponse.fromJson(response.data);
+  }
+
+  static Future<SolicitacaoResponse> confirmarPagamento(
+      int id, String tipo) async {
+    final response = await ApiClient.instance.patch(
+      '/solicitacoes/$id/confirmar-pagamento',
+      queryParameters: {'tipo': tipo},
+    );
+    return SolicitacaoResponse.fromJson(response.data);
+  }
+
+  static Future<SolicitacaoResponse> recusar(int id) async {
+    final response = await ApiClient.instance.patch(
+      '/solicitacoes/$id/recusar',
+    );
+    return SolicitacaoResponse.fromJson(response.data);
   }
 }

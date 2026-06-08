@@ -1,26 +1,71 @@
-
+import 'package:bicos_app/models/solicitacao_response.dart';
+import 'package:bicos_app/services/avaliacao_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../components/app_header.dart';
+import '../components/main_navigation_prestador.dart';
 import '../core/app_colors.dart';
 
-
 class AvaliacaoPrestadorPage extends StatefulWidget {
-  const AvaliacaoPrestadorPage({super.key});
+  final SolicitacaoResponse solicitacao;
+
+  const AvaliacaoPrestadorPage({super.key, required this.solicitacao});
 
   @override
   State<AvaliacaoPrestadorPage> createState() => _AvaliacaoPrestadorPageState();
 }
 
 class _AvaliacaoPrestadorPageState extends State<AvaliacaoPrestadorPage> {
-  // Estado para armazenar a nota (0 a 5)
   int _nota = 0;
+  final TextEditingController _observacoesController = TextEditingController();
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _observacoesController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _enviar() async {
+    if (_nota == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione uma nota')),
+      );
+      return;
+    }
+    setState(() => _isSubmitting = true);
+    try {
+      await AvaliacaoService.criar(
+        nota: _nota,
+        comentario: _observacoesController.text.trim(),
+        solicitacaoId: widget.solicitacao.id,
+        avaliadorTipo: 'PRESTADOR',
+      );
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const MainNavigationPrestador()),
+          (route) => false,
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao enviar avaliação')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Usamos o Scaffold para estruturar a página
     return Scaffold(
-      appBar: PreferredSize(preferredSize: const Size.fromHeight(76), child: const AppHeader(showAvatar: true)),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(76),
+        child: const AppHeader(showAvatar: true),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -29,8 +74,6 @@ class _AvaliacaoPrestadorPageState extends State<AvaliacaoPrestadorPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 32),
-
-                // --- CARD DE SERVIÇO FINALIZADO ---
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
@@ -46,32 +89,29 @@ class _AvaliacaoPrestadorPageState extends State<AvaliacaoPrestadorPage> {
                   ),
                   child: Column(
                     children: [
-                      // Ícone de check dentro do círculo neon
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppColors.destaque, // Fundo neon clarinho
+                          color: AppColors.destaque,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.check,
                           color: AppColors.preto,
                           size: 50,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // Título "Serviço finalizado!"
                       Text(
                         'Serviço finalizado!',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.principalEscura, // Roxo do fundo
+                          color: AppColors.principalEscura,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // Texto descritivo
                       Text(
                         'Você finalizou o serviço, realize uma avaliação ao cliente.',
                         textAlign: TextAlign.center,
@@ -79,48 +119,35 @@ class _AvaliacaoPrestadorPageState extends State<AvaliacaoPrestadorPage> {
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: AppColors.principal.withOpacity(0.8),
-                          height: 1.5, // Maior espaçamento entre linhas
+                          height: 1.5,
                         ),
                       ),
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 48),
-
-                // --- SEÇÃO DE ESTRELAS ---
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center, // Centraliza as estrelas
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(5, (index) {
                     final int valorEstrela = index + 1;
                     return GestureDetector(
-                      onTap: () {
-                        // Ao tocar, atualiza a nota e refaz a tela
-                        setState(() {
-                          _nota = valorEstrela;
-                        });
-                        print("Nota selecionada: $_nota");
-                      },
+                      onTap: () => setState(() => _nota = valorEstrela),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6.0),
                         child: Icon(
-                          _nota >= valorEstrela ? Icons.star : Icons.star_border,
-                          // Amarelo se tiver nota, neon se não tiver
-                          color: _nota >= valorEstrela
-                              ? AppColors.destaque // Estrela amarela preenchida
-                              : AppColors.destaque, // Estrela neon contornada
+                          _nota >= valorEstrela
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: AppColors.destaque,
                           size: 40,
                         ),
                       ),
                     );
                   }),
                 ),
-
                 const SizedBox(height: 40),
-
-                // --- CAMPO DE OBSERVAÇÕES ---
                 Text(
-                  'Descreva a sua experiência com Vera Azevedo:',
+                  'Descreva a sua experiência com ${widget.solicitacao.clienteNome}:',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
@@ -128,13 +155,13 @@ class _AvaliacaoPrestadorPageState extends State<AvaliacaoPrestadorPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Campo de texto multi-linha (text area)
                 TextField(
-                  maxLines: 6, // Define a altura visual
+                  controller: _observacoesController,
+                  maxLines: 6,
                   keyboardType: TextInputType.multiline,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
-                    color: AppColors.principalEscura, // Texto roxo escuro
+                    color: AppColors.principalEscura,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Escreva aqui suas observações...',
@@ -142,46 +169,45 @@ class _AvaliacaoPrestadorPageState extends State<AvaliacaoPrestadorPage> {
                       color: AppColors.principal.withOpacity(0.5),
                     ),
                     filled: true,
-                    fillColor: AppColors.branco, // Fundo branco
+                    fillColor: AppColors.branco,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none, // Sem borda visível
+                      borderSide: BorderSide.none,
                     ),
                     contentPadding: const EdgeInsets.all(16),
                   ),
                 ),
-
-                const SizedBox(height: 48), // Espaço antes do botão
-
-                // --- BOTÃO ENVIAR AVALIAÇÃO ---
+                const SizedBox(height: 48),
                 ElevatedButton(
-                  onPressed: () {
-                    // Lógica para enviar a avaliação (print para teste)
-                    print("Avaliação enviada: Nota $_nota e texto do campo.");
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Avaliação enviada com sucesso!')),
-                    );
-                    Navigator.pop(context); // Volta após enviar
-                  },
+                  onPressed: _isSubmitting ? null : _enviar,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.principalEscura, // Roxo muito escuro do botão
-                    foregroundColor: AppColors.branco, // Cor do texto
+                    backgroundColor: AppColors.principalEscura,
+                    foregroundColor: AppColors.branco,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     elevation: 5,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text(
-                    'Enviar avaliação',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: AppColors.branco,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          'Enviar avaliação',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                 ),
-                const SizedBox(height: 24), // Espaço no final da página (para SafeArea)
+                const SizedBox(height: 24),
               ],
             ),
           ),
