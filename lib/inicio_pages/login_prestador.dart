@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import 'cadastro_prestador.dart';
+import 'recuperar_senha.dart';
 import '../components/main_navigation_prestador.dart';
 import '../providers/auth_provider.dart';
 
@@ -97,7 +98,31 @@ class _LoginPrestadorState extends State<LoginPrestador> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RecuperarSenhaPage(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Esqueceu a senha?',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.destaque,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.destaque,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   Consumer<AuthProvider>(
                     builder: (context, auth, _) {
                       if (auth.isAuthenticated) {

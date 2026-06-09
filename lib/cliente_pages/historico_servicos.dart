@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../components/app_header.dart';
 import '../core/app_colors.dart';
+import '../core/status_helper.dart';
 import '../models/prestador_model.dart';
 import '../models/solicitacao_response.dart';
 import '../providers/auth_provider.dart';
@@ -199,6 +200,41 @@ class HistoricoServicosState extends State<HistoricoServicos> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    if (s.dataEstimada != null ||
+                        s.valorSugerido != null) ...[
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          if (s.dataEstimada != null) ...[
+                            Icon(Icons.calendar_month,
+                                size: 12, color: Colors.grey[400]),
+                            const SizedBox(width: 3),
+                            Text(
+                              s.dataEstimada!,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                          if (s.dataEstimada != null &&
+                              s.valorSugerido != null)
+                            const SizedBox(width: 12),
+                          if (s.valorSugerido != null) ...[
+                            Icon(Icons.attach_money,
+                                size: 12, color: Colors.grey[400]),
+                            const SizedBox(width: 3),
+                            Text(
+                              'R\$ ${s.valorSugerido!.toStringAsFixed(2)}',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -216,7 +252,7 @@ class HistoricoServicosState extends State<HistoricoServicos> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  s.status.replaceAll('_', ' '),
+                  StatusHelper.format(s.status),
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,

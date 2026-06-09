@@ -5,6 +5,7 @@ class MensagemResponse {
   final String tipoRemetente;
   final String texto;
   final String? dataHora;
+  final String? imagemUrl;
 
   MensagemResponse({
     required this.id,
@@ -13,6 +14,7 @@ class MensagemResponse {
     required this.tipoRemetente,
     required this.texto,
     this.dataHora,
+    this.imagemUrl,
   });
 
   factory MensagemResponse.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class MensagemResponse {
       tipoRemetente: json['tipoRemetente'] ?? '',
       texto: json['texto'] ?? '',
       dataHora: json['dataHora'],
+      imagemUrl: json['imagemUrl'],
     );
   }
 }

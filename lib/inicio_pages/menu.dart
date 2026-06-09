@@ -1,23 +1,16 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../providers/auth_provider.dart';
-import '../services/avatar_service.dart';
+import '../components/main_navigation_cliente.dart';
+import '../components/main_navigation_prestador.dart';
 import '../prestador_pages/editar_perfil_publico.dart';
 import 'perfil.dart';
 import 'escolha_perfil.dart';
 
 class MenuApp extends StatelessWidget {
   const MenuApp({super.key});
-
-  Future<void> _pickAvatar(BuildContext context) async {
-    final file = await AvatarService.pickAndSave();
-    if (file != null && context.mounted) {
-      context.read<AuthProvider>().setAvatarPath(file.path);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +24,41 @@ class MenuApp extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Image.asset('assets/bicos_logo1.png', height: 32),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Bicos',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.destaque,
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        final auth = context.read<AuthProvider>();
+                        if (auth.perfil == 'PRESTADOR') {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const MainNavigationPrestador()),
+                            (route) => false,
+                          );
+                        } else {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const MainNavigation()),
+                            (route) => false,
+                          );
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Image.asset('assets/bicos_logo1.png', height: 32),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Bicos',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.destaque,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -48,93 +68,57 @@ class MenuApp extends StatelessWidget {
               const SizedBox(height: 24),
               Consumer<AuthProvider>(
                 builder: (context, auth, _) {
-                  return GestureDetector(
-                    onTap: () => _pickAvatar(context),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF46295C),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                            color: AppColors.branco.withOpacity(0.1)),
-                      ),
-                      child: Row(
-                        children: [
-                          Stack(
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF46295C),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                          color: AppColors.branco.withOpacity(0.1)),
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundColor: AppColors.principalEscura,
+                          child: Text(
+                            auth.nome != null && auth.nome!.isNotEmpty
+                                ? auth.nome![0].toUpperCase()
+                                : '?',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.destaque,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: AppColors.destaque,
-                                    width: 1.5,
-                                  ),
-                                  color: AppColors.principalEscura,
+                              Text(
+                                auth.nome ?? 'Usuário',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.branco,
                                 ),
-                                clipBehavior: Clip.antiAlias,
-                                child: auth.avatarPath != null
-                                    ? ClipOval(
-                                        child: Image.file(
-                                          File(auth.avatarPath!),
-                                          width: 56,
-                                          height: 56,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : const Icon(
-                                        Icons.person,
-                                        size: 32,
-                                        color: AppColors.branco,
-                                      ),
                               ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(3),
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.destaque,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.camera_alt,
-                                    size: 14,
-                                    color: AppColors.principalEscura,
-                                  ),
+                              const SizedBox(height: 4),
+                              Text(
+                                auth.email ?? '',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color:
+                                      AppColors.branco.withOpacity(0.7),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  auth.nome ?? 'Usuário',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.branco,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  auth.email ?? '',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color:
-                                        AppColors.branco.withOpacity(0.7),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -175,13 +159,6 @@ class MenuApp extends StatelessWidget {
                       const SizedBox(height: 16),
                     ],
                   );
-                },
-              ),
-              _construirBotaoMenu(
-                icone: Icons.settings_outlined,
-                titulo: 'Configurações',
-                onTap: () {
-                  // Configurações
                 },
               ),
               const SizedBox(height: 16),

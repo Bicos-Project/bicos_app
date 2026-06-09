@@ -22,6 +22,28 @@ class AuthService {
     return LoginResponse.fromJson(response.data);
   }
 
+  static Future<void> solicitarRedefinicaoSenha(String email) async {
+    await ApiClient.instance.post(
+      '/auth/recuperar-senha',
+      data: {'email': email},
+    );
+  }
+
+  static Future<void> redefinirSenha({
+    required String email,
+    required String codigo,
+    required String novaSenha,
+  }) async {
+    await ApiClient.instance.post(
+      '/auth/redefinir-senha',
+      data: {
+        'email': email,
+        'codigo': codigo,
+        'novaSenha': novaSenha,
+      },
+    );
+  }
+
   static String extrairErro(DioException e) {
     if (e.response?.data is Map) {
       final msg = e.response?.data['error'];

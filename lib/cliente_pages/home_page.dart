@@ -63,6 +63,7 @@ class _HomePageState extends State<HomePage>
     _animController.forward();
     _carregarCategorias();
     _carregarAvaliacoesPendentes();
+    context.read<FavoritosProvider>().carregar();
   }
 
   Future<void> _carregarCategorias() async {
@@ -134,23 +135,41 @@ class _HomePageState extends State<HomePage>
                     const AppHeader(showAvatar: true),
                     const SizedBox(height: 24),
                     _construirSaudacao(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     _construirBuscaRapida(),
                     if (_avaliacoesPendentesLoaded &&
                         _avaliacoesPendentes.isNotEmpty) ...[
                       const SizedBox(height: 8),
                       _construirAvaliacoesPendentesCard(),
                       const SizedBox(height: 24),
-                    ],
+                    ] else
+                      const SizedBox(height: 16),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        'Categorias',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.branco,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: AppColors.destaque.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.grid_view_rounded,
+                              color: AppColors.destaque,
+                              size: 16,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Categorias',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.branco,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -164,7 +183,6 @@ class _HomePageState extends State<HomePage>
                             ),
                           )
                         : _construirGridCategorias(),
-                    const SizedBox(height: 16),
                     const MapaHome(),
                     const SizedBox(height: 16),
                     if (context.watch<FavoritosProvider>().favoritos.isNotEmpty) ...[
@@ -172,7 +190,7 @@ class _HomePageState extends State<HomePage>
                       const SizedBox(height: 14),
                       _construirListaFavoritos(),
                     ],
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 100),
                   ],
                 ),
               ),

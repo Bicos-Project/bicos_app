@@ -5,10 +5,12 @@ import 'package:bicos_app/models/solicitacao_response.dart';
 import 'package:bicos_app/prestador_pages/andamento_servico.dart';
 import 'package:bicos_app/prestador_pages/minhas_avaliacoes.dart';
 import 'package:bicos_app/prestador_pages/visualizacao_proposta_prestador.dart';
+import 'package:bicos_app/providers/auth_provider.dart';
 import 'package:bicos_app/services/avaliacao_service.dart';
 import 'package:bicos_app/services/solicitacao_service.dart';
 import 'package:bicos_app/storage/auth_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:bicos_app/prestador_pages/editar_perfil_publico.dart';
 import 'package:bicos_app/prestador_pages/ver_mais_solicitacoes.dart';
 import 'package:bicos_app/prestador_pages/avaliacao_prestador.dart';
@@ -103,12 +105,14 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Olá, Usuário!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+                Consumer<AuthProvider>(
+                  builder: (context, auth, _) => Text(
+                    'Olá, ${auth.nome ?? 'Usuário'}!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const Text(
@@ -131,6 +135,7 @@ class HomePagePrestadorState extends State<HomePagePrestador> {
                 const SizedBox(height: 24),
                 _buildRatingCard(),
                 if (_avaliacoesPendentes.isNotEmpty) ...[
+                  const SizedBox(height: 12),
                   _buildAvaliacoesPendentesCard(),
                 ],
                 const SizedBox(height: 48),

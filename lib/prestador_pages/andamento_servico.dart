@@ -4,6 +4,7 @@ import 'package:bicos_app/prestador_pages/avaliacao_prestador.dart';
 import 'package:bicos_app/services/solicitacao_service.dart';
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
+import '../core/status_helper.dart';
 
 class AndamentoServicoPage extends StatefulWidget {
   final SolicitacaoResponse solicitacao;
@@ -97,6 +98,8 @@ class _AndamentoServicoPageState extends State<AndamentoServicoPage> {
           children: [
             _buildClienteCard(),
             const SizedBox(height: 16),
+            _buildServiceInfo(),
+            const SizedBox(height: 16),
             _buildProgressoServico(),
             const SizedBox(height: 16),
             _buildAcoes(),
@@ -165,7 +168,7 @@ class _AndamentoServicoPageState extends State<AndamentoServicoPage> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              _solicitacao.status.replaceAll('_', ' '),
+              StatusHelper.format(_solicitacao.status),
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
@@ -175,6 +178,85 @@ class _AndamentoServicoPageState extends State<AndamentoServicoPage> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildServiceInfo() {
+    if (_solicitacao.dataEstimada == null &&
+        _solicitacao.valorSugerido == null) {
+      return const SizedBox.shrink();
+    }
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.branco,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (_solicitacao.dataEstimada != null) ...[
+            const Row(
+              children: [
+                Icon(Icons.calendar_month, size: 16, color: AppColors.principal),
+                SizedBox(width: 6),
+                Text(
+                  'Data estimada',
+                  style: TextStyle(
+                    color: AppColors.cinza,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.only(left: 22),
+              child: Text(
+                _solicitacao.dataEstimada!,
+                style: const TextStyle(
+                  color: AppColors.principalEscura,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+          if (_solicitacao.dataEstimada != null &&
+              _solicitacao.valorSugerido != null)
+            const SizedBox(height: 12),
+          if (_solicitacao.valorSugerido != null) ...[
+            const Row(
+              children: [
+                Icon(Icons.attach_money, size: 16, color: AppColors.principal),
+                SizedBox(width: 6),
+                Text(
+                  'Valor sugerido',
+                  style: TextStyle(
+                    color: AppColors.cinza,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.only(left: 22),
+              child: Text(
+                'R\$ ${_solicitacao.valorSugerido!.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  color: AppColors.principalEscura,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

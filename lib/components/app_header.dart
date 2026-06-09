@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -157,21 +156,22 @@ class AppHeader extends StatelessWidget {
         return Container(
           width: 40,
           height: 40,
+          alignment: Alignment.center,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: AppColors.principalEscura,
           ),
           clipBehavior: Clip.antiAlias,
-          child: auth.avatarPath != null
-              ? ClipOval(
-                  child: Image.file(
-                    File(auth.avatarPath!),
-                    width: 40,
-                    height: 40,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : const Icon(Icons.person, size: 24, color: AppColors.branco),
+          child: Text(
+            auth.nome != null && auth.nome!.isNotEmpty
+                ? auth.nome![0].toUpperCase()
+                : '?',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.destaque,
+            ),
+          ),
         );
       },
     );

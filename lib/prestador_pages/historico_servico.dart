@@ -5,6 +5,7 @@ import 'package:bicos_app/storage/auth_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
+import '../core/status_helper.dart';
 
 class HistoricoServicoRealizadoPage extends StatefulWidget {
   const HistoricoServicoRealizadoPage({super.key});
@@ -130,7 +131,7 @@ class _HistoricoServicoRealizadoPageState
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              s.status.replaceAll('_', ' '),
+                              StatusHelper.format(s.status),
                               style: TextStyle(
                                 color: s.status == 'orcamento'
                                     ? Colors.orange
@@ -158,6 +159,41 @@ class _HistoricoServicoRealizadoPageState
                           color: Colors.black54,
                           fontSize: 12,
                         ),
+                      ),
+                    ],
+                    if (s.dataEstimada != null ||
+                        s.valorSugerido != null) ...[
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          if (s.dataEstimada != null) ...[
+                            Icon(Icons.calendar_month,
+                                size: 12, color: Colors.grey[400]),
+                            const SizedBox(width: 3),
+                            Text(
+                              s.dataEstimada!,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                          if (s.dataEstimada != null &&
+                              s.valorSugerido != null)
+                            const SizedBox(width: 12),
+                          if (s.valorSugerido != null) ...[
+                            Icon(Icons.attach_money,
+                                size: 12, color: Colors.grey[400]),
+                            const SizedBox(width: 3),
+                            Text(
+                              'R\$ ${s.valorSugerido!.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
                   ],

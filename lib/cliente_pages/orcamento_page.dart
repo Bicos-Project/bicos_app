@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../components/app_header.dart';
 import '../components/app_image.dart';
 import '../core/app_colors.dart';
+import '../core/status_helper.dart';
 import '../models/prestador_model.dart';
 import '../models/solicitacao_response.dart';
 import '../services/solicitacao_service.dart';
@@ -101,6 +102,8 @@ class _OrcamentoPageState extends State<OrcamentoPage> {
           prestadorId: _solicitacao.prestadorId,
           prestadorNome: _solicitacao.prestadorNome,
           clienteAvaliacao: _solicitacao.clienteAvaliacao,
+          dataEstimada: _solicitacao.dataEstimada,
+          valorSugerido: _solicitacao.valorSugerido,
         );
         _cancelando = false;
       });
@@ -199,7 +202,7 @@ class _OrcamentoPageState extends State<OrcamentoPage> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          _solicitacao.status,
+                          StatusHelper.format(_solicitacao.status),
                           style: TextStyle(
                             color: _isCancelado
                                 ? Colors.red.shade700

@@ -6,6 +6,7 @@ class AuthStorage {
   static const _userNomeKey = 'user_nome';
   static const _userEmailKey = 'user_email';
   static const _userPerfilKey = 'user_perfil';
+  static const _avatarUrlKey = 'avatar_url';
 
   static Future<SharedPreferences> get _prefs =>
       SharedPreferences.getInstance();
@@ -43,6 +44,16 @@ class AuthStorage {
     };
   }
 
+  static Future<void> saveAvatarUrl(String url) async {
+    final prefs = await _prefs;
+    await prefs.setString(_avatarUrlKey, url);
+  }
+
+  static Future<String?> getAvatarUrl() async {
+    final prefs = await _prefs;
+    return prefs.getString(_avatarUrlKey);
+  }
+
   static Future<void> clear() async {
     final prefs = await _prefs;
     await prefs.remove(_tokenKey);
@@ -50,5 +61,6 @@ class AuthStorage {
     await prefs.remove(_userNomeKey);
     await prefs.remove(_userEmailKey);
     await prefs.remove(_userPerfilKey);
+    await prefs.remove(_avatarUrlKey);
   }
 }

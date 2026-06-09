@@ -15,6 +15,8 @@ class SolicitacaoResponse {
   final bool clienteConfirmouPagamento;
   final bool clienteAvaliou;
   final bool prestadorAvaliou;
+  final String? clienteFotoUrl;
+  final String? prestadorFotoUrl;
 
   SolicitacaoResponse({
     required this.id,
@@ -33,6 +35,8 @@ class SolicitacaoResponse {
     this.clienteConfirmouPagamento = false,
     this.clienteAvaliou = false,
     this.prestadorAvaliou = false,
+    this.clienteFotoUrl,
+    this.prestadorFotoUrl,
   });
 
   factory SolicitacaoResponse.fromJson(Map<String, dynamic> json) {
@@ -55,6 +59,8 @@ class SolicitacaoResponse {
           json['clienteConfirmouPagamento'] ?? false,
       clienteAvaliou: json['clienteAvaliou'] ?? false,
       prestadorAvaliou: json['prestadorAvaliou'] ?? false,
+      clienteFotoUrl: json['clienteFotoUrl'],
+      prestadorFotoUrl: json['prestadorFotoUrl'],
     );
   }
 }

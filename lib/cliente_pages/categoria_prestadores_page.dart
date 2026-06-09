@@ -80,7 +80,6 @@ class _CategoriaPrestadoresPageState extends State<CategoriaPrestadoresPage> {
 
   void _recalcularDistancias() {
     if (_respostasApi.isEmpty) return;
-    final ids = _respostasApi.map((r) => r.id).toSet();
     var updated = _prestadores.map((p) {
       final idx = _respostasApi.indexWhere((r) => r.id == p.id);
       return idx >= 0 ? _paraPrestadorMock(_respostasApi[idx]) : p;

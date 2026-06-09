@@ -6,6 +6,7 @@ import 'package:bicos_app/storage/auth_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_colors.dart';
+import '../core/status_helper.dart';
 
 class VerMaisSolicitacoesPage extends StatefulWidget {
   const VerMaisSolicitacoesPage({super.key});
@@ -167,7 +168,7 @@ class _VerMaisSolicitacoesPageState extends State<VerMaisSolicitacoesPage> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              s.status.replaceAll('_', ' '),
+                              StatusHelper.format(s.status),
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,

@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
-import '../models/prestador_foto_model.dart';
 import '../services/auth_service.dart';
-import '../services/avatar_service.dart';
 import '../storage/auth_storage.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -11,9 +9,6 @@ class AuthProvider extends ChangeNotifier {
   String? _nome;
   String? _email;
   String? _perfil;
-  String? _avatarPath;
-  String? _avatarUrl;
-  List<PrestadorFoto> _fotos = [];
   bool _isLoading = false;
   String? _error;
 
@@ -22,9 +17,6 @@ class AuthProvider extends ChangeNotifier {
   String? get nome => _nome;
   String? get email => _email;
   String? get perfil => _perfil;
-  String? get avatarPath => _avatarPath;
-  String? get avatarUrl => _avatarUrl;
-  List<PrestadorFoto> get fotos => _fotos;
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isAuthenticated => _token != null;
@@ -41,7 +33,6 @@ class AuthProvider extends ChangeNotifier {
     _nome = userData['nome'] as String?;
     _email = userData['email'] as String?;
     _perfil = userData['perfil'] as String?;
-    _avatarPath = await AvatarService.getSavedPath();
     notifyListeners();
     return true;
   }
@@ -58,8 +49,6 @@ class AuthProvider extends ChangeNotifier {
       _nome = response.nome;
       _email = response.email;
       _perfil = response.perfil;
-      _avatarUrl = response.fotoUrl;
-      _avatarPath = await AvatarService.getSavedPath();
       await AuthStorage.saveToken(response.token);
       await AuthStorage.saveUserData(
         id: response.id,
@@ -87,8 +76,6 @@ class AuthProvider extends ChangeNotifier {
       _nome = response.nome;
       _email = response.email;
       _perfil = response.perfil;
-      _avatarUrl = response.fotoUrl;
-      _avatarPath = await AvatarService.getSavedPath();
       await AuthStorage.saveToken(response.token);
       await AuthStorage.saveUserData(
         id: response.id,
@@ -104,31 +91,14 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> setAvatarPath(String path) async {
-    _avatarPath = path;
-    notifyListeners();
-  }
-
-  void setFotos(List<PrestadorFoto> fotos) {
-    _fotos = fotos;
-    if (fotos.isNotEmpty) {
-      _avatarUrl = fotos.first.url;
-    }
-    notifyListeners();
-  }
-
   Future<void> logOut() async {
     _token = null;
     _userId = null;
     _nome = null;
     _email = null;
     _perfil = null;
-    _avatarPath = null;
-    _avatarUrl = null;
-    _fotos = [];
     _error = null;
     await AuthStorage.clear();
-    await AvatarService.clear();
     notifyListeners();
   }
 

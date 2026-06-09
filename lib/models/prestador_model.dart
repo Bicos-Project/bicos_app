@@ -48,4 +48,26 @@ class Prestador {
             ? List<String>.from(json['fotosUrls'] as List)
             : const [],
       );
+
+  factory Prestador.fromResponseDTO(Map<String, dynamic> json) {
+    final fotos = json['fotos'] as List?;
+    return Prestador(
+      id: json['id'] as int?,
+      nome: json['nome'] as String? ?? '',
+      especialidade: json['especialidade'] as String? ?? '',
+      descricao: json['descricao'] as String? ?? '',
+      imagemAsset: fotos != null && fotos.isNotEmpty
+          ? (fotos.first['url'] as String? ?? '')
+          : '',
+      avaliacao: (json['avaliacao'] as num?)?.toDouble() ?? 0.0,
+      distancia: '',
+      distanciaKm: double.infinity,
+      categoria: json['categoria'] is Map
+          ? (json['categoria']['nome'] as String? ?? '')
+          : (json['categoria'] as String? ?? ''),
+      fotosUrls: fotos != null
+          ? fotos.map((f) => f['url'] as String).toList()
+          : const [],
+    );
+  }
 }

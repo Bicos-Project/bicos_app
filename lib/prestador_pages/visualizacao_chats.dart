@@ -5,6 +5,7 @@ import 'package:bicos_app/storage/auth_storage.dart';
 import 'package:flutter/material.dart';
 import '../components/app_header.dart';
 import '../core/app_colors.dart';
+import '../core/status_helper.dart';
 
 class VisualizacaoChats extends StatefulWidget {
   const VisualizacaoChats({super.key});
@@ -69,7 +70,7 @@ class _VisualizacaoChatsState extends State<VisualizacaoChats> {
   }
 
   Widget _buildChatCard(SolicitacaoResponse s) {
-    final statusLabel = s.status.replaceAll('_', ' ');
+    final statusLabel = StatusHelper.format(s.status);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: InkWell(

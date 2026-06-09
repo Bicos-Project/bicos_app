@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:bicos_app/models/mensagem_response.dart';
 import 'package:bicos_app/models/solicitacao_response.dart';
 import 'package:bicos_app/services/mensagem_service.dart';
 import 'package:bicos_app/storage/auth_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import '../core/app_colors.dart';
 
 class ChatClientePage extends StatefulWidget {
@@ -16,13 +18,18 @@ class ChatClientePage extends StatefulWidget {
 }
 
 class _ChatClientePageState extends State<ChatClientePage> {
+  String _fullUrl(String relative) => 'http://localhost:8080$relative';
+
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ImagePicker _picker = ImagePicker();
 
   List<MensagemResponse> _mensagens = [];
   bool _isLoading = true;
   int? _userId;
   String? _perfil;
+  String? _nome;
+  File? _pendingImage;
 
   @override
   void initState() {
@@ -34,6 +41,8 @@ class _ChatClientePageState extends State<ChatClientePage> {
     final userData = await AuthStorage.getUserData();
     _userId = userData['id'] as int?;
     _perfil = userData['perfil'] as String?;
+    _nome = userData['nome'] as String?;
+
     await _carregarMensagens();
   }
 
@@ -62,18 +71,29 @@ class _ChatClientePageState extends State<ChatClientePage> {
 
   Future<void> _enviarMensagem() async {
     final texto = _controller.text.trim();
-    if (texto.isEmpty || _userId == null) return;
+    if ((texto.isEmpty && _pendingImage == null) || _userId == null) return;
 
+    final image = _pendingImage;
+    _pendingImage = null;
     _controller.clear();
+    if (mounted) setState(() {});
     try {
       await MensagemService.enviar(
         solicitacaoId: widget.solicitacao.id,
         remetenteId: _userId!,
         tipoRemetente: _perfil ?? 'CLIENTE',
         texto: texto,
+        imagem: image,
       );
       await _carregarMensagens();
     } catch (_) {}
+  }
+
+  Future<void> _selecionarImagem() async {
+    final file = await _picker.pickImage(source: ImageSource.gallery);
+    if (file != null && mounted) {
+      setState(() => _pendingImage = File(file.path));
+    }
   }
 
   @override
@@ -215,43 +235,106 @@ class _ChatClientePageState extends State<ChatClientePage> {
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: isMinha ? const Color(0xFF5A3A70) : AppColors.branco,
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(18),
-                topRight: const Radius.circular(18),
-                bottomLeft: Radius.circular(isMinha ? 18 : 4),
-                bottomRight: Radius.circular(isMinha ? 4 : 18),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              if (!isMinha) ...[
+                _construirAvatarMensagem(
+                    widget.solicitacao.prestadorNome),
+                const SizedBox(width: 8),
               ],
-            ),
-            child: Text(
-              msg.texto,
-              style: GoogleFonts.plusJakartaSans(
-                color: isMinha ? AppColors.branco : AppColors.principalEscura,
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                height: 1.4,
+              Flexible(
+                child: Container(
+                  padding: msg.imagemUrl != null
+                      ? EdgeInsets.zero
+                      : const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: isMinha ? const Color(0xFF5A3A70) : AppColors.branco,
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(18),
+                      topRight: const Radius.circular(18),
+                      bottomLeft: Radius.circular(isMinha ? 18 : 4),
+                      bottomRight: Radius.circular(isMinha ? 4 : 18),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (msg.imagemUrl != null)
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(18),
+                            topRight: Radius.circular(18),
+                          ),
+                          child: Image.network(
+                            _fullUrl(msg.imagemUrl!),
+                            width: 220,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              height: 120,
+                              color: Colors.grey[300],
+                              child: const Icon(Icons.broken_image, color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                      if (msg.texto.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Text(
+                            msg.texto,
+                            style: GoogleFonts.plusJakartaSans(
+                              color: isMinha ? AppColors.branco : AppColors.principalEscura,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              if (isMinha) ...[
+                const SizedBox(width: 8),
+                _construirAvatarMensagem(_nome),
+              ],
+            ],
           ),
           const SizedBox(height: 4),
-          Text(
-            hora,
-            style: GoogleFonts.plusJakartaSans(
-              color: AppColors.branco.withOpacity(0.4),
-              fontSize: 10,
+          Padding(
+            padding: EdgeInsets.only(left: isMinha ? 0 : 32),
+            child: Text(
+              hora,
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.branco.withOpacity(0.4),
+                fontSize: 10,
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _construirAvatarMensagem(String? nome) {
+    return CircleAvatar(
+      radius: 16,
+      backgroundColor: AppColors.principalEscura.withOpacity(0.15),
+      child: Text(
+        nome != null && nome.isNotEmpty ? nome[0].toUpperCase() : '?',
+        style: const TextStyle(
+          color: AppColors.principalEscura,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
       ),
     );
   }
@@ -268,82 +351,103 @@ class _ChatClientePageState extends State<ChatClientePage> {
           ),
         ),
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.attach_file,
-              color: AppColors.principalEscura.withOpacity(0.9),
-              size: 22,
-            ),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.camera_alt_outlined,
-              color: AppColors.principalEscura.withOpacity(0.75),
-              size: 22,
-            ),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: Container(
+          if (_pendingImage != null)
+            Container(
+              height: 60,
+              margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFFD2C3D9).withOpacity(0.15),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: AppColors.principalEscura.withOpacity(0.15),
-                  width: 1,
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: FileImage(_pendingImage!),
+                  fit: BoxFit.cover,
                 ),
               ),
-              child: TextField(
-                controller: _controller,
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.principalEscura,
-                  fontSize: 14,
-                ),
-                maxLines: null,
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => _enviarMensagem(),
-                decoration: InputDecoration(
-                  hintText: 'Digite uma mensagem...',
-                  hintStyle: GoogleFonts.plusJakartaSans(
-                    color: AppColors.principalEscura.withOpacity(0.4),
-                    fontSize: 14,
+              child: Align(
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                  onTap: () => setState(() => _pendingImage = null),
+                  child: Container(
+                    margin: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.close, size: 18, color: AppColors.branco),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  border: InputBorder.none,
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: _enviarMensagem,
-              child: Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: AppColors.principalEscura,
-                  shape: BoxShape.circle,
+          Row(
+            children: [
+              IconButton(
+                onPressed: _selecionarImagem,
+                icon: Icon(
+                  Icons.image_outlined,
+                  color: AppColors.principalEscura.withOpacity(0.9),
+                  size: 22,
                 ),
-                child: const Icon(
-                  Icons.send,
-                  color: AppColors.branco,
-                  size: 20,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD2C3D9).withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppColors.principalEscura.withOpacity(0.15),
+                      width: 1,
+                    ),
+                  ),
+                  child: TextField(
+                    controller: _controller,
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.principalEscura,
+                      fontSize: 14,
+                    ),
+                    maxLines: null,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (_) => _enviarMensagem(),
+                    decoration: InputDecoration(
+                      hintText: 'Digite uma mensagem...',
+                      hintStyle: GoogleFonts.plusJakartaSans(
+                        color: AppColors.principalEscura.withOpacity(0.4),
+                        fontSize: 14,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      border: InputBorder.none,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 8),
+              MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: _enviarMensagem,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.principalEscura,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.send,
+                      color: AppColors.branco,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -1,9 +1,11 @@
 import 'package:bicos_app/cliente_pages/avaliacao.dart';
+import 'package:bicos_app/cliente_pages/chat_cliente.dart';
 import 'package:bicos_app/components/app_header.dart';
 import 'package:bicos_app/models/solicitacao_response.dart';
 import 'package:bicos_app/services/solicitacao_service.dart';
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
+import '../core/status_helper.dart';
 
 class AndamentoServicoClientePage extends StatefulWidget {
   final SolicitacaoResponse solicitacao;
@@ -86,9 +88,13 @@ class _AndamentoServicoClientePageState
           children: [
             _buildPrestadorCard(),
             const SizedBox(height: 16),
+            _buildServiceInfo(),
+            const SizedBox(height: 16),
             _buildProgressoServico(),
             const SizedBox(height: 16),
             _buildAcoes(),
+            const SizedBox(height: 24),
+            _buildBotaoChat(),
           ],
         ),
       ),
@@ -153,7 +159,7 @@ class _AndamentoServicoClientePageState
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              _solicitacao.status.replaceAll('_', ' '),
+              StatusHelper.format(_solicitacao.status),
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
@@ -163,6 +169,85 @@ class _AndamentoServicoClientePageState
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildServiceInfo() {
+    if (_solicitacao.dataEstimada == null &&
+        _solicitacao.valorSugerido == null) {
+      return const SizedBox.shrink();
+    }
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.branco,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (_solicitacao.dataEstimada != null) ...[
+            const Row(
+              children: [
+                Icon(Icons.calendar_month, size: 16, color: AppColors.principal),
+                SizedBox(width: 6),
+                Text(
+                  'Data estimada',
+                  style: TextStyle(
+                    color: AppColors.cinza,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.only(left: 22),
+              child: Text(
+                _solicitacao.dataEstimada!,
+                style: const TextStyle(
+                  color: AppColors.principalEscura,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+          if (_solicitacao.dataEstimada != null &&
+              _solicitacao.valorSugerido != null)
+            const SizedBox(height: 12),
+          if (_solicitacao.valorSugerido != null) ...[
+            const Row(
+              children: [
+                Icon(Icons.attach_money, size: 16, color: AppColors.principal),
+                SizedBox(width: 6),
+                Text(
+                  'Valor sugerido',
+                  style: TextStyle(
+                    color: AppColors.cinza,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.only(left: 22),
+              child: Text(
+                'R\$ ${_solicitacao.valorSugerido!.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  color: AppColors.principalEscura,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -481,5 +566,87 @@ class _AndamentoServicoClientePageState
     }
 
     return const SizedBox.shrink();
+  }
+
+  Widget _buildBotaoChat() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.branco.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.destaque.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChatClientePage(solicitacao: _solicitacao),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.destaque.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.chat_bubble_outline_rounded,
+                    color: AppColors.destaque,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Conversar com prestador',
+                        style: TextStyle(
+                          color: AppColors.branco,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Tire dúvidas sobre o serviço',
+                        style: TextStyle(
+                          color: AppColors.branco,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppColors.destaque.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_forward_rounded,
+                    color: AppColors.destaque,
+                    size: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

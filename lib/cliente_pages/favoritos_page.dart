@@ -16,6 +16,12 @@ class FavoritosPage extends StatefulWidget {
 }
 
 class _FavoritosPageState extends State<FavoritosPage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<FavoritosProvider>().carregar();
+  }
+
   Future<void> _remover(Prestador p) async {
     await context.read<FavoritosProvider>().remover(p.nome);
     if (!mounted) return;

@@ -61,109 +61,108 @@ class _PerfilPrestadorPageState extends State<PerfilPrestadorPage> {
               children: [
                 AppHeader(showBack: true, title: 'Perfil Prestador'),
                 const SizedBox(height: 16),
-                SizedBox(
-                  height: 300,
-                  child: Stack(
-                    children: [
-                      if (fotos.isEmpty)
-                        _imagemFallback()
-                      else ...[
-                        ...fotos.asMap().entries.map((e) =>
-                          Positioned.fill(
-                            child: AnimatedOpacity(
-                              opacity: _fotoAtual == e.key ? 1 : 0,
-                              duration: const Duration(milliseconds: 300),
-                              child: e.value == fotos.first && _fotoAtual != e.key
-                                  ? const SizedBox.shrink()
-                                  : AppImage(e.value, fit: BoxFit.cover),
-                            ),
-                          ),
-                        ),
-                        if (fotos.length > 1) ...[
-                          Positioned(
-                            left: 8,
-                            top: 0,
-                            bottom: 0,
-                            child: Center(
-                              child: MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (_fotoAtual > 0) {
-                                      setState(() => _fotoAtual--);
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black26,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.chevron_left,
-                                      color: Colors.white,
-                                      size: 28,
-                                    ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SizedBox(
+                    height: 200,
+                    child: fotos.isEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: _imagemFallback(),
+                          )
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Stack(
+                              children: [
+                                ...fotos.asMap().entries.map((e) =>
+                                  AnimatedOpacity(
+                                    opacity: _fotoAtual == e.key ? 1 : 0,
+                                    duration: const Duration(milliseconds: 300),
+                                    child: e.value == fotos.first && _fotoAtual != e.key
+                                        ? const SizedBox.shrink()
+                                        : AppImage(e.value, fit: BoxFit.cover, width: double.infinity, height: 200),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            right: 8,
-                            top: 0,
-                            bottom: 0,
-                            child: Center(
-                              child: MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (_fotoAtual < fotos.length - 1) {
-                                      setState(() => _fotoAtual++);
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black26,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.chevron_right,
-                                      color: Colors.white,
-                                      size: 28,
+                                if (fotos.length > 1) ...[
+                                  Positioned(
+                                    left: 8,
+                                    top: 0,
+                                    bottom: 0,
+                                    child: Center(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (_fotoAtual > 0) {
+                                            setState(() => _fotoAtual--);
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black26,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.chevron_left,
+                                            color: Colors.white,
+                                            size: 22,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 12,
-                            left: 0,
-                            right: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                fotos.length,
-                                (i) => AnimatedContainer(
-                                  duration: const Duration(milliseconds: 250),
-                                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                                  width: _fotoAtual == i ? 24 : 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    color: _fotoAtual == i
-                                        ? AppColors.destaque
-                                        : Colors.white.withOpacity(0.6),
-                                    borderRadius: BorderRadius.circular(4),
+                                  Positioned(
+                                    right: 8,
+                                    top: 0,
+                                    bottom: 0,
+                                    child: Center(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (_fotoAtual < fotos.length - 1) {
+                                            setState(() => _fotoAtual++);
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black26,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.chevron_right,
+                                            color: Colors.white,
+                                            size: 22,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                  Positioned(
+                                    bottom: 10,
+                                    left: 0,
+                                    right: 0,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: List.generate(
+                                        fotos.length,
+                                        (i) => AnimatedContainer(
+                                          duration: const Duration(milliseconds: 250),
+                                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                                          width: _fotoAtual == i ? 20 : 7,
+                                          height: 7,
+                                          decoration: BoxDecoration(
+                                            color: _fotoAtual == i
+                                                ? AppColors.destaque
+                                                : Colors.white.withOpacity(0.6),
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
-                        ],
-                      ],
-                    ],
                   ),
                 ),
                 Padding(
@@ -318,8 +317,23 @@ class _PerfilPrestadorPageState extends State<PerfilPrestadorPage> {
 
   Widget _imagemFallback() {
     return Container(
-      color: const Color(0xFFD2C3D9),
-      child: const Icon(Icons.person, size: 64, color: AppColors.principalEscura),
+      width: double.infinity,
+      height: 200,
+      decoration: BoxDecoration(
+        color: const Color(0xFFD2C3D9),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.person, size: 50, color: AppColors.principalEscura),
+          SizedBox(height: 8),
+          Text(
+            'Sem fotos',
+            style: TextStyle(color: AppColors.principalEscura, fontSize: 14),
+          ),
+        ],
+      ),
     );
   }
 }

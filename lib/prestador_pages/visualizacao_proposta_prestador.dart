@@ -1,5 +1,6 @@
 import 'package:bicos_app/components/app_header.dart';
 import 'package:bicos_app/core/app_colors.dart';
+import 'package:bicos_app/core/status_helper.dart';
 import 'package:bicos_app/models/solicitacao_response.dart';
 import 'package:bicos_app/prestador_pages/chat_prestador.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +104,7 @@ class VisualizacaoPropostaPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        solicitacao.status.replaceAll('_', ' '),
+                        StatusHelper.format(solicitacao.status),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -122,6 +123,22 @@ class VisualizacaoPropostaPage extends StatelessWidget {
                 content: solicitacao.dataSolicitacao ?? 'A combinar',
                 icon: Icons.calendar_today_outlined,
               ),
+              if (solicitacao.dataEstimada != null) ...[
+                const SizedBox(height: 12),
+                _buildInfoCard(
+                  title: 'DATA ESTIMADA',
+                  content: solicitacao.dataEstimada!,
+                  icon: Icons.calendar_month_outlined,
+                ),
+              ],
+              if (solicitacao.valorSugerido != null) ...[
+                const SizedBox(height: 12),
+                _buildInfoCard(
+                  title: 'VALOR SUGERIDO',
+                  content: 'R\$ ${solicitacao.valorSugerido!.toStringAsFixed(2)}',
+                  icon: Icons.attach_money,
+                ),
+              ],
               const SizedBox(height: 12),
               _buildInfoCard(
                 title: 'SOLICITAÇÃO',
