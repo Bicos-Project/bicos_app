@@ -48,6 +48,18 @@ lib/
 └── shared_pages/     # Páginas compartilhadas (serviço concluído)
 ```
 
+## Setup para Windows
+
+1. Instalar Flutter SDK, Java 21+ e PostgreSQL
+2. Clonar os dois repositórios (frontend + backend)
+3. Seguir as instruções de setup do backend primeiro
+4. Voltar para este diretório e executar:
+
+```bash
+flutter pub get
+flutter run -d windows
+```
+
 ## Pré-requisitos
 
 - Flutter SDK 3.6 ou superior
@@ -56,14 +68,7 @@ lib/
 ## Como executar
 
 ```bash
-# Clone o repositório
-git clone https://github.com/Bicos-Project/bicos_app.git
-cd bicos-app
-
-# Instale as dependências
 flutter pub get
-
-# Execute
 flutter run
 ```
 
