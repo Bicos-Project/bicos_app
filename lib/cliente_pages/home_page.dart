@@ -399,9 +399,7 @@ class _HomePageState extends State<HomePage>
   Widget _construirBuscaRapida() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: MouseRegion(
-        cursor: SystemMouseCursors.text,
-        child: GestureDetector(
+      child: GestureDetector(
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
